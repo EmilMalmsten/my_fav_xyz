@@ -1,3 +1,5 @@
-module github.com/emilmalmsten/my_fav_xyz
+module github.com/emilmalmsten/my_top_xyz
 
 go 1.20
+
+require github.com/go-chi/chi v1.5.4

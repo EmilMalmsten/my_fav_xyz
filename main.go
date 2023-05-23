@@ -1,7 +1,25 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/go-chi/chi"
+)
+
+type apiConfig struct {
+}
 
 func main() {
-	fmt.Println("Hello world!")
+	apiCfg := apiConfig{}
+
+	router := chi.NewRouter()
+
+	router.Post("/api/toplists", apiCfg.handlerCreateToplist)
+
+	fmt.Println("Server running...")
+	err := http.ListenAndServe(":8080", router)
+	if err != nil {
+		panic(err)
+	}
 }
