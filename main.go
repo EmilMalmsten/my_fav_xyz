@@ -15,7 +15,7 @@ func main() {
 
 	router := chi.NewRouter()
 
-	router.Post("/api/toplists", apiCfg.handlerCreateToplist)
+	router.Post("/api/toplists", apiCfg.handlerToplistsCreate)
 
 	fmt.Println("Server running...")
 	err := http.ListenAndServe(":8080", router)
