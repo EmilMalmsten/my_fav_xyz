@@ -2,30 +2,31 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
-	"os"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-type List struct {
-	Title string
+type DbConfig struct {
+	database *sql.DB
 }
 
-func Db(dbUrl string) {
+func Init(dbUrl string) (*DbConfig, error) {
 	db, err := sql.Open("pgx", dbUrl)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
+		return &DbConfig{}, err
 	}
-	defer db.Close()
-
-	var title string
-	err = db.QueryRow("SELECT title FROM lists LIMIT 1").Scan(&title)
+	err = db.Ping()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-		os.Exit(1)
+		return &DbConfig{}, err
 	}
 
-	fmt.Printf("found title: %+v\n", title)
+	return &DbConfig{database: db}, nil
+}
+
+func (dbCfg *DbConfig) CreateToplist(title string) error {
+	_, err := dbCfg.database.Exec("INSERT INTO lists (title) VALUES ($1)", title)
+	if err != nil {
+		return err
+	}
+	return nil
 }

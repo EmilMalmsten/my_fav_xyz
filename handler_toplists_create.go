@@ -7,7 +7,7 @@ import (
 
 func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
-		Body string `json:"body"`
+		Title string `json:"title"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -15,6 +15,12 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 	err := decoder.Decode(&params)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		return
+	}
+
+	err = cfg.DB.CreateToplist(params.Title)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Error occurred when creating new toplist")
 		return
 	}
 

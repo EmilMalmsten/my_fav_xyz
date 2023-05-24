@@ -12,7 +12,7 @@ import (
 )
 
 type apiConfig struct {
-	dbUrl string
+	DB *database.DbConfig
 }
 
 func main() {
@@ -22,18 +22,21 @@ func main() {
 		log.Fatal("DB_URL env var is not set")
 	}
 
+	db, err := database.Init(dbUrl)
+	if err != nil {
+		log.Fatalf("unable to initialize database: %v", err)
+	}
+
 	apiCfg := apiConfig{
-		dbUrl: dbUrl,
+		DB: db,
 	}
 
 	router := chi.NewRouter()
 
 	router.Post("/api/toplists", apiCfg.handlerToplistsCreate)
 
-	database.Db(apiCfg.dbUrl)
-
 	fmt.Println("Server running...")
-	err := http.ListenAndServe(":8080", router)
+	err = http.ListenAndServe("localhost:8080", router)
 	if err != nil {
 		panic(err)
 	}
