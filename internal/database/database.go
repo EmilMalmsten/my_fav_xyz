@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -23,10 +24,13 @@ func Init(dbUrl string) (*DbConfig, error) {
 	return &DbConfig{database: db}, nil
 }
 
-func (dbCfg *DbConfig) CreateToplist(title string) error {
-	_, err := dbCfg.database.Exec("INSERT INTO lists (title) VALUES ($1)", title)
+func (dbCfg *DbConfig) CreateToplist(title string, description string) (int64, error) {
+	var listId int64
+	err := dbCfg.database.QueryRow("INSERT INTO toplists (title, description) VALUES ($1, $2) RETURNING id", title, description).Scan(&listId)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return -1, err
 	}
-	return nil
+
+	return listId, nil
 }
