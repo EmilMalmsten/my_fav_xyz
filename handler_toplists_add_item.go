@@ -2,22 +2,25 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/emilmalmsten/my_top_xyz/internal/database"
 	"github.com/go-chi/chi"
 )
 
-func (cfg apiConfig) handlerToplistsAddItem(w http.ResponseWriter, r *http.Request) {
-	type ToplistItem struct {
-		Rank        int    `json:"rank"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
+func areRanksInOrder(toplistItems []database.ToplistItem) bool {
+	for i := 0; i < len(toplistItems); i++ {
+		if toplistItems[i].Rank != i+1 {
+			return false
+		}
 	}
+	return true
+}
 
+func (cfg apiConfig) handlerToplistsAddItems(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
-		ToplistItems []ToplistItem `json:"toplistItems"`
+		ToplistItems []database.ToplistItem `json:"toplistItems"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -35,8 +38,16 @@ func (cfg apiConfig) handlerToplistsAddItem(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	fmt.Println(listId)
-	fmt.Printf("%+v\n", params.ToplistItems)
-	respondWithJSON(w, http.StatusOK, "ok")
+	if !areRanksInOrder(params.ToplistItems) {
+		respondWithError(w, http.StatusBadRequest, "Item ranks are not in order")
+		return
+	}
 
+	addedToplistItems, err := cfg.DB.AddItemsToToplist(params.ToplistItems, listId)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Database error - could not add new items")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, addedToplistItems)
 }
