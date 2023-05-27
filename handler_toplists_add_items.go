@@ -43,11 +43,11 @@ func (cfg apiConfig) handlerToplistsAddItems(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	addedToplistItems, err := cfg.DB.AddItemsToToplist(params.ToplistItems, listId)
+	err = cfg.DB.AddItemsToToplist(params.ToplistItems, listId)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Database error - could not add new items")
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, addedToplistItems)
+	respondWithJSON(w, http.StatusOK, "")
 }

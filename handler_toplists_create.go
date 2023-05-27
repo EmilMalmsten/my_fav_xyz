@@ -12,9 +12,7 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 	}
 
 	type resp struct {
-		Id          int64  `json:"id"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
+		Id int64 `json:"id"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -32,8 +30,6 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 	}
 
 	respondWithJSON(w, http.StatusCreated, resp{
-		Id:          toplistId,
-		Title:       params.Title,
-		Description: params.Description,
+		Id: toplistId,
 	})
 }
