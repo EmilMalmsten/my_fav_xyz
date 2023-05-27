@@ -27,6 +27,7 @@ type ToplistItem struct {
 }
 
 var ErrNotExist = errors.New("resource does not exist")
+var ErrAlreadyExist = errors.New("already exists")
 
 func Init(dbUrl string) (*DbConfig, error) {
 	db, err := sql.Open("pgx", dbUrl)
@@ -55,6 +56,16 @@ func (dbCfg *DbConfig) CreateToplist(title string, description string) (int64, e
 }
 
 func (dbCfg *DbConfig) AddItemsToToplist(toplistItems []ToplistItem, listId int) error {
+	var itemsFound int
+	doesItemsExist := "SELECT COUNT(*) FROM list_items WHERE toplist_id = $1"
+	err := dbCfg.database.QueryRow(doesItemsExist, listId).Scan(&itemsFound)
+	if err != nil {
+		return err
+	}
+
+	if itemsFound > 0 {
+		return ErrAlreadyExist
+	}
 
 	query := "INSERT INTO list_items (toplist_id, rank, title, description) VALUES ($1, $2, $3, $4)"
 

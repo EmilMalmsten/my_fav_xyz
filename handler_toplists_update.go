@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -28,8 +29,13 @@ func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reques
 
 	err = cfg.DB.UpdateToplist(toplist, listId)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Error occurred when creating new toplist")
+		if errors.Is(err, database.ErrNotExist) {
+			respondWithError(w, http.StatusNotFound, "Toplist does not exist")
+			return
+		}
+		respondWithError(w, http.StatusInternalServerError, "Failed to update toplist")
 		return
+
 	}
 
 	respondWithJSON(w, http.StatusOK, "")

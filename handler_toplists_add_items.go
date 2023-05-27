@@ -9,15 +9,6 @@ import (
 	"github.com/go-chi/chi"
 )
 
-func areRanksInOrder(toplistItems []database.ToplistItem) bool {
-	for i := 0; i < len(toplistItems); i++ {
-		if toplistItems[i].Rank != i+1 {
-			return false
-		}
-	}
-	return true
-}
-
 func (cfg apiConfig) handlerToplistsAddItems(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		ToplistItems []database.ToplistItem `json:"toplistItems"`
@@ -50,4 +41,13 @@ func (cfg apiConfig) handlerToplistsAddItems(w http.ResponseWriter, r *http.Requ
 	}
 
 	respondWithJSON(w, http.StatusOK, "")
+}
+
+func areRanksInOrder(toplistItems []database.ToplistItem) bool {
+	for i := 0; i < len(toplistItems); i++ {
+		if toplistItems[i].Rank != i+1 {
+			return false
+		}
+	}
+	return true
 }
