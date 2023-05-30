@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -9,7 +10,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
-func (cfg apiConfig) handlerToplistsAddItems(w http.ResponseWriter, r *http.Request) {
+func (cfg apiConfig) handlerToplistsChangeItems(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		ToplistItems []database.ToplistItem `json:"toplistItems"`
 	}
@@ -18,9 +19,11 @@ func (cfg apiConfig) handlerToplistsAddItems(w http.ResponseWriter, r *http.Requ
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
+		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode json data")
 		return
 	}
+	fmt.Println(params.ToplistItems)
 
 	listIdString := chi.URLParam(r, "listId")
 	listId, err := strconv.Atoi(listIdString)
@@ -36,10 +39,9 @@ func (cfg apiConfig) handlerToplistsAddItems(w http.ResponseWriter, r *http.Requ
 
 	err = cfg.DB.AddItemsToToplist(params.ToplistItems, listId)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Database error - could not add new items")
+		respondWithError(w, http.StatusInternalServerError, "Failed to add items to list")
 		return
 	}
-
 	respondWithJSON(w, http.StatusOK, "")
 }
 
