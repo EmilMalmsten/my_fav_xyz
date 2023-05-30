@@ -25,8 +25,8 @@ func (cfg apiConfig) handlerToplistsChangeItems(w http.ResponseWriter, r *http.R
 	}
 	fmt.Println(params.ToplistItems)
 
-	listIdString := chi.URLParam(r, "listId")
-	listId, err := strconv.Atoi(listIdString)
+	listIDString := chi.URLParam(r, "listId")
+	listID, err := strconv.Atoi(listIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid toplist ID")
 		return
@@ -37,7 +37,7 @@ func (cfg apiConfig) handlerToplistsChangeItems(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	err = cfg.DB.AddItemsToToplist(params.ToplistItems, listId)
+	err = cfg.DB.AddItemsToToplist(params.ToplistItems, listID)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Failed to add items to list")
 		return

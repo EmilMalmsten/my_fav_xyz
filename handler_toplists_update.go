@@ -20,14 +20,14 @@ func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	listIdString := chi.URLParam(r, "listId")
-	listId, err := strconv.Atoi(listIdString)
+	listIDString := chi.URLParam(r, "listID")
+	listID, err := strconv.Atoi(listIDString)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid toplist ID")
 		return
 	}
 
-	err = cfg.DB.UpdateToplist(toplist, listId)
+	err = cfg.DB.UpdateToplist(toplist, listID)
 	if err != nil {
 		if errors.Is(err, database.ErrNotExist) {
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")

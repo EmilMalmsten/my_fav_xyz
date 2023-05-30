@@ -21,7 +21,7 @@ type Toplist struct {
 
 type ToplistItem struct {
 	ID          int    `json:"id"`
-	ListId      int    `json:"listId"`
+	ListID      int    `json:"listId"`
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`

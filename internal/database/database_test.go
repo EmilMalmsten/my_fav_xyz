@@ -53,14 +53,14 @@ func createToplist(t *testing.T) int64 {
 		Items: []ToplistItem{
 			{
 				ID:          101,
-				ListId:      1,
+				ListID:      1,
 				Rank:        1,
 				Title:       "Item 1",
 				Description: "Description 1",
 			},
 			{
 				ID:          102,
-				ListId:      1,
+				ListID:      1,
 				Rank:        2,
 				Title:       "Item 2",
 				Description: "Description 2",

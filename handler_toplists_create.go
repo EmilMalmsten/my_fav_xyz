@@ -39,7 +39,7 @@ func (t Toplist) ToDBToplist() database.Toplist {
 func (t ToplistItem) ToDBToplistItem() database.ToplistItem {
 	return database.ToplistItem{
 		ID:          t.ID,
-		ListId:      t.ListId,
+		ListID:      t.ListId,
 		Rank:        t.Rank,
 		Title:       t.Title,
 		Description: t.Description,
