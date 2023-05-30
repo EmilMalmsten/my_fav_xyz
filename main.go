@@ -22,7 +22,7 @@ func main() {
 		log.Fatal("DB_URL env var is not set")
 	}
 
-	db, err := database.Init(dbUrl)
+	db, err := database.CreateDatabaseConnection(dbUrl)
 	if err != nil {
 		log.Fatalf("unable to initialize database: %v", err)
 	}

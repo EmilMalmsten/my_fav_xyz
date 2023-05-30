@@ -30,7 +30,7 @@ func run(m *testing.M) (code int, err error) {
 		log.Fatal("TEST_DB_URL env var is not set")
 	}
 
-	db, err := Init(testDbUrl)
+	db, err := CreateDatabaseConnection(testDbUrl)
 	dbTestConfig = db
 
 	tables := []string{"toplists", "list_items"}
@@ -68,7 +68,7 @@ func createToplist(t *testing.T) int64 {
 		},
 	}
 
-	id, err := dbTestConfig.CreateToplist(arg)
+	id, err := dbTestConfig.InsertToplist(arg)
 	require.NoError(t, err)
 	require.NotZero(t, id)
 

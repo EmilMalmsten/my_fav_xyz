@@ -30,7 +30,7 @@ type ToplistItem struct {
 var ErrNotExist = errors.New("resource does not exist")
 var ErrAlreadyExist = errors.New("already exists")
 
-func Init(dbUrl string) (*DbConfig, error) {
+func CreateDatabaseConnection(dbUrl string) (*DbConfig, error) {
 	db, err := sql.Open("pgx", dbUrl)
 	if err != nil {
 		return &DbConfig{}, err
@@ -43,7 +43,10 @@ func Init(dbUrl string) (*DbConfig, error) {
 	return &DbConfig{database: db}, nil
 }
 
-func (dbCfg *DbConfig) CreateToplist(toplist Toplist) (int64, error) {
+func (dbCfg *DbConfig) InsertToplist(toplist Toplist) (int64, error) {
+
+	// Add get function here to see if toplist already exists
+
 	var listId int64
 	err := dbCfg.database.QueryRow(`
 		INSERT INTO toplists (title, description)
@@ -53,7 +56,31 @@ func (dbCfg *DbConfig) CreateToplist(toplist Toplist) (int64, error) {
 		return -1, err
 	}
 
+	err = dbCfg.InsertToplistItems(toplist.Items, listId)
+	if err != nil {
+		fmt.Println(err)
+		return -1, err
+	}
+
 	return listId, nil
+}
+
+func (dbCfg *DbConfig) InsertToplistItems(toplistItems []ToplistItem, listId int64) error {
+	for i := range toplistItems {
+		insertQuery := "INSERT INTO list_items (toplist_id, rank, title, description) VALUES ($1, $2, $3, $4)"
+		_, err := dbCfg.database.Exec(
+			insertQuery,
+			listId,
+			toplistItems[i].Rank,
+			toplistItems[i].Title,
+			toplistItems[i].Description,
+		)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
+	return nil
 }
 
 func (dbCfg *DbConfig) getExistingListItemRanks(listId int) ([]int, error) {

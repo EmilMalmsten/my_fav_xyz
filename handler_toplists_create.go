@@ -61,7 +61,7 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 
 	dbToplist := toplist.ToDBToplist()
 
-	toplistId, err := cfg.DB.CreateToplist(dbToplist)
+	toplistId, err := cfg.DB.InsertToplist(dbToplist)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Error occurred when creating new toplist")
 		return
