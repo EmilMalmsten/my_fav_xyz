@@ -13,9 +13,10 @@ type DbConfig struct {
 }
 
 type Toplist struct {
-	ID          int    `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	ID          int           `json:"id"`
+	Title       string        `json:"title"`
+	Description string        `json:"description"`
+	Items       []ToplistItem `json:"items"`
 }
 
 type ToplistItem struct {
@@ -42,11 +43,11 @@ func Init(dbUrl string) (*DbConfig, error) {
 	return &DbConfig{database: db}, nil
 }
 
-func (dbCfg *DbConfig) CreateToplist(title string, description string) (int64, error) {
+func (dbCfg *DbConfig) CreateToplist(toplist Toplist) (int64, error) {
 	var listId int64
 	err := dbCfg.database.QueryRow(`
 		INSERT INTO toplists (title, description)
-		VALUES ($1, $2) RETURNING id`, title, description).Scan(&listId)
+		VALUES ($1, $2) RETURNING id`, toplist.Title, toplist.Description).Scan(&listId)
 	if err != nil {
 		fmt.Println(err)
 		return -1, err

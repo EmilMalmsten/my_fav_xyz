@@ -47,11 +47,28 @@ func run(m *testing.M) (code int, err error) {
 
 func createToplist(t *testing.T) int64 {
 	arg := Toplist{
-		Title:       "Test toplist",
-		Description: "Just testing stuff",
+		ID:          1,
+		Title:       "My Toplist",
+		Description: "This is a mock toplist",
+		Items: []ToplistItem{
+			{
+				ID:          101,
+				ListId:      1,
+				Rank:        1,
+				Title:       "Item 1",
+				Description: "Description 1",
+			},
+			{
+				ID:          102,
+				ListId:      1,
+				Rank:        2,
+				Title:       "Item 2",
+				Description: "Description 2",
+			},
+		},
 	}
 
-	id, err := dbTestConfig.CreateToplist(arg.Title, arg.Description)
+	id, err := dbTestConfig.CreateToplist(arg)
 	require.NoError(t, err)
 	require.NotZero(t, id)
 
