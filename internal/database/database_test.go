@@ -31,6 +31,9 @@ func run(m *testing.M) (code int, err error) {
 	}
 
 	db, err := CreateDatabaseConnection(testDbUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
 	dbTestConfig = db
 
 	tables := []string{"toplists", "list_items"}
@@ -45,22 +48,17 @@ func run(m *testing.M) (code int, err error) {
 	return m.Run(), nil
 }
 
-func createToplist(t *testing.T) int64 {
-	arg := Toplist{
-		ID:          1,
+func insertToplist(t *testing.T) Toplist {
+	toplist := Toplist{
 		Title:       "My Toplist",
 		Description: "This is a mock toplist",
 		Items: []ToplistItem{
 			{
-				ID:          101,
-				ListID:      1,
 				Rank:        1,
 				Title:       "Item 1",
 				Description: "Description 1",
 			},
 			{
-				ID:          102,
-				ListID:      1,
 				Rank:        2,
 				Title:       "Item 2",
 				Description: "Description 2",
@@ -68,13 +66,48 @@ func createToplist(t *testing.T) int64 {
 		},
 	}
 
-	id, err := dbTestConfig.InsertToplist(arg)
+	insertedToplist, err := dbTestConfig.InsertToplist(toplist)
 	require.NoError(t, err)
-	require.NotZero(t, id)
+	require.NotZero(t, insertedToplist)
 
-	return id
+	require.Equal(t, toplist.Title, insertedToplist.Title)
+	require.Equal(t, toplist.Description, insertedToplist.Description)
+
+	require.Equal(t, len(toplist.Items), len(insertedToplist.Items))
+
+	for i := range insertedToplist.Items {
+		require.Equal(t, insertedToplist.Items[i].ListID, insertedToplist.ID)
+		require.Equal(t, toplist.Items[i].Rank, insertedToplist.Items[i].Rank)
+		require.Equal(t, toplist.Items[i].Title, insertedToplist.Items[i].Title)
+		require.Equal(t, toplist.Items[i].Description, insertedToplist.Items[i].Description)
+	}
+
+	return insertedToplist
 }
 
-func TestCreateToplist(t *testing.T) {
-	createToplist(t)
+func TestInsertToplist(t *testing.T) {
+	insertToplist(t)
+}
+
+func TestGetToplist(t *testing.T) {
+	toplist1 := insertToplist(t)
+	toplist2, err := dbTestConfig.GetToplist(toplist1.ID)
+
+	fmt.Println(toplist1)
+	fmt.Println(toplist2)
+	require.NoError(t, err)
+	require.NotEmpty(t, toplist2)
+
+	require.Equal(t, toplist1.ID, toplist2.ID)
+	require.Equal(t, toplist1.Title, toplist2.Title)
+	require.Equal(t, toplist1.Description, toplist2.Description)
+
+	require.Equal(t, len(toplist1.Items), len(toplist2.Items))
+
+	for i := range toplist2.Items {
+		require.Equal(t, toplist1.Items[i].ListID, toplist2.Items[i].ListID)
+		require.Equal(t, toplist1.Items[i].Rank, toplist2.Items[i].Rank)
+		require.Equal(t, toplist1.Items[i].Title, toplist2.Items[i].Title)
+		require.Equal(t, toplist1.Items[i].Description, toplist2.Items[i].Description)
+	}
 }

@@ -13,7 +13,7 @@ import (
 func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
-	var toplist database.Toplist
+	var toplist Toplist
 	err := decoder.Decode(&toplist)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
@@ -27,7 +27,9 @@ func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	err = cfg.DB.UpdateToplist(toplist, listID)
+	dbToplist := toplist.ToDBToplist()
+
+	err = cfg.DB.UpdateToplist(dbToplist, listID)
 	if err != nil {
 		if errors.Is(err, database.ErrNotExist) {
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")

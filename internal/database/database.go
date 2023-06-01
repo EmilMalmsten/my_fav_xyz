@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -43,44 +44,82 @@ func CreateDatabaseConnection(dbUrl string) (*DbConfig, error) {
 	return &DbConfig{database: db}, nil
 }
 
-func (dbCfg *DbConfig) InsertToplist(toplist Toplist) (int64, error) {
+func (dbCfg *DbConfig) InsertToplist(toplist Toplist) (Toplist, error) {
 
 	// Add get function here to see if toplist already exists
 
-	var listId int64
-	err := dbCfg.database.QueryRow(`
+	insertQuery := `
 		INSERT INTO toplists (title, description)
-		VALUES ($1, $2) RETURNING id`, toplist.Title, toplist.Description).Scan(&listId)
+		VALUES ($1, $2) 
+		RETURNING id, title, description
+	`
+
+	var insertedToplist Toplist
+
+	err := dbCfg.database.QueryRow(insertQuery, toplist.Title, toplist.Description).Scan(
+		&insertedToplist.ID,
+		&insertedToplist.Title,
+		&insertedToplist.Description,
+	)
 	if err != nil {
-		fmt.Println(err)
-		return -1, err
+		return insertedToplist, err
 	}
 
-	err = dbCfg.InsertToplistItems(toplist.Items, listId)
+	insertedListItems, err := dbCfg.InsertToplistItems(toplist.Items, insertedToplist.ID)
 	if err != nil {
 		fmt.Println(err)
-		return -1, err
+		return insertedToplist, err
 	}
 
-	return listId, nil
+	insertedToplist.Items = insertedListItems
+
+	return insertedToplist, nil
 }
 
-func (dbCfg *DbConfig) InsertToplistItems(toplistItems []ToplistItem, listId int64) error {
-	for i := range toplistItems {
-		insertQuery := "INSERT INTO list_items (toplist_id, rank, title, description) VALUES ($1, $2, $3, $4)"
-		_, err := dbCfg.database.Exec(
-			insertQuery,
+func (dbCfg *DbConfig) InsertToplistItems(toplistItems []ToplistItem, listId int) ([]ToplistItem, error) {
+	tx, err := dbCfg.database.Begin()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(`
+		INSERT INTO list_items(toplist_id, rank, title, description) 
+		VALUES ($1, $2, $3, $4) 
+		RETURNING toplist_id, rank, title, description`)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	var insertedListItems []ToplistItem
+
+	for _, item := range toplistItems {
+		var insertedItem ToplistItem
+
+		err := stmt.QueryRow(
 			listId,
-			toplistItems[i].Rank,
-			toplistItems[i].Title,
-			toplistItems[i].Description,
+			item.Rank,
+			item.Title,
+			item.Description,
+		).Scan(
+			&insertedItem.ListID,
+			&insertedItem.Rank,
+			&insertedItem.Title,
+			&insertedItem.Description,
 		)
 		if err != nil {
-			fmt.Println(err)
-			return err
+			return nil, err
 		}
+
+		insertedListItems = append(insertedListItems, insertedItem)
 	}
-	return nil
+
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return insertedListItems, nil
 }
 
 func (dbCfg *DbConfig) getExistingListItemRanks(listId int) ([]int, error) {
@@ -163,4 +202,73 @@ func (dbCfg *DbConfig) UpdateToplist(toplist Toplist, listId int) error {
 	}
 
 	return nil
+}
+
+func (dbCfg *DbConfig) UpdateToplistItems(toplistItems []ToplistItem, listId int) error {
+
+	// remove old toplist items
+
+	return nil
+}
+
+func (dbCfg *DbConfig) RemoveToplistItems(listId int) error {
+	query := "REMOVE FROM list_items WHERE toplist_id = $1"
+	_, err := dbCfg.database.Exec(query, listId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
+	var toplist Toplist
+
+	query := "SELECT id, title, description FROM toplists WHERE id = $1"
+	row := dbCfg.database.QueryRowContext(context.Background(), query, listId)
+
+	err := row.Scan(&toplist.ID, &toplist.Title, &toplist.Description)
+	if err != nil {
+		fmt.Println(err)
+		return toplist, err
+	}
+
+	toplistItems, err := dbCfg.GetToplistItems(listId)
+	if err != nil {
+		fmt.Println(err)
+		return toplist, err
+	}
+
+	toplist.Items = toplistItems
+	return toplist, nil
+}
+
+func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
+	query := "SELECT toplist_id, rank, title, description FROM list_items WHERE toplist_id = $1"
+	rows, err := dbCfg.database.QueryContext(context.Background(), query, listId)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var toplistItems []ToplistItem
+
+	for rows.Next() {
+		var item ToplistItem
+		err := rows.Scan(&item.ListID, &item.Rank, &item.Title, &item.Description)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
+		item.ID = listId
+		toplistItems = append(toplistItems, item)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return toplistItems, nil
 }
