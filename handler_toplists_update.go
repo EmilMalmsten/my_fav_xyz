@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
-	"github.com/go-chi/chi"
 )
 
 func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Request) {
@@ -20,16 +18,9 @@ func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	listIDString := chi.URLParam(r, "listID")
-	listID, err := strconv.Atoi(listIDString)
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid toplist ID")
-		return
-	}
-
 	dbToplist := toplist.ToDBToplist()
 
-	err = cfg.DB.UpdateToplist(dbToplist, listID)
+	_, err = cfg.DB.UpdateToplist(dbToplist)
 	if err != nil {
 		if errors.Is(err, database.ErrNotExist) {
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")

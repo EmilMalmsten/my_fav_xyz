@@ -92,9 +92,6 @@ func TestInsertToplist(t *testing.T) {
 func TestGetToplist(t *testing.T) {
 	toplist1 := insertToplist(t)
 	toplist2, err := dbTestConfig.GetToplist(toplist1.ID)
-
-	fmt.Println(toplist1)
-	fmt.Println(toplist2)
 	require.NoError(t, err)
 	require.NotEmpty(t, toplist2)
 
@@ -110,4 +107,29 @@ func TestGetToplist(t *testing.T) {
 		require.Equal(t, toplist1.Items[i].Title, toplist2.Items[i].Title)
 		require.Equal(t, toplist1.Items[i].Description, toplist2.Items[i].Description)
 	}
+}
+
+func TestUpdateToplist(t *testing.T) {
+	toplist1 := insertToplist(t)
+
+	toplist2 := toplist1
+	toplist2.Title = "Updated My Toplist"
+
+	toplist2, err := dbTestConfig.UpdateToplist(toplist2)
+	require.NoError(t, err)
+	require.NotEmpty(t, toplist2)
+
+	require.NotEqual(t, toplist1.Title, toplist2.Title)
+	require.Equal(t, toplist1.Description, toplist2.Description)
+	require.Equal(t, toplist1.ID, toplist2.ID)
+}
+
+func TestRemoveToplist(t *testing.T) {
+	toplist := insertToplist(t)
+
+	err := dbTestConfig.DeleteToplist(toplist.ID)
+	require.NoError(t, err)
+
+	_, err = dbTestConfig.GetToplist(toplist.ID)
+	require.ErrorIs(t, err, ErrNotExist)
 }

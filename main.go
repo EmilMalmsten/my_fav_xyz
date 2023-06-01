@@ -34,7 +34,7 @@ func main() {
 	router := chi.NewRouter()
 
 	router.Post("/api/toplists", apiCfg.handlerToplistsCreate)
-	router.Put("/api/toplists/{listID}", apiCfg.handlerToplistsUpdate)
+	router.Put("/api/toplists", apiCfg.handlerToplistsUpdate)
 	router.Put("/api/toplists/{listID}/items", apiCfg.handlerToplistsChangeItems)
 
 	fmt.Println("Server running...")
