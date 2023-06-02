@@ -112,8 +112,20 @@ func TestGetToplist(t *testing.T) {
 func TestUpdateToplist(t *testing.T) {
 	toplist1 := insertToplist(t)
 
-	toplist2 := toplist1
+	toplist2 := Toplist{
+		ID:          toplist1.ID,
+		Title:       toplist1.Title,
+		Description: toplist1.Description,
+		Items:       make([]ToplistItem, len(toplist1.Items)),
+	}
+	copy(toplist2.Items, toplist1.Items)
+
 	toplist2.Title = "Updated My Toplist"
+	toplist2.Items[0].Title = "Updated Item 1"
+	toplist2.Items[0].Description = "Updated Description 1"
+
+	fmt.Println(toplist1.Items[0].Title)
+	fmt.Println(toplist2.Items[0].Title)
 
 	toplist2, err := dbTestConfig.UpdateToplist(toplist2)
 	require.NoError(t, err)
@@ -122,6 +134,11 @@ func TestUpdateToplist(t *testing.T) {
 	require.NotEqual(t, toplist1.Title, toplist2.Title)
 	require.Equal(t, toplist1.Description, toplist2.Description)
 	require.Equal(t, toplist1.ID, toplist2.ID)
+
+	require.Equal(t, toplist1.Items[0].ListID, toplist2.Items[0].ListID)
+	require.Equal(t, toplist1.Items[0].Rank, toplist2.Items[0].Rank)
+	require.NotEqual(t, toplist1.Items[0].Title, toplist2.Items[0].Title)
+	require.NotEqual(t, toplist1.Items[0].Description, toplist2.Items[0].Description)
 }
 
 func TestRemoveToplist(t *testing.T) {

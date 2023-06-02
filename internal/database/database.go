@@ -145,7 +145,7 @@ func (dbCfg *DbConfig) getExistingListItemRanks(listId int) ([]int, error) {
 	return existingRanks, nil
 }
 
-func rankExists(existingRanks []int, rank int) bool {
+func rankAlreadyExists(existingRanks []int, rank int) bool {
 	for _, existingRank := range existingRanks {
 		if existingRank == rank {
 			return true
@@ -162,7 +162,7 @@ func (dbCfg *DbConfig) AddItemsToToplist(toplistItems []ToplistItem, listId int)
 	fmt.Println(existingListItemRanks)
 
 	for i := range toplistItems {
-		if rankExists(existingListItemRanks, toplistItems[i].Rank) {
+		if rankAlreadyExists(existingListItemRanks, toplistItems[i].Rank) {
 			updateQuery := "UPDATE list_items SET title = $1, description = $2 WHERE rank = $3 AND toplist_id = $4"
 			_, err := dbCfg.database.Exec(updateQuery, toplistItems[i].Title, toplistItems[i].Description, toplistItems[i].Rank, listId)
 			if err != nil {
@@ -222,23 +222,62 @@ func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
 	return updatedToplist, nil
 }
 
-func (dbCfg *DbConfig) UpdateToplistItems(toplistItems []ToplistItem, listId int) ([]ToplistItem, error) {
+func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int) ([]ToplistItem, error) {
 
-	err := dbCfg.DeleteToplistItems(listId)
+	existingListItems, err := dbCfg.GetToplistItems(listId)
 	if err != nil {
-		return nil, err
+		return []ToplistItem{}, err
 	}
 
-	newItems, err := dbCfg.InsertToplistItems(toplistItems, listId)
-	if err != nil {
-		return nil, err
+	if len(existingListItems) > len(newListItems) {
+		lengthDifference := len(existingListItems) - len(newListItems)
+		itemsToRemove := existingListItems[len(existingListItems)-lengthDifference:]
+		err := dbCfg.DeleteSpecificToplistItems(itemsToRemove)
+		if err != nil {
+			return []ToplistItem{}, err
+		}
 	}
 
-	return newItems, nil
+	var existingListItemRanks []int
+	for _, item := range existingListItems {
+		existingListItemRanks = append(existingListItemRanks, item.Rank)
+	}
+
+	var updatedItems []ToplistItem
+	for i := range newListItems {
+		var updatedItem ToplistItem
+		if rankAlreadyExists(existingListItemRanks, newListItems[i].Rank) {
+			updateQuery := "UPDATE list_items SET title = $1, description = $2 WHERE rank = $3 AND toplist_id = $4 RETURNING toplist_id, rank, title, description"
+			err := dbCfg.database.QueryRow(updateQuery, newListItems[i].Title, newListItems[i].Description, newListItems[i].Rank, listId).Scan(
+				&updatedItem.ListID,
+				&updatedItem.Rank,
+				&updatedItem.Title,
+				&updatedItem.Description,
+			)
+			if err != nil {
+				return []ToplistItem{}, err
+			}
+
+		} else {
+			insertQuery := "INSERT INTO list_items (toplist_id, rank, title, description) VALUES ($1, $2, $3, $4) RETURNING toplist_id, rank, title, description"
+			err := dbCfg.database.QueryRow(insertQuery, listId, newListItems[i].Rank, newListItems[i].Title, newListItems[i].Description).Scan(
+				&updatedItem.ListID,
+				&updatedItem.Rank,
+				&updatedItem.Title,
+				&updatedItem.Description,
+			)
+			if err != nil {
+				return []ToplistItem{}, err
+			}
+		}
+		updatedItems = append(updatedItems, updatedItem)
+	}
+
+	return updatedItems, nil
 }
 
-func (dbCfg *DbConfig) DeleteToplistItems(listId int) error {
-	query := "DELETE FROM list_items WHERE toplist_id = $1"
+func (dbCfg *DbConfig) DeleteToplist(listId int) error {
+	query := "DELETE FROM toplists WHERE id = $1"
 	_, err := dbCfg.database.Exec(query, listId)
 	if err != nil {
 		return err
@@ -246,8 +285,19 @@ func (dbCfg *DbConfig) DeleteToplistItems(listId int) error {
 	return nil
 }
 
-func (dbCfg *DbConfig) DeleteToplist(listId int) error {
-	query := "DELETE FROM toplists WHERE id = $1"
+func (dbCfg *DbConfig) DeleteSpecificToplistItems(itemsToDelete []ToplistItem) error {
+	for _, item := range itemsToDelete {
+		query := "DELETE FROM list_items WHERE rank = $1"
+		_, err := dbCfg.database.Exec(query, item.Rank)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (dbCfg *DbConfig) DeleteToplistItems(listId int) error {
+	query := "DELETE FROM list_items WHERE toplist_id = $1"
 	_, err := dbCfg.database.Exec(query, listId)
 	if err != nil {
 		return err
@@ -283,8 +333,10 @@ func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
 	query := "SELECT toplist_id, rank, title, description FROM list_items WHERE toplist_id = $1"
 	rows, err := dbCfg.database.QueryContext(context.Background(), query, listId)
 	if err != nil {
-		fmt.Println(err)
-		return nil, err
+		if err == sql.ErrNoRows {
+			return []ToplistItem{}, ErrNotExist
+		}
+		return []ToplistItem{}, err
 	}
 	defer rows.Close()
 
@@ -295,7 +347,7 @@ func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
 		err := rows.Scan(&item.ListID, &item.Rank, &item.Title, &item.Description)
 		if err != nil {
 			fmt.Println(err)
-			return nil, err
+			return []ToplistItem{}, err
 		}
 		item.ID = listId
 		toplistItems = append(toplistItems, item)
@@ -304,7 +356,7 @@ func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
 	err = rows.Err()
 	if err != nil {
 		fmt.Println(err)
-		return nil, err
+		return []ToplistItem{}, err
 	}
 
 	return toplistItems, nil
