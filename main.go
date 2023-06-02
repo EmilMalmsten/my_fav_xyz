@@ -35,7 +35,6 @@ func main() {
 
 	router.Post("/api/toplists", apiCfg.handlerToplistsCreate)
 	router.Put("/api/toplists", apiCfg.handlerToplistsUpdate)
-	router.Put("/api/toplists/{listID}/items", apiCfg.handlerToplistsChangeItems)
 
 	fmt.Println("Server running...")
 	err = http.ListenAndServe("localhost:8080", router)

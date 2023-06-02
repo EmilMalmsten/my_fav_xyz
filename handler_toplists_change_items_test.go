@@ -11,6 +11,15 @@ type TestData struct {
 	result bool
 }
 
+func areRanksInOrder(toplistItems []database.ToplistItem) bool {
+	for i := 0; i < len(toplistItems); i++ {
+		if toplistItems[i].Rank != i+1 {
+			return false
+		}
+	}
+	return true
+}
+
 func TestAreRanksInOrder(t *testing.T) {
 	testData := []TestData{
 		{

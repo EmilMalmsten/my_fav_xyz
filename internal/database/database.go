@@ -120,67 +120,6 @@ func (dbCfg *DbConfig) InsertToplistItems(toplistItems []ToplistItem, listId int
 	return insertedListItems, nil
 }
 
-func (dbCfg *DbConfig) getExistingListItemRanks(listId int) ([]int, error) {
-	query := "SELECT rank FROM list_items WHERE toplist_id = $1"
-	rows, err := dbCfg.database.Query(query, listId)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var existingRanks []int
-	for rows.Next() {
-		var rank int
-		err := rows.Scan(&rank)
-		if err != nil {
-			return nil, err
-		}
-		existingRanks = append(existingRanks, rank)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return existingRanks, nil
-}
-
-func rankAlreadyExists(existingRanks []int, rank int) bool {
-	for _, existingRank := range existingRanks {
-		if existingRank == rank {
-			return true
-		}
-	}
-	return false
-}
-
-func (dbCfg *DbConfig) AddItemsToToplist(toplistItems []ToplistItem, listId int) error {
-	existingListItemRanks, err := dbCfg.getExistingListItemRanks(listId)
-	if err != nil {
-		return err
-	}
-	fmt.Println(existingListItemRanks)
-
-	for i := range toplistItems {
-		if rankAlreadyExists(existingListItemRanks, toplistItems[i].Rank) {
-			updateQuery := "UPDATE list_items SET title = $1, description = $2 WHERE rank = $3 AND toplist_id = $4"
-			_, err := dbCfg.database.Exec(updateQuery, toplistItems[i].Title, toplistItems[i].Description, toplistItems[i].Rank, listId)
-			if err != nil {
-				fmt.Println(err)
-				return err
-			}
-		} else {
-			insertQuery := "INSERT INTO list_items (toplist_id, rank, title, description) VALUES ($1, $2, $3, $4)"
-			_, err := dbCfg.database.Exec(insertQuery, listId, toplistItems[i].Rank, toplistItems[i].Title, toplistItems[i].Description)
-			if err != nil {
-				fmt.Println(err)
-				return err
-			}
-		}
-	}
-	return nil
-}
-
 func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
 
 	query := "SELECT 1 FROM toplists WHERE id = $1"
@@ -220,6 +159,15 @@ func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
 
 	updatedToplist.Items = updatedItems
 	return updatedToplist, nil
+}
+
+func rankAlreadyExists(existingRanks []int, rank int) bool {
+	for _, existingRank := range existingRanks {
+		if existingRank == rank {
+			return true
+		}
+	}
+	return false
 }
 
 func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int) ([]ToplistItem, error) {
