@@ -192,6 +192,20 @@ func (dbCfg *DbConfig) DeleteToplist(listId int) error {
 	if err != nil {
 		return err
 	}
+
+	err = dbCfg.DeleteToplistItems(listId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dbCfg *DbConfig) DeleteToplistItems(listId int) error {
+	query := "DELETE FROM list_items WHERE toplist_id = $1"
+	_, err := dbCfg.database.Exec(query, listId)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -202,15 +216,6 @@ func (dbCfg *DbConfig) DeleteSpecificToplistItems(itemsToDelete []ToplistItem) e
 		if err != nil {
 			return err
 		}
-	}
-	return nil
-}
-
-func (dbCfg *DbConfig) DeleteToplistItems(listId int) error {
-	query := "DELETE FROM list_items WHERE toplist_id = $1"
-	_, err := dbCfg.database.Exec(query, listId)
-	if err != nil {
-		return err
 	}
 	return nil
 }
