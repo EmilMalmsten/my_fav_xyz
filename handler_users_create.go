@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/emilmalmsten/my_top_xyz/internal/auth"
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
 )
 
@@ -26,9 +27,15 @@ func (cfg apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	hashedPassword, err := auth.HashPassword(params.Password)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't hash password")
+		return
+	}
+
 	createdUser, err := cfg.DB.InsertUser(database.User{
 		Email:          params.Email,
-		HashedPassword: params.Password,
+		HashedPassword: hashedPassword,
 	})
 	if err != nil {
 		fmt.Println(err)

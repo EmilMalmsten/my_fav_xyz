@@ -35,6 +35,7 @@ func main() {
 
 	router.Post("/api/toplists", apiCfg.handlerToplistsCreate)
 	router.Put("/api/toplists", apiCfg.handlerToplistsUpdate)
+
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
 
 	fmt.Println("Server running...")
