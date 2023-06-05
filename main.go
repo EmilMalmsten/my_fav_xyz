@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,6 +21,11 @@ func main() {
 		log.Fatal("DB_URL env var is not set")
 	}
 
+	port := os.Getenv("PORT")
+	if dbUrl == "" {
+		log.Fatal("PORT env var is not set")
+	}
+
 	db, err := database.CreateDatabaseConnection(dbUrl)
 	if err != nil {
 		log.Fatalf("unable to initialize database: %v", err)
@@ -38,9 +42,14 @@ func main() {
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
 
-	fmt.Println("Server running...")
-	err = http.ListenAndServe("localhost:8080", router)
+	srv := &http.Server{
+		Handler: router,
+		Addr:    ":" + port,
+	}
+
+	log.Printf("Server listening on port %v", port)
+	err = srv.ListenAndServe()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
