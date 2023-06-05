@@ -10,6 +10,7 @@ func insertToplist(t *testing.T) Toplist {
 	toplist := Toplist{
 		Title:       "My Toplist",
 		Description: "This is a mock toplist",
+		UserID:      1,
 		Items: []ToplistItem{
 			{
 				Rank:        1,
@@ -35,6 +36,7 @@ func insertToplist(t *testing.T) Toplist {
 
 	require.Equal(t, toplist.Title, insertedToplist.Title)
 	require.Equal(t, toplist.Description, insertedToplist.Description)
+	require.Equal(t, toplist.UserID, insertedToplist.UserID)
 
 	require.Equal(t, len(toplist.Items), len(insertedToplist.Items))
 
@@ -43,6 +45,7 @@ func insertToplist(t *testing.T) Toplist {
 		require.Equal(t, toplist.Items[i].Rank, insertedToplist.Items[i].Rank)
 		require.Equal(t, toplist.Items[i].Title, insertedToplist.Items[i].Title)
 		require.Equal(t, toplist.Items[i].Description, insertedToplist.Items[i].Description)
+
 	}
 
 	return insertedToplist
@@ -79,6 +82,7 @@ func TestUpdateToplist(t *testing.T) {
 		ID:          toplist1.ID,
 		Title:       toplist1.Title,
 		Description: toplist1.Description,
+		UserID:      toplist1.UserID,
 		Items:       make([]ToplistItem, len(toplist1.Items)),
 	}
 	copy(toplist2.Items, toplist1.Items)
@@ -91,6 +95,7 @@ func TestUpdateToplist(t *testing.T) {
 
 	require.NotEqual(t, toplist1.Title, toplist2.Title)
 	require.Equal(t, toplist1.Description, toplist2.Description)
+	require.Equal(t, toplist1.UserID, toplist2.UserID)
 	require.Equal(t, toplist1.ID, toplist2.ID)
 
 }
@@ -102,6 +107,7 @@ func TestUpdateToplistLonger(t *testing.T) {
 		ID:          toplist1.ID,
 		Title:       toplist1.Title,
 		Description: toplist1.Description,
+		UserID:      toplist1.UserID,
 		Items:       make([]ToplistItem, len(toplist1.Items)),
 	}
 	copy(toplist2.Items, toplist1.Items)
@@ -135,6 +141,7 @@ func TestUpdateToplistShorter(t *testing.T) {
 		ID:          toplist1.ID,
 		Title:       toplist1.Title,
 		Description: toplist1.Description,
+		UserID:      toplist1.UserID,
 		Items:       make([]ToplistItem, len(toplist1.Items)),
 	}
 	copy(toplist2.Items, toplist1.Items)

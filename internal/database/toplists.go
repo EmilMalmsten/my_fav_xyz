@@ -9,17 +9,19 @@ import (
 func (dbCfg *DbConfig) InsertToplist(toplist Toplist) (Toplist, error) {
 
 	insertQuery := `
-		INSERT INTO toplists (title, description)
-		VALUES ($1, $2) 
-		RETURNING id, title, description
+		INSERT INTO toplists (title, description, user_id)
+		VALUES ($1, $2, $3) 
+		RETURNING id, title, description, user_id, created_at
 	`
 
 	var insertedToplist Toplist
 
-	err := dbCfg.database.QueryRow(insertQuery, toplist.Title, toplist.Description).Scan(
+	err := dbCfg.database.QueryRow(insertQuery, toplist.Title, toplist.Description, toplist.UserID).Scan(
 		&insertedToplist.ID,
 		&insertedToplist.Title,
 		&insertedToplist.Description,
+		&insertedToplist.UserID,
+		&insertedToplist.CreatedAt,
 	)
 	if err != nil {
 		return insertedToplist, err
@@ -46,7 +48,7 @@ func (dbCfg *DbConfig) InsertToplistItems(toplistItems []ToplistItem, listId int
 	stmt, err := tx.Prepare(`
 		INSERT INTO list_items(toplist_id, rank, title, description) 
 		VALUES ($1, $2, $3, $4) 
-		RETURNING toplist_id, rank, title, description`)
+		RETURNING id, toplist_id, rank, title, description`)
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +65,7 @@ func (dbCfg *DbConfig) InsertToplistItems(toplistItems []ToplistItem, listId int
 			item.Title,
 			item.Description,
 		).Scan(
+			&insertedItem.ID,
 			&insertedItem.ListID,
 			&insertedItem.Rank,
 			&insertedItem.Title,
@@ -100,7 +103,7 @@ func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
 	updateQuery := `
 		UPDATE toplists SET title = $1, description = $2
 		WHERE id = $3
-		RETURNING id, title, description
+		RETURNING id, title, description, user_id, created_at
 	`
 
 	var updatedToplist Toplist
@@ -109,6 +112,8 @@ func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
 		&updatedToplist.ID,
 		&updatedToplist.Title,
 		&updatedToplist.Description,
+		&updatedToplist.UserID,
+		&updatedToplist.CreatedAt,
 	)
 	if err != nil {
 		return Toplist{}, err
@@ -157,8 +162,19 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 	for i := range newListItems {
 		var updatedItem ToplistItem
 		if rankAlreadyExists(existingListItemRanks, newListItems[i].Rank) {
-			updateQuery := "UPDATE list_items SET title = $1, description = $2 WHERE rank = $3 AND toplist_id = $4 RETURNING toplist_id, rank, title, description"
-			err := dbCfg.database.QueryRow(updateQuery, newListItems[i].Title, newListItems[i].Description, newListItems[i].Rank, listId).Scan(
+			updateQuery := `
+				UPDATE list_items SET title = $1, description = $2 
+				WHERE rank = $3 AND toplist_id = $4 
+				RETURNING id, toplist_id, rank, title, description
+			`
+			err := dbCfg.database.QueryRow(
+				updateQuery,
+				newListItems[i].Title,
+				newListItems[i].Description,
+				newListItems[i].Rank,
+				listId,
+			).Scan(
+				&updatedItem.ID,
 				&updatedItem.ListID,
 				&updatedItem.Rank,
 				&updatedItem.Title,
@@ -169,8 +185,19 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 			}
 
 		} else {
-			insertQuery := "INSERT INTO list_items (toplist_id, rank, title, description) VALUES ($1, $2, $3, $4) RETURNING toplist_id, rank, title, description"
-			err := dbCfg.database.QueryRow(insertQuery, listId, newListItems[i].Rank, newListItems[i].Title, newListItems[i].Description).Scan(
+			insertQuery := `
+				INSERT INTO list_items (toplist_id, rank, title, description)
+				VALUES ($1, $2, $3, $4) 
+				RETURNING id, toplist_id, rank, title, description
+			`
+			err := dbCfg.database.QueryRow(
+				insertQuery,
+				listId,
+				newListItems[i].Rank,
+				newListItems[i].Title,
+				newListItems[i].Description,
+			).Scan(
+				&updatedItem.ID,
 				&updatedItem.ListID,
 				&updatedItem.Rank,
 				&updatedItem.Title,
@@ -223,10 +250,16 @@ func (dbCfg *DbConfig) DeleteSpecificToplistItems(itemsToDelete []ToplistItem) e
 func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
 	var toplist Toplist
 
-	query := "SELECT id, title, description FROM toplists WHERE id = $1"
+	query := "SELECT id, title, description, user_id, created_at FROM toplists WHERE id = $1"
 	row := dbCfg.database.QueryRowContext(context.Background(), query, listId)
 
-	err := row.Scan(&toplist.ID, &toplist.Title, &toplist.Description)
+	err := row.Scan(
+		&toplist.ID,
+		&toplist.Title,
+		&toplist.Description,
+		&toplist.UserID,
+		&toplist.CreatedAt,
+	)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return toplist, ErrNotExist
@@ -245,7 +278,7 @@ func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
 }
 
 func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
-	query := "SELECT toplist_id, rank, title, description FROM list_items WHERE toplist_id = $1"
+	query := "SELECT id, toplist_id, rank, title, description FROM list_items WHERE toplist_id = $1"
 	rows, err := dbCfg.database.QueryContext(context.Background(), query, listId)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -259,7 +292,7 @@ func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
 
 	for rows.Next() {
 		var item ToplistItem
-		err := rows.Scan(&item.ListID, &item.Rank, &item.Title, &item.Description)
+		err := rows.Scan(&item.ID, &item.ListID, &item.Rank, &item.Title, &item.Description)
 		if err != nil {
 			fmt.Println(err)
 			return []ToplistItem{}, err

@@ -1,6 +1,9 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 type DbConfig struct {
 	database *sql.DB
@@ -11,6 +14,7 @@ type Toplist struct {
 	Title       string        `json:"title"`
 	Description string        `json:"description"`
 	UserID      int           `json:"userID"`
+	CreatedAt   time.Time     `json:"created_at"`
 	Items       []ToplistItem `json:"items"`
 }
 
@@ -23,7 +27,8 @@ type ToplistItem struct {
 }
 
 type User struct {
-	ID             int    `json:"id"`
-	Email          string `json:"email"`
-	HashedPassword string `json:"hashed_password"`
+	ID             int       `json:"id"`
+	Email          string    `json:"email"`
+	HashedPassword string    `json:"hashed_password"`
+	CreatedAt      time.Time `json:"created_at"`
 }
