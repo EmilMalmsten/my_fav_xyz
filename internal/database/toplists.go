@@ -309,3 +309,39 @@ func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
 
 	return toplistItems, nil
 }
+
+func (dbCfg *DbConfig) ListToplists(limit, offset int) ([]Toplist, error) {
+	query := `
+		SELECT id, title, description, user_id, created_at FROM toplists 
+		ORDER BY id
+		LIMIT $1 
+		OFFSET $2
+	`
+	rows, err := dbCfg.database.QueryContext(context.Background(), query, limit, offset)
+	if err != nil {
+		return []Toplist{}, err
+	}
+	defer rows.Close()
+
+	var toplists []Toplist
+	for rows.Next() {
+		var toplist Toplist
+		err := rows.Scan(
+			&toplist.ID,
+			&toplist.Title,
+			&toplist.Description,
+			&toplist.UserID,
+			&toplist.CreatedAt,
+		)
+		if err != nil {
+			return []Toplist{}, err
+		}
+		toplist.Items, err = dbCfg.GetToplistItems(toplist.ID)
+		if err != nil {
+			return []Toplist{}, err
+		}
+		toplists = append(toplists, toplist)
+	}
+
+	return toplists, nil
+}

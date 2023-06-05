@@ -75,6 +75,27 @@ func TestGetToplist(t *testing.T) {
 	}
 }
 
+func TestListToplists(t *testing.T) {
+	toplist1 := insertToplist(t)
+	toplist2 := insertToplist(t)
+	toplist3 := insertToplist(t)
+	testLists := []Toplist{toplist1, toplist2, toplist3}
+
+	limit := 10
+	offset := 1
+	toplists, err := dbTestConfig.ListToplists(limit, offset)
+	require.NoError(t, err)
+	require.Equal(t, len(testLists)-offset, len(toplists))
+
+	slicedTestLists := testLists[offset:]
+	for i := range slicedTestLists {
+		require.Equal(t, slicedTestLists[i].ID, toplists[i].ID)
+		require.Equal(t, slicedTestLists[i].Title, toplists[i].Title)
+		require.Equal(t, slicedTestLists[i].Description, toplists[i].Description)
+		require.Equal(t, slicedTestLists[i].UserID, toplists[i].UserID)
+	}
+}
+
 func TestUpdateToplist(t *testing.T) {
 	toplist1 := insertToplist(t)
 
