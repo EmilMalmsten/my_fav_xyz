@@ -16,17 +16,13 @@ CREATE TABLE "list_items" (
 
 CREATE TABLE "users" (
   "id" serial PRIMARY KEY,
-  "email" varchar NOT NULL,
-  "password" varchar NOT NULL,
+  "email" varchar UNIQUE NOT NULL,
+  "hashed_password" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE INDEX ON "list_items" ("toplist_id");
+CREATE UNIQUE INDEX ON "list_items" ("toplist_id", "rank");
 
 ALTER TABLE "toplists" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "list_items" ADD FOREIGN KEY ("toplist_id") REFERENCES "toplists" ("id") ON DELETE CASCADE;
-
-ALTER TABLE list_items ADD CONSTRAINT unique_rank_per_list UNIQUE (toplist_id, rank);
-
-ALTER TABLE users ADD CONSTRAINT unique_email UNIQUE (email);
