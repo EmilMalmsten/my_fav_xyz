@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
@@ -63,6 +64,7 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 
 	insertedToplist, err := cfg.DB.InsertToplist(dbToplist)
 	if err != nil {
+		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Error occurred when creating new toplist")
 		return
 	}
