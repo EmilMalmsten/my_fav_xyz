@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
 )
@@ -12,6 +13,8 @@ type Toplist struct {
 	ID          int           `json:"id"`
 	Title       string        `json:"title"`
 	Description string        `json:"description"`
+	UserID      int           `json:"user_id"`
+	CreatedAt   time.Time     `json:"created_at"`
 	Items       []ToplistItem `json:"items"`
 }
 
@@ -33,6 +36,8 @@ func (t Toplist) ToDBToplist() database.Toplist {
 		ID:          t.ID,
 		Title:       t.Title,
 		Description: t.Description,
+		UserID:      t.UserID,
+		CreatedAt:   t.CreatedAt,
 		Items:       dbItems,
 	}
 }

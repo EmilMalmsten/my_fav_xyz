@@ -39,12 +39,13 @@ func main() {
 
 	router.Post("/api/toplists", apiCfg.handlerToplistsCreate)
 	router.Put("/api/toplists", apiCfg.handlerToplistsUpdate)
+	router.Get("/api/toplists/{toplistID}", apiCfg.handlerToplistsGetOne)
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
 
 	srv := &http.Server{
 		Handler: router,
-		Addr:    ":" + port,
+		Addr:    "localhost:" + port,
 	}
 
 	log.Printf("Server listening on port %v", port)
