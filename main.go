@@ -21,9 +21,9 @@ func main() {
 		log.Fatal("DB_URL env var is not set")
 	}
 
-	port := os.Getenv("PORT")
+	serverAddress := os.Getenv("SERVER_ADDRESS")
 	if dbUrl == "" {
-		log.Fatal("PORT env var is not set")
+		log.Fatal("Server address env var is not set")
 	}
 
 	db, err := database.CreateDatabaseConnection(dbUrl)
@@ -40,16 +40,17 @@ func main() {
 	router.Post("/api/toplists", apiCfg.handlerToplistsCreate)
 	router.Put("/api/toplists", apiCfg.handlerToplistsUpdate)
 	router.Get("/api/toplists/{toplistID}", apiCfg.handlerToplistsGetOne)
+	router.Get("/api/toplists", apiCfg.handlerToplistsGetMany)
 	router.Delete("/api/toplists/{toplistID}", apiCfg.handlerToplistsDelete)
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
 
 	srv := &http.Server{
 		Handler: router,
-		Addr:    "localhost:" + port,
+		Addr:    serverAddress,
 	}
 
-	log.Printf("Server listening on port %v", port)
+	log.Printf("Server listening on %s", serverAddress)
 	err = srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)
