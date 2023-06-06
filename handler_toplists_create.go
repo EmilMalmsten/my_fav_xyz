@@ -4,47 +4,40 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
 )
 
-type Toplist struct {
-	ID          int           `json:"id"`
-	Title       string        `json:"title"`
-	Description string        `json:"description"`
-	UserID      int           `json:"user_id"`
-	CreatedAt   time.Time     `json:"created_at"`
-	Items       []ToplistItem `json:"items"`
+type CreateToplistRequest struct {
+	Title       string                     `json:"title"`
+	Description string                     `json:"description"`
+	UserID      int                        `json:"user_id"`
+	Items       []CreateToplistItemRequest `json:"items"`
 }
 
-type ToplistItem struct {
-	ID          int    `json:"id"`
+type CreateToplistItemRequest struct {
 	ListId      int    `json:"listId"`
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-func (t Toplist) ToDBToplist() database.Toplist {
+func (t CreateToplistRequest) ToDBToplist() database.Toplist {
 	dbItems := make([]database.ToplistItem, len(t.Items))
 	for i, item := range t.Items {
 		dbItems[i] = item.ToDBToplistItem()
 	}
 
 	return database.Toplist{
-		ID:          t.ID,
 		Title:       t.Title,
 		Description: t.Description,
 		UserID:      t.UserID,
-		CreatedAt:   t.CreatedAt,
 		Items:       dbItems,
 	}
 }
 
-func (t ToplistItem) ToDBToplistItem() database.ToplistItem {
+func (t CreateToplistItemRequest) ToDBToplistItem() database.ToplistItem {
 	return database.ToplistItem{
-		ID:          t.ID,
 		ListID:      t.ListId,
 		Rank:        t.Rank,
 		Title:       t.Title,
@@ -58,7 +51,7 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var toplist Toplist
+	var toplist CreateToplistRequest
 	err := decoder.Decode(&toplist)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")

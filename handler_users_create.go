@@ -9,32 +9,32 @@ import (
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
 )
 
-func (cfg apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+type CreateUserRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
 
+func (cfg apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request) {
 	type resp struct {
 		Id int `json:"id"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	params := parameters{}
-	err := decoder.Decode(&params)
+	createUserRequest := CreateUserRequest{}
+	err := decoder.Decode(&createUserRequest)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
 		return
 	}
 
-	hashedPassword, err := auth.HashPassword(params.Password)
+	hashedPassword, err := auth.HashPassword(createUserRequest.Password)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't hash password")
 		return
 	}
 
 	createdUser, err := cfg.DB.InsertUser(database.User{
-		Email:          params.Email,
+		Email:          createUserRequest.Email,
 		HashedPassword: hashedPassword,
 	})
 	if err != nil {
