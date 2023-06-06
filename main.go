@@ -40,6 +40,7 @@ func main() {
 	router.Post("/api/toplists", apiCfg.handlerToplistsCreate)
 	router.Put("/api/toplists", apiCfg.handlerToplistsUpdate)
 	router.Get("/api/toplists/{toplistID}", apiCfg.handlerToplistsGetOne)
+	router.Delete("/api/toplists/{toplistID}", apiCfg.handlerToplistsDelete)
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
 
