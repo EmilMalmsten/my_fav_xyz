@@ -48,7 +48,8 @@ func (cfg apiConfig) handlerToplistsGetMany(w http.ResponseWriter, r *http.Reque
 		respondWithError(w, http.StatusBadRequest, "Invalid page size parameter")
 		return
 	}
-	if pageSize < 1 {
+	maxPageSize := 20
+	if pageSize < 1 || pageSize > maxPageSize {
 		respondWithError(w, http.StatusBadRequest, "Page size value needs to be minimum 1")
 		return
 	}

@@ -11,7 +11,8 @@ import (
 )
 
 type apiConfig struct {
-	DB *database.DbConfig
+	DB        *database.DbConfig
+	jwtSecret string
 }
 
 func main() {
@@ -23,7 +24,12 @@ func main() {
 
 	serverAddress := os.Getenv("SERVER_ADDRESS")
 	if dbUrl == "" {
-		log.Fatal("Server address env var is not set")
+		log.Fatal("SERVER_ADDRESS env var is not set")
+	}
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET env var is not set")
 	}
 
 	db, err := database.CreateDatabaseConnection(dbUrl)
@@ -32,7 +38,8 @@ func main() {
 	}
 
 	apiCfg := apiConfig{
-		DB: db,
+		DB:        db,
+		jwtSecret: jwtSecret,
 	}
 
 	router := chi.NewRouter()
