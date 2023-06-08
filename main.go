@@ -52,6 +52,8 @@ func main() {
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
 
+	router.Post("/api/login", apiCfg.handlerLogin)
+
 	srv := &http.Server{
 		Handler: router,
 		Addr:    serverAddress,

@@ -18,3 +18,24 @@ func (dbCfg *DbConfig) InsertUser(user User) (User, error) {
 
 	return insertedUser, nil
 }
+
+func (dbCfg *DbConfig) GetUserByEmail(email string) (User, error) {
+	query := `
+		GET id, email, hashed_password, created_at 
+		FROM users WHERE email = $1
+		RETURNING id, email, hashed_password, created_at 
+	`
+
+	var user User
+	err := dbCfg.database.QueryRow(query, email).Scan(
+		&user.ID,
+		&user.Email,
+		&user.HashedPassword,
+		&user.CreatedAt,
+	)
+	if err != nil {
+		return User{}, err
+	}
+
+	return user, nil
+}
