@@ -21,9 +21,8 @@ func (dbCfg *DbConfig) InsertUser(user User) (User, error) {
 
 func (dbCfg *DbConfig) GetUserByEmail(email string) (User, error) {
 	query := `
-		GET id, email, hashed_password, created_at 
+		SELECT id, email, hashed_password, created_at 
 		FROM users WHERE email = $1
-		RETURNING id, email, hashed_password, created_at 
 	`
 
 	var user User
