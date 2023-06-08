@@ -8,21 +8,21 @@ import (
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
 )
 
-type CreateToplistRequest struct {
+type createToplistRequest struct {
 	Title       string                     `json:"title"`
 	Description string                     `json:"description"`
 	UserID      int                        `json:"user_id"`
-	Items       []CreateToplistItemRequest `json:"items"`
+	Items       []createToplistItemRequest `json:"items"`
 }
 
-type CreateToplistItemRequest struct {
+type createToplistItemRequest struct {
 	ListId      int    `json:"listId"`
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-func (t CreateToplistRequest) ToDBToplist() database.Toplist {
+func (t createToplistRequest) ToDBToplist() database.Toplist {
 	dbItems := make([]database.ToplistItem, len(t.Items))
 	for i, item := range t.Items {
 		dbItems[i] = item.ToDBToplistItem()
@@ -36,7 +36,7 @@ func (t CreateToplistRequest) ToDBToplist() database.Toplist {
 	}
 }
 
-func (t CreateToplistItemRequest) ToDBToplistItem() database.ToplistItem {
+func (t createToplistItemRequest) ToDBToplistItem() database.ToplistItem {
 	return database.ToplistItem{
 		ListID:      t.ListId,
 		Rank:        t.Rank,
@@ -51,7 +51,7 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	var toplist CreateToplistRequest
+	var toplist createToplistRequest
 	err := decoder.Decode(&toplist)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")

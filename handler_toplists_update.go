@@ -11,7 +11,7 @@ import (
 func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
-	var toplist CreateToplistRequest
+	var toplist createToplistRequest
 	err := decoder.Decode(&toplist)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")

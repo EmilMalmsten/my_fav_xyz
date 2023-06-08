@@ -9,7 +9,7 @@ import (
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
 )
 
-type CreateUserRequest struct {
+type createUserRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -20,7 +20,7 @@ func (cfg apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request) 
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	createUserRequest := CreateUserRequest{}
+	createUserRequest := createUserRequest{}
 	err := decoder.Decode(&createUserRequest)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
