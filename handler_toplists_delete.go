@@ -24,5 +24,5 @@ func (cfg apiConfig) handlerToplistsDelete(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, "")
+	respondWithJSON(w, http.StatusOK, struct{}{})
 }

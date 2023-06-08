@@ -31,5 +31,5 @@ func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reques
 
 	}
 
-	respondWithJSON(w, http.StatusOK, "")
+	respondWithJSON(w, http.StatusOK, struct{}{})
 }

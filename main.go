@@ -55,6 +55,7 @@ func main() {
 
 	router.Post("/api/login", apiCfg.handlerLogin)
 	router.Post("/api/refresh", apiCfg.handlerRefresh)
+	router.Post("/api/revoke", apiCfg.handlerRevoke)
 
 	srv := &http.Server{
 		Handler: router,
