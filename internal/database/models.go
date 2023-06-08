@@ -32,3 +32,8 @@ type User struct {
 	HashedPassword string    `json:"hashed_password"`
 	CreatedAt      time.Time `json:"created_at"`
 }
+
+type Revocation struct {
+	Token     string    `json:"token"`
+	RevokedAt time.Time `json:"revoked_at"`
+}

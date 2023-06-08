@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -96,4 +97,28 @@ func ValidateJWT(tokenString, tokenSecret string) (string, error) {
 	}
 
 	return userIDString, nil
+}
+
+func RefreshToken(tokenString, tokenSecret string) (string, error) {
+	userIDString, err := ValidateJWT(tokenString, tokenSecret)
+	if err != nil {
+		return "", err
+	}
+
+	userID, err := strconv.Atoi(userIDString)
+	if err != nil {
+		return "", err
+	}
+
+	newToken, err := MakeJWT(
+		userID,
+		tokenSecret,
+		time.Hour,
+		TokenTypeAccess,
+	)
+	if err != nil {
+		return "", err
+	}
+
+	return newToken, nil
 }

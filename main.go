@@ -54,6 +54,7 @@ func main() {
 	router.Put("/api/users", apiCfg.handlerUsersUpdate)
 
 	router.Post("/api/login", apiCfg.handlerLogin)
+	router.Post("/api/refresh", apiCfg.handlerRefresh)
 
 	srv := &http.Server{
 		Handler: router,

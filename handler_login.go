@@ -55,7 +55,7 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 	refreshToken, err := auth.MakeJWT(
 		dbUser.ID,
 		cfg.jwtSecret,
-		time.Hour*24*30,
+		time.Hour*24*7,
 		auth.TokenTypeRefresh,
 	)
 	if err != nil {
