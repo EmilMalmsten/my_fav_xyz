@@ -100,9 +100,36 @@ func ValidateJWT(tokenString, tokenSecret string) (string, error) {
 }
 
 func RefreshToken(tokenString, tokenSecret string) (string, error) {
-	userIDString, err := ValidateJWT(tokenString, tokenSecret)
+	claimsStruct := jwt.RegisteredClaims{}
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		&claimsStruct,
+		func(token *jwt.Token) (interface{}, error) { return []byte(tokenSecret), nil },
+	)
 	if err != nil {
 		return "", err
+	}
+
+	userIDString, err := token.Claims.GetSubject()
+	if err != nil {
+		return "", err
+	}
+
+	expiresAt, err := token.Claims.GetExpirationTime()
+	if err != nil {
+		return "", err
+	}
+
+	issuer, err := token.Claims.GetIssuer()
+	if err != nil {
+		return "", err
+	}
+	if issuer != string(TokenTypeRefresh) {
+		return "", errors.New("invalid issuer")
+	}
+
+	if expiresAt.Before(time.Now().UTC()) {
+		return "", errors.New("JWT is expired")
 	}
 
 	userID, err := strconv.Atoi(userIDString)
