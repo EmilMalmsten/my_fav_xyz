@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
 )
@@ -16,7 +17,7 @@ type createToplistRequest struct {
 }
 
 type createToplistItemRequest struct {
-	ListId      int    `json:"listId"`
+	ListID      int    `json:"listId"`
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -38,7 +39,7 @@ func (t createToplistRequest) ToDBToplist() database.Toplist {
 
 func (t createToplistItemRequest) ToDBToplistItem() database.ToplistItem {
 	return database.ToplistItem{
-		ListID:      t.ListId,
+		ListID:      t.ListID,
 		Rank:        t.Rank,
 		Title:       t.Title,
 		Description: t.Description,
@@ -58,6 +59,12 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	ok := validateItemRanks(toplist.Items)
+	if !ok {
+		respondWithError(w, http.StatusBadRequest, "Item ranks are not in correct order")
+		return
+	}
+
 	dbToplist := toplist.ToDBToplist()
 
 	insertedToplist, err := cfg.DB.InsertToplist(dbToplist)
@@ -70,4 +77,20 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 	respondWithJSON(w, http.StatusCreated, resp{
 		Id: insertedToplist.ID,
 	})
+}
+
+func validateItemRanks(toplistItems []createToplistItemRequest) bool {
+	itemRanks := make([]int, len(toplistItems))
+	for i, item := range toplistItems {
+		itemRanks[i] = item.Rank
+	}
+
+	sort.Ints(itemRanks)
+
+	for i := 0; i < len(itemRanks); i++ {
+		if itemRanks[i] != i+1 {
+			return false
+		}
+	}
+	return true
 }
