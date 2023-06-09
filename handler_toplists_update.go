@@ -18,6 +18,12 @@ func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	ok := validateItemRanks(toplist.Items)
+	if !ok {
+		respondWithError(w, http.StatusBadRequest, "Item ranks are not in correct order")
+		return
+	}
+
 	dbToplist := toplist.ToDBToplist()
 
 	_, err = cfg.DB.UpdateToplist(dbToplist)
