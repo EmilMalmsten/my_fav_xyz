@@ -1,6 +1,6 @@
 package database
 
-func (dbCfg *DbConfig) RevokeToken(token string) error {
+func (dbCfg *DbConfig) RevokeToken(token string) (Revocation, error) {
 	query := `
 		INSERT INTO token_revocations (token) VALUES ($1)
 		RETURNING token, revoked_at
@@ -11,9 +11,9 @@ func (dbCfg *DbConfig) RevokeToken(token string) error {
 		&revocation.RevokedAt,
 	)
 	if err != nil {
-		return err
+		return Revocation{}, err
 	}
-	return nil
+	return revocation, nil
 }
 
 func (dbCfg *DbConfig) IsTokenRevoked(token string) (bool, error) {
