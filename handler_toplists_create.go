@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"sort"
@@ -17,7 +18,6 @@ type createToplistRequest struct {
 }
 
 type createToplistItemRequest struct {
-	ListID      int    `json:"listId"`
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -39,7 +39,6 @@ func (t createToplistRequest) ToDBToplist() database.Toplist {
 
 func (t createToplistItemRequest) ToDBToplistItem() database.ToplistItem {
 	return database.ToplistItem{
-		ListID:      t.ListID,
 		Rank:        t.Rank,
 		Title:       t.Title,
 		Description: t.Description,
@@ -55,14 +54,14 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 	var toplist createToplistRequest
 	err := decoder.Decode(&toplist)
 	if err != nil {
+		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
 		return
 	}
 
-	ok := validateItemRanks(toplist.Items)
-	if !ok {
-		respondWithError(w, http.StatusBadRequest, "Item ranks are not in correct order")
-		return
+	err = validateToplist(toplist)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
 	}
 
 	dbToplist := toplist.ToDBToplist()
@@ -77,6 +76,28 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 	respondWithJSON(w, http.StatusCreated, resp{
 		Id: insertedToplist.ID,
 	})
+}
+
+func validateToplist(toplist createToplistRequest) error {
+	if toplist.Title == "" {
+		return errors.New("toplist title is missing")
+	}
+	maxDescriptionLength := 1000
+	if len(toplist.Description) > maxDescriptionLength {
+		return fmt.Errorf(
+			"toplist description too long. Max is %d characters, got %d characters",
+			maxDescriptionLength,
+			len(toplist.Description),
+		)
+	}
+	// TODO: validate whole toplist item, not just rank
+
+	ok := validateItemRanks(toplist.Items)
+	if !ok {
+		return errors.New("toplist item ranks are not ordered properly")
+	}
+
+	return nil
 }
 
 func validateItemRanks(toplistItems []createToplistItemRequest) bool {

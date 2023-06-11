@@ -17,11 +17,9 @@ func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reques
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
 		return
 	}
-
-	ok := validateItemRanks(toplist.Items)
-	if !ok {
-		respondWithError(w, http.StatusBadRequest, "Item ranks are not in correct order")
-		return
+	err = validateToplist(toplist)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
 	}
 
 	dbToplist := toplist.ToDBToplist()
