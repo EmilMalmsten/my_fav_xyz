@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -15,14 +16,14 @@ import (
 )
 
 type TestData struct {
-	inputs []createToplistItemRequest
+	inputs []toplistItemRequest
 	result bool
 }
 
 func TestAreRanksInOrder(t *testing.T) {
 	testData := []TestData{
 		{
-			[]createToplistItemRequest{
+			[]toplistItemRequest{
 				{Rank: 1, Title: "Item 1", Description: "Description 1"},
 				{Rank: 2, Title: "Item 2", Description: "Description 2"},
 				{Rank: 3, Title: "Item 3", Description: "Description 3"},
@@ -30,7 +31,7 @@ func TestAreRanksInOrder(t *testing.T) {
 			true,
 		},
 		{
-			[]createToplistItemRequest{
+			[]toplistItemRequest{
 				{Rank: 0, Title: "Item 0", Description: "Description 1"},
 				{Rank: 1, Title: "Item 2", Description: "Description 2"},
 				{Rank: 2, Title: "Item 3", Description: "Description 3"},
@@ -38,7 +39,7 @@ func TestAreRanksInOrder(t *testing.T) {
 			false,
 		},
 		{
-			[]createToplistItemRequest{
+			[]toplistItemRequest{
 				{Rank: 0, Title: "Item 1", Description: "Description 1"},
 				{Rank: 1, Title: "Item 2", Description: "Description 2"},
 				{Rank: 2, Title: "Item 4", Description: "Description 3"},
@@ -65,22 +66,20 @@ func TestHandlerToplistsCreate(t *testing.T) {
 		{
 			Name:          "Successful creation",
 			RequestMethod: http.MethodPost,
-			RequestBody: createToplistRequest{
+			RequestBody: toplistRequest{
 				Title:       "test title",
 				Description: "test description",
-				UserID:      3,
-				Items:       []createToplistItemRequest{},
+				Items:       []toplistItemRequest{},
 			},
 			ExpectedCode: http.StatusCreated,
 		},
 		{
 			Name:          "Invalid request",
 			RequestMethod: http.MethodPost,
-			RequestBody: createToplistRequest{
+			RequestBody: toplistRequest{
 				Title:       "",
 				Description: "test description",
-				UserID:      3,
-				Items:       []createToplistItemRequest{},
+				Items:       []toplistItemRequest{},
 			},
 			ExpectedCode: http.StatusBadRequest,
 		},
@@ -116,6 +115,8 @@ func TestHandlerToplistsCreate(t *testing.T) {
 			t.Fatal(err)
 		}
 		req.Header.Set("Content-Type", "application/json")
+		ctx := context.WithValue(req.Context(), userIDKey, 3)
+		req = req.WithContext(ctx)
 
 		rr := httptest.NewRecorder()
 		apiCfg.handlerToplistsCreate(rr, req)
@@ -123,6 +124,5 @@ func TestHandlerToplistsCreate(t *testing.T) {
 		if rr.Code != tc.ExpectedCode {
 			t.Errorf("Expected %d but got %d", tc.ExpectedCode, rr.Code)
 		}
-
 	}
 }

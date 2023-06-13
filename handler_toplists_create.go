@@ -10,26 +10,28 @@ import (
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
 )
 
-type createToplistRequest struct {
-	Title       string                     `json:"title"`
-	Description string                     `json:"description"`
-	UserID      int                        `json:"user_id"`
-	Items       []createToplistItemRequest `json:"items"`
+type toplistRequest struct {
+	ID          int                  `json:"id"`
+	Title       string               `json:"title"`
+	Description string               `json:"description"`
+	UserID      int                  `json:"user_id"`
+	Items       []toplistItemRequest `json:"items"`
 }
 
-type createToplistItemRequest struct {
+type toplistItemRequest struct {
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-func (t createToplistRequest) ToDBToplist() database.Toplist {
+func (t toplistRequest) ToDBToplist() database.Toplist {
 	dbItems := make([]database.ToplistItem, len(t.Items))
 	for i, item := range t.Items {
 		dbItems[i] = item.ToDBToplistItem()
 	}
 
 	return database.Toplist{
+		ID:          t.ID,
 		Title:       t.Title,
 		Description: t.Description,
 		UserID:      t.UserID,
@@ -37,7 +39,7 @@ func (t createToplistRequest) ToDBToplist() database.Toplist {
 	}
 }
 
-func (t createToplistItemRequest) ToDBToplistItem() database.ToplistItem {
+func (t toplistItemRequest) ToDBToplistItem() database.ToplistItem {
 	return database.ToplistItem{
 		Rank:        t.Rank,
 		Title:       t.Title,
@@ -50,16 +52,24 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 		Id int `json:"id"`
 	}
 
+	userIDValue := r.Context().Value(userIDKey)
+	userID, ok := userIDValue.(int)
+	if !ok {
+		respondWithError(w, http.StatusInternalServerError, "Invalid user ID type")
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
-	var toplist createToplistRequest
+	var toplist toplistRequest
 	err := decoder.Decode(&toplist)
 	if err != nil {
 		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
 		return
 	}
+	toplist.UserID = userID
 
-	err = validateToplist(toplist)
+	err = validateToplistValues(toplist)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 	}
@@ -78,7 +88,7 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 	})
 }
 
-func validateToplist(toplist createToplistRequest) error {
+func validateToplistValues(toplist toplistRequest) error {
 	if toplist.Title == "" {
 		return errors.New("toplist title is missing")
 	}
@@ -100,7 +110,7 @@ func validateToplist(toplist createToplistRequest) error {
 	return nil
 }
 
-func validateItemRanks(toplistItems []createToplistItemRequest) bool {
+func validateItemRanks(toplistItems []toplistItemRequest) bool {
 	itemRanks := make([]int, len(toplistItems))
 	for i, item := range toplistItems {
 		itemRanks[i] = item.Rank

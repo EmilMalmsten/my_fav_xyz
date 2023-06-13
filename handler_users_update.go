@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/emilmalmsten/my_top_xyz/internal/auth"
 )
@@ -15,21 +14,16 @@ type updateUserRequest struct {
 }
 
 func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request) {
-	token, err := auth.GetBearerToken(r.Header)
-	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "Couldn't find JWT")
-		return
-	}
-
-	subject, err := auth.ValidateJWT(token, cfg.jwtSecret)
-	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "Couldn't validate JWT")
+	userIDValue := r.Context().Value(userIDKey)
+	userID, ok := userIDValue.(int)
+	if !ok {
+		respondWithError(w, http.StatusInternalServerError, "Invalid user ID type")
 		return
 	}
 
 	decoder := json.NewDecoder(r.Body)
 	updateUserRequest := updateUserRequest{}
-	err = decoder.Decode(&updateUserRequest)
+	err := decoder.Decode(&updateUserRequest)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
 		return
@@ -41,13 +35,7 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	userIDInt, err := strconv.Atoi(subject)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't parse user ID")
-		return
-	}
-
-	_, err = cfg.DB.UpdateUser(userIDInt, updateUserRequest.Email, hashedPassword)
+	_, err = cfg.DB.UpdateUser(userID, updateUserRequest.Email, hashedPassword)
 	if err != nil {
 		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't update user")

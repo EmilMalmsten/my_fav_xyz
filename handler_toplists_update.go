@@ -10,14 +10,22 @@ import (
 
 func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Request) {
 
+	userIDValue := r.Context().Value(userIDKey)
+	userID, ok := userIDValue.(int)
+	if !ok {
+		respondWithError(w, http.StatusInternalServerError, "Invalid user ID type")
+		return
+	}
+
 	decoder := json.NewDecoder(r.Body)
-	var toplist createToplistRequest
+	var toplist toplistRequest
 	err := decoder.Decode(&toplist)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
 		return
 	}
-	err = validateToplist(toplist)
+	toplist.UserID = userID
+	err = validateToplistValues(toplist)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 	}

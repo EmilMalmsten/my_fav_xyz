@@ -44,14 +44,14 @@ func main() {
 
 	router := chi.NewRouter()
 
-	router.Post("/api/toplists", apiCfg.handlerToplistsCreate)
-	router.Put("/api/toplists", apiCfg.handlerToplistsUpdate)
+	router.With(apiCfg.validateJWT).Post("/api/toplists", apiCfg.handlerToplistsCreate)
+	router.With(apiCfg.validateJWT).Put("/api/toplists", apiCfg.handlerToplistsUpdate)
 	router.Get("/api/toplists/{toplistID}", apiCfg.handlerToplistsGetOne)
 	router.Get("/api/toplists", apiCfg.handlerToplistsGetMany)
-	router.Delete("/api/toplists/{toplistID}", apiCfg.handlerToplistsDelete)
+	router.With(apiCfg.validateJWT).Delete("/api/toplists/{toplistID}", apiCfg.handlerToplistsDelete)
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
-	router.Put("/api/users", apiCfg.handlerUsersUpdate)
+	router.With(apiCfg.validateJWT).Put("/api/users", apiCfg.handlerUsersUpdate)
 
 	router.Post("/api/login", apiCfg.handlerLogin)
 	router.Post("/api/refresh", apiCfg.handlerRefresh)
