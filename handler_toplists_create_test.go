@@ -4,15 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
-
-	"github.com/emilmalmsten/my_top_xyz/internal/database"
-	"github.com/go-chi/chi"
-	"github.com/joho/godotenv"
 )
 
 type TestData struct {
@@ -84,24 +78,6 @@ func TestHandlerToplistsCreate(t *testing.T) {
 			ExpectedCode: http.StatusBadRequest,
 		},
 	}
-
-	godotenv.Load()
-	dbURL := os.Getenv("DB_URL")
-	if dbURL == "" {
-		log.Fatal("DB_URL env var is not set")
-	}
-
-	db, err := database.CreateDatabaseConnection(dbURL)
-	if err != nil {
-		log.Fatalf("unable to initialize database: %v", err)
-	}
-
-	apiCfg := apiConfig{
-		DB: db,
-	}
-
-	r := chi.NewRouter()
-	r.Put("/api/toplists", apiCfg.handlerToplistsCreate)
 
 	for _, tc := range testCases {
 

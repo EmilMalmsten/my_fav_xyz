@@ -47,7 +47,7 @@ func (t toplistItemRequest) ToDBToplistItem() database.ToplistItem {
 	}
 }
 
-func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Request) {
 	type resp struct {
 		Id int `json:"id"`
 	}
@@ -71,11 +71,12 @@ func (cfg apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reques
 
 	err = validateToplistValues(toplist)
 	if err != nil {
+		fmt.Println(err)
 		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	dbToplist := toplist.ToDBToplist()
-
 	insertedToplist, err := cfg.DB.InsertToplist(dbToplist)
 	if err != nil {
 		fmt.Println(err)

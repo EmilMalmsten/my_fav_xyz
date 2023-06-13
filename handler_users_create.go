@@ -14,7 +14,7 @@ type createUserRequest struct {
 	Password string `json:"password"`
 }
 
-func (cfg apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request) {
 	type resp struct {
 		Id int `json:"id"`
 	}

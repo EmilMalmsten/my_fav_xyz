@@ -8,7 +8,7 @@ import (
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
 )
 
-func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Request) {
 
 	userIDValue := r.Context().Value(userIDKey)
 	userID, ok := userIDValue.(int)
@@ -28,6 +28,7 @@ func (cfg apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reques
 	err = validateToplistValues(toplist)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	dbToplist := toplist.ToDBToplist()

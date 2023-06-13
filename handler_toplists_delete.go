@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
-func (cfg apiConfig) handlerToplistsDelete(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerToplistsDelete(w http.ResponseWriter, r *http.Request) {
 	toplistIDString := chi.URLParam(r, "toplistID")
 	toplistID, err := strconv.Atoi(toplistIDString)
 	if err != nil {
