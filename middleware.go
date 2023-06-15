@@ -34,7 +34,6 @@ func (cfg *apiConfig) validateJWT(next http.Handler) http.Handler {
 			return
 		}
 
-		// Add the user ID to the request context
 		ctx := context.WithValue(r.Context(), userIDKey, userID)
 		r = r.WithContext(ctx)
 

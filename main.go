@@ -52,6 +52,7 @@ func main() {
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
 	router.With(apiCfg.validateJWT).Put("/api/users", apiCfg.handlerUsersUpdate)
+	router.With(apiCfg.validateJWT).Delete("/api/users", apiCfg.handlerUsersDelete)
 
 	router.Post("/api/login", apiCfg.handlerLogin)
 	router.Post("/api/refresh", apiCfg.handlerRefresh)

@@ -60,3 +60,12 @@ func (dbCfg *DbConfig) GetUserByEmail(email string) (User, error) {
 
 	return user, nil
 }
+
+func (dbCfg *DbConfig) DeleteUser(userID int) error {
+	query := "DELETE FROM users WHERE id = $1"
+	_, err := dbCfg.database.Exec(query, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
