@@ -55,7 +55,7 @@ func (cfg *apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reque
 	userIDValue := r.Context().Value(userIDKey)
 	userID, ok := userIDValue.(int)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Invalid user ID type")
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID type")
 		return
 	}
 
@@ -101,28 +101,30 @@ func validateToplistValues(toplist toplistRequest) error {
 			len(toplist.Description),
 		)
 	}
-	// TODO: validate whole toplist item, not just rank
 
-	ok := validateItemRanks(toplist.Items)
-	if !ok {
-		return errors.New("toplist item ranks are not ordered properly")
+	err := validateListItemValues(toplist.Items)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func validateItemRanks(toplistItems []toplistItemRequest) bool {
+func validateListItemValues(toplistItems []toplistItemRequest) error {
 	itemRanks := make([]int, len(toplistItems))
 	for i, item := range toplistItems {
 		itemRanks[i] = item.Rank
+		if item.Title == "" {
+			return errors.New("title missing in toplist items")
+		}
 	}
 
 	sort.Ints(itemRanks)
 
 	for i := 0; i < len(itemRanks); i++ {
 		if itemRanks[i] != i+1 {
-			return false
+			return errors.New("toplist item ranks are not ordered properly")
 		}
 	}
-	return true
+	return nil
 }
