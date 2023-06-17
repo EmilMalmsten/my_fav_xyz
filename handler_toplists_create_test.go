@@ -4,17 +4,63 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	_ "errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-type TestData struct {
-	inputs []toplistItemRequest
-	result bool
+func TestValidateToplistValues(t *testing.T) {
+	type TestData struct {
+		inputs     toplistRequest
+		exptectErr bool
+	}
+	testData := []TestData{
+		{
+			toplistRequest{
+				Title:       "Test toplist",
+				Description: "Test description",
+				Items:       []toplistItemRequest{},
+			},
+			false,
+		},
+		{
+			toplistRequest{
+				Title:       "",
+				Description: "Test description",
+				Items:       []toplistItemRequest{},
+			},
+			true,
+		},
+		{
+			toplistRequest{
+				Title:       "Test toplist",
+				Description: "Test description",
+			},
+			false,
+		},
+	}
+
+	for _, test := range testData {
+		var gotErr bool
+		err := validateToplistValues(test.inputs)
+		if err != nil {
+			gotErr = true
+		} else {
+			gotErr = false
+		}
+		if gotErr != test.exptectErr {
+			t.Errorf("got items %v, expected err to be %t but got %t\n", test.inputs, test.exptectErr, gotErr)
+		}
+	}
 }
 
-func TestAreRanksInOrder(t *testing.T) {
+func TestValidateListItemValues(t *testing.T) {
+	type TestData struct {
+		inputs     []toplistItemRequest
+		exptectErr bool
+	}
+
 	testData := []TestData{
 		{
 			[]toplistItemRequest{
@@ -22,7 +68,7 @@ func TestAreRanksInOrder(t *testing.T) {
 				{Rank: 2, Title: "Item 2", Description: "Description 2"},
 				{Rank: 3, Title: "Item 3", Description: "Description 3"},
 			},
-			true,
+			false,
 		},
 		{
 			[]toplistItemRequest{
@@ -30,7 +76,7 @@ func TestAreRanksInOrder(t *testing.T) {
 				{Rank: 1, Title: "Item 2", Description: "Description 2"},
 				{Rank: 2, Title: "Item 3", Description: "Description 3"},
 			},
-			false,
+			true,
 		},
 		{
 			[]toplistItemRequest{
@@ -38,14 +84,24 @@ func TestAreRanksInOrder(t *testing.T) {
 				{Rank: 1, Title: "Item 2", Description: "Description 2"},
 				{Rank: 2, Title: "Item 4", Description: "Description 3"},
 			},
+			true,
+		},
+		{
+			[]toplistItemRequest{},
 			false,
 		},
 	}
 
 	for _, test := range testData {
-		result := validateItemRanks(test.inputs)
-		if result != test.result {
-			t.Errorf("got items %v, expected %t\n", test.inputs, test.result)
+		var gotErr bool
+		err := validateListItemValues(test.inputs)
+		if err != nil {
+			gotErr = true
+		} else {
+			gotErr = false
+		}
+		if gotErr != test.exptectErr {
+			t.Errorf("got items %v, expected %t but got %t\n", test.inputs, test.exptectErr, gotErr)
 		}
 	}
 }
@@ -55,6 +111,7 @@ func TestHandlerToplistsCreate(t *testing.T) {
 		Name          string
 		RequestMethod string
 		RequestBody   interface{}
+		RequestUserID interface{}
 		ExpectedCode  int
 	}{
 		{
@@ -65,7 +122,8 @@ func TestHandlerToplistsCreate(t *testing.T) {
 				Description: "test description",
 				Items:       []toplistItemRequest{},
 			},
-			ExpectedCode: http.StatusCreated,
+			RequestUserID: 1,
+			ExpectedCode:  http.StatusCreated,
 		},
 		{
 			Name:          "Invalid request",
@@ -75,7 +133,26 @@ func TestHandlerToplistsCreate(t *testing.T) {
 				Description: "test description",
 				Items:       []toplistItemRequest{},
 			},
-			ExpectedCode: http.StatusBadRequest,
+			RequestUserID: 1,
+			ExpectedCode:  http.StatusBadRequest,
+		},
+		{
+			Name:          "Invalid userID",
+			RequestMethod: http.MethodPost,
+			RequestBody: toplistRequest{
+				Title:       "test title",
+				Description: "test description",
+				Items:       []toplistItemRequest{},
+			},
+			RequestUserID: nil,
+			ExpectedCode:  http.StatusBadRequest,
+		},
+		{
+			Name:          "Invalid request body",
+			RequestMethod: http.MethodPost,
+			RequestBody:   "test",
+			RequestUserID: 1,
+			ExpectedCode:  http.StatusInternalServerError,
 		},
 	}
 
@@ -91,7 +168,7 @@ func TestHandlerToplistsCreate(t *testing.T) {
 			t.Fatal(err)
 		}
 		req.Header.Set("Content-Type", "application/json")
-		ctx := context.WithValue(req.Context(), userIDKey, 3)
+		ctx := context.WithValue(req.Context(), userIDKey, tc.RequestUserID)
 		req = req.WithContext(ctx)
 
 		rr := httptest.NewRecorder()

@@ -12,6 +12,7 @@ import (
 )
 
 var apiCfg apiConfig
+var insertedTestToplists []database.Toplist
 
 func TestMain(m *testing.M) {
 	fmt.Println("Initializing test...")
@@ -30,10 +31,57 @@ func TestMain(m *testing.M) {
 		DB: db,
 	}
 
+	insertToplists()
+
 	r := chi.NewRouter()
 	r.Put("/api/toplists", apiCfg.handlerToplistsCreate)
+	r.Delete("/api/toplists/{toplistID}", apiCfg.handlerToplistsDelete)
 
 	code := m.Run()
 
 	os.Exit(code)
+}
+
+func insertToplists() {
+	toplists := []toplistRequest{
+		{
+			Title:       "Test toplist 1",
+			Description: "Test description 1",
+			UserID:      1,
+			Items: []toplistItemRequest{
+				{Rank: 1, Title: "Item 1", Description: "Description 1"},
+				{Rank: 2, Title: "Item 2", Description: "Description 2"},
+				{Rank: 3, Title: "Item 3", Description: "Description 3"},
+			},
+		},
+		{
+			Title:       "Test toplist 2",
+			Description: "Test description 2",
+			UserID:      1,
+			Items: []toplistItemRequest{
+				{Rank: 1, Title: "Item 1", Description: "Description 1"},
+				{Rank: 2, Title: "Item 2", Description: "Description 2"},
+				{Rank: 3, Title: "Item 3", Description: "Description 3"},
+			},
+		},
+		{
+			Title:       "Test toplist 3",
+			Description: "Test description 3",
+			UserID:      1,
+			Items: []toplistItemRequest{
+				{Rank: 1, Title: "Item 1", Description: "Description 1"},
+				{Rank: 2, Title: "Item 2", Description: "Description 2"},
+				{Rank: 3, Title: "Item 3", Description: "Description 3"},
+			},
+		},
+	}
+
+	for _, toplist := range toplists {
+		dbToplist := toplist.ToDBToplist()
+		insertedToplist, err := apiCfg.DB.InsertToplist(dbToplist)
+		if err != nil {
+			log.Fatalf("unable to insert test toplist: %v", err)
+		}
+		insertedTestToplists = append(insertedTestToplists, insertedToplist)
+	}
 }
