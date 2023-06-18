@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -50,7 +51,7 @@ func (cfg apiConfig) handlerToplistsGetMany(w http.ResponseWriter, r *http.Reque
 	}
 	maxPageSize := 20
 	if pageSize < 1 || pageSize > maxPageSize {
-		respondWithError(w, http.StatusBadRequest, "Page size value needs to be minimum 1")
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Page size needs to be min 1 and max %d", maxPageSize))
 		return
 	}
 

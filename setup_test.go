@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/emilmalmsten/my_top_xyz/internal/database"
-	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
 )
 
@@ -32,10 +31,6 @@ func TestMain(m *testing.M) {
 	}
 
 	insertToplists()
-
-	r := chi.NewRouter()
-	r.Put("/api/toplists", apiCfg.handlerToplistsCreate)
-	r.Delete("/api/toplists/{toplistID}", apiCfg.handlerToplistsDelete)
 
 	code := m.Run()
 
@@ -67,6 +62,16 @@ func insertToplists() {
 		{
 			Title:       "Test toplist 3",
 			Description: "Test description 3",
+			UserID:      1,
+			Items: []toplistItemRequest{
+				{Rank: 1, Title: "Item 1", Description: "Description 1"},
+				{Rank: 2, Title: "Item 2", Description: "Description 2"},
+				{Rank: 3, Title: "Item 3", Description: "Description 3"},
+			},
+		},
+		{
+			Title:       "Test toplist 4",
+			Description: "Test description 4",
 			UserID:      1,
 			Items: []toplistItemRequest{
 				{Rank: 1, Title: "Item 1", Description: "Description 1"},
