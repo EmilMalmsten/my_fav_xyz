@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/emilmalmsten/my_top_xyz v0.0.0-20230618044701-5fb2b4283e6e
 	github.com/go-chi/chi v1.5.4
+	github.com/go-chi/cors v1.2.1
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/jackc/pgx/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1
