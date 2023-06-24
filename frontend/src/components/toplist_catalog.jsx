@@ -27,8 +27,8 @@ function ToplistCatalog({ title }) {
       <>
         <h5>{title}</h5>
         <ol>
-            {items.map((item, index) => (
-            <li key={index}>{item.title}</li>
+            {items.map((item) => (
+            <li key={item.id}>{item.title}</li>
             ))}
         </ol>
         <Button variant="outline-dark">View more</Button>
