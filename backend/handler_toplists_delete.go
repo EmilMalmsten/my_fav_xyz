@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/emilmalmsten/my_top_xyz/internal/database"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 	"github.com/go-chi/chi"
 )
 
@@ -29,11 +29,11 @@ func (cfg *apiConfig) handlerToplistsDelete(w http.ResponseWriter, r *http.Reque
 
 	dbToplist, err := cfg.DB.GetToplist(toplistID)
 	if err != nil {
+		fmt.Println(err)
 		if errors.Is(err, database.ErrNotExist) {
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")
 			return
 		}
-		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Could not find toplist")
 		return
 	}

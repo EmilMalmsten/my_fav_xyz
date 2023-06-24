@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/emilmalmsten/my_top_xyz/internal/auth"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/auth"
 )
 
 type updateUserRequest struct {

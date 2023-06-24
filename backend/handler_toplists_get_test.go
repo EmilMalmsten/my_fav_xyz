@@ -21,7 +21,7 @@ func TestHandlerToplistsGetOne(t *testing.T) {
 		{
 			Name:             "Successful get one toplist",
 			RequestMethod:    http.MethodGet,
-			RequestToplistID: insertedTestToplists[2].ID,
+			RequestToplistID: insertedTestToplists[2].ToplistID,
 			ExpectedCode:     http.StatusOK,
 		},
 		{

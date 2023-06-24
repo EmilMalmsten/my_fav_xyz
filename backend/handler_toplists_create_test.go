@@ -122,7 +122,7 @@ func TestHandlerToplistsCreate(t *testing.T) {
 				Description: "test description",
 				Items:       []toplistItemRequest{},
 			},
-			RequestUserID: 1,
+			RequestUserID: insertedTestUser.ID,
 			ExpectedCode:  http.StatusCreated,
 		},
 		{
@@ -133,7 +133,7 @@ func TestHandlerToplistsCreate(t *testing.T) {
 				Description: "test description",
 				Items:       []toplistItemRequest{},
 			},
-			RequestUserID: 1,
+			RequestUserID: insertedTestUser.ID,
 			ExpectedCode:  http.StatusBadRequest,
 		},
 		{

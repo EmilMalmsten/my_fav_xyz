@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/emilmalmsten/my_top_xyz/internal/auth"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/auth"
 )
 
 type LoginRequest struct {

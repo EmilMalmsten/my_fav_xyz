@@ -17,7 +17,7 @@ func (dbCfg *DbConfig) InsertToplist(toplist Toplist) (Toplist, error) {
 	var insertedToplist Toplist
 
 	err := dbCfg.database.QueryRow(insertQuery, toplist.Title, toplist.Description, toplist.UserID).Scan(
-		&insertedToplist.ID,
+		&insertedToplist.ToplistID,
 		&insertedToplist.Title,
 		&insertedToplist.Description,
 		&insertedToplist.UserID,
@@ -27,7 +27,7 @@ func (dbCfg *DbConfig) InsertToplist(toplist Toplist) (Toplist, error) {
 		return insertedToplist, err
 	}
 
-	insertedListItems, err := dbCfg.InsertToplistItems(toplist.Items, insertedToplist.ID)
+	insertedListItems, err := dbCfg.InsertToplistItems(toplist.Items, insertedToplist.ToplistID)
 	if err != nil {
 		fmt.Println(err)
 		return insertedToplist, err
@@ -65,7 +65,7 @@ func (dbCfg *DbConfig) InsertToplistItems(toplistItems []ToplistItem, listId int
 			item.Title,
 			item.Description,
 		).Scan(
-			&insertedItem.ID,
+			&insertedItem.ItemID,
 			&insertedItem.ListID,
 			&insertedItem.Rank,
 			&insertedItem.Title,
@@ -88,7 +88,7 @@ func (dbCfg *DbConfig) InsertToplistItems(toplistItems []ToplistItem, listId int
 func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
 
 	query := "SELECT 1 FROM toplists WHERE id = $1"
-	row := dbCfg.database.QueryRowContext(context.Background(), query, toplist.ID)
+	row := dbCfg.database.QueryRowContext(context.Background(), query, toplist.ToplistID)
 
 	var toplistExists bool
 	err := row.Scan(&toplistExists)
@@ -108,8 +108,8 @@ func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
 
 	var updatedToplist Toplist
 
-	err = dbCfg.database.QueryRow(updateQuery, toplist.Title, toplist.Description, toplist.ID).Scan(
-		&updatedToplist.ID,
+	err = dbCfg.database.QueryRow(updateQuery, toplist.Title, toplist.Description, toplist.ToplistID).Scan(
+		&updatedToplist.ToplistID,
 		&updatedToplist.Title,
 		&updatedToplist.Description,
 		&updatedToplist.UserID,
@@ -119,7 +119,7 @@ func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
 		return Toplist{}, err
 	}
 
-	updatedItems, err := dbCfg.UpdateToplistItems(toplist.Items, toplist.ID)
+	updatedItems, err := dbCfg.UpdateToplistItems(toplist.Items, toplist.ToplistID)
 	if err != nil {
 		return Toplist{}, err
 	}
@@ -174,7 +174,7 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 				newListItems[i].Rank,
 				listId,
 			).Scan(
-				&updatedItem.ID,
+				&updatedItem.ItemID,
 				&updatedItem.ListID,
 				&updatedItem.Rank,
 				&updatedItem.Title,
@@ -197,7 +197,7 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 				newListItems[i].Title,
 				newListItems[i].Description,
 			).Scan(
-				&updatedItem.ID,
+				&updatedItem.ItemID,
 				&updatedItem.ListID,
 				&updatedItem.Rank,
 				&updatedItem.Title,
@@ -254,7 +254,7 @@ func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
 	row := dbCfg.database.QueryRowContext(context.Background(), query, listId)
 
 	err := row.Scan(
-		&toplist.ID,
+		&toplist.ToplistID,
 		&toplist.Title,
 		&toplist.Description,
 		&toplist.UserID,
@@ -292,12 +292,11 @@ func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
 
 	for rows.Next() {
 		var item ToplistItem
-		err := rows.Scan(&item.ID, &item.ListID, &item.Rank, &item.Title, &item.Description)
+		err := rows.Scan(&item.ItemID, &item.ListID, &item.Rank, &item.Title, &item.Description)
 		if err != nil {
 			fmt.Println(err)
 			return []ToplistItem{}, err
 		}
-		item.ID = listId
 		toplistItems = append(toplistItems, item)
 	}
 
@@ -327,7 +326,7 @@ func (dbCfg *DbConfig) ListToplists(limit, offset int) ([]Toplist, error) {
 	for rows.Next() {
 		var toplist Toplist
 		err := rows.Scan(
-			&toplist.ID,
+			&toplist.ToplistID,
 			&toplist.Title,
 			&toplist.Description,
 			&toplist.UserID,
@@ -336,7 +335,7 @@ func (dbCfg *DbConfig) ListToplists(limit, offset int) ([]Toplist, error) {
 		if err != nil {
 			return []Toplist{}, err
 		}
-		toplist.Items, err = dbCfg.GetToplistItems(toplist.ID)
+		toplist.Items, err = dbCfg.GetToplistItems(toplist.ToplistID)
 		if err != nil {
 			return []Toplist{}, err
 		}

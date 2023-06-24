@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/emilmalmsten/my_top_xyz/internal/database"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 	"github.com/go-chi/chi"
 )
 

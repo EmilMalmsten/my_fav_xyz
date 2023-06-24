@@ -3,14 +3,17 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"testing"
+	"time"
 
-	"github.com/emilmalmsten/my_top_xyz/internal/database"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 	"github.com/joho/godotenv"
 )
 
 var apiCfg apiConfig
+var insertedTestUser database.User
 var insertedTestToplists []database.Toplist
 
 func TestMain(m *testing.M) {
@@ -30,19 +33,47 @@ func TestMain(m *testing.M) {
 		DB: db,
 	}
 
-	insertToplists()
+	err = insertTestUser()
+	if err != nil {
+		log.Fatalf("unable to insert test user: %v", err)
+	}
+
+	insertTestToplists(insertedTestUser.ID)
 
 	code := m.Run()
 
 	os.Exit(code)
 }
 
-func insertToplists() {
+func createRandomEmail() string {
+	seed := time.Now().UnixNano()
+	rng := rand.New(rand.NewSource(seed))
+	randomNumber := rng.Intn(100000) + 1
+	email := fmt.Sprintf("testuser%d@mail.com", randomNumber)
+	return email
+}
+
+func insertTestUser() error {
+	randomEmail := createRandomEmail()
+	user := database.User{
+		Email:          randomEmail,
+		HashedPassword: "asd123123123hjerwehr",
+	}
+	insertedUser, err := apiCfg.DB.InsertUser(user)
+	if err != nil {
+		return err
+	}
+
+	insertedTestUser = insertedUser
+	return nil
+}
+
+func insertTestToplists(testUserID int) {
 	toplists := []toplistRequest{
 		{
 			Title:       "Test toplist 1",
 			Description: "Test description 1",
-			UserID:      1,
+			UserID:      testUserID,
 			Items: []toplistItemRequest{
 				{Rank: 1, Title: "Item 1", Description: "Description 1"},
 				{Rank: 2, Title: "Item 2", Description: "Description 2"},
@@ -52,7 +83,7 @@ func insertToplists() {
 		{
 			Title:       "Test toplist 2",
 			Description: "Test description 2",
-			UserID:      1,
+			UserID:      testUserID,
 			Items: []toplistItemRequest{
 				{Rank: 1, Title: "Item 1", Description: "Description 1"},
 				{Rank: 2, Title: "Item 2", Description: "Description 2"},
@@ -62,7 +93,7 @@ func insertToplists() {
 		{
 			Title:       "Test toplist 3",
 			Description: "Test description 3",
-			UserID:      1,
+			UserID:      testUserID,
 			Items: []toplistItemRequest{
 				{Rank: 1, Title: "Item 1", Description: "Description 1"},
 				{Rank: 2, Title: "Item 2", Description: "Description 2"},
@@ -72,7 +103,7 @@ func insertToplists() {
 		{
 			Title:       "Test toplist 4",
 			Description: "Test description 4",
-			UserID:      1,
+			UserID:      testUserID,
 			Items: []toplistItemRequest{
 				{Rank: 1, Title: "Item 1", Description: "Description 1"},
 				{Rank: 2, Title: "Item 2", Description: "Description 2"},

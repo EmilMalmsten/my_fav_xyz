@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/emilmalmsten/my_top_xyz/internal/database"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 )
 
 func (cfg *apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Request) {

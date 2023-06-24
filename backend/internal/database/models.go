@@ -10,7 +10,7 @@ type DbConfig struct {
 }
 
 type Toplist struct {
-	ID          int           `json:"id"`
+	ToplistID   int           `json:"toplist_id"`
 	Title       string        `json:"title"`
 	Description string        `json:"description"`
 	UserID      int           `json:"user_id"`
@@ -19,8 +19,8 @@ type Toplist struct {
 }
 
 type ToplistItem struct {
-	ID          int    `json:"id"`
-	ListID      int    `json:"listID"`
+	ItemID      int    `json:"item_id"`
+	ListID      int    `json:"list_id"`
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`

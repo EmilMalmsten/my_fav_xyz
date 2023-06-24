@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/emilmalmsten/my_top_xyz/internal/database"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 )
 
 type toplistRequest struct {
-	ID          int                  `json:"id"`
+	ToplistID   int                  `json:"id"`
 	Title       string               `json:"title"`
 	Description string               `json:"description"`
 	UserID      int                  `json:"user_id"`
@@ -31,7 +31,7 @@ func (t toplistRequest) ToDBToplist() database.Toplist {
 	}
 
 	return database.Toplist{
-		ID:          t.ID,
+		ToplistID:   t.ToplistID,
 		Title:       t.Title,
 		Description: t.Description,
 		UserID:      t.UserID,
@@ -85,7 +85,7 @@ func (cfg *apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reque
 	}
 
 	respondWithJSON(w, http.StatusCreated, resp{
-		Id: insertedToplist.ID,
+		Id: insertedToplist.ToplistID,
 	})
 }
 

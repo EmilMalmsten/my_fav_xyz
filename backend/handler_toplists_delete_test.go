@@ -22,22 +22,22 @@ func TestHandlerToplistsDelete(t *testing.T) {
 		{
 			Name:             "Successful deletion",
 			RequestMethod:    http.MethodDelete,
-			RequestToplistID: insertedTestToplists[0].ID,
-			RequestUserID:    1,
+			RequestToplistID: insertedTestToplists[0].ToplistID,
+			RequestUserID:    insertedTestUser.ID,
 			ExpectedCode:     http.StatusOK,
 		},
 		{
 			Name:             "Unauthorized deletion",
 			RequestMethod:    http.MethodDelete,
-			RequestToplistID: insertedTestToplists[1].ID,
+			RequestToplistID: insertedTestToplists[1].ToplistID,
 			RequestUserID:    15,
 			ExpectedCode:     http.StatusUnauthorized,
 		},
 		{
 			Name:             "Delete non existent toplist",
 			RequestMethod:    http.MethodDelete,
-			RequestToplistID: insertedTestToplists[0].ID,
-			RequestUserID:    1,
+			RequestToplistID: insertedTestToplists[0].ToplistID,
+			RequestUserID:    insertedTestUser.ID,
 			ExpectedCode:     http.StatusNotFound,
 		},
 	}
@@ -45,7 +45,7 @@ func TestHandlerToplistsDelete(t *testing.T) {
 	for _, tc := range testCases {
 
 		endpoint := fmt.Sprintf("/api/toplists/%d", tc.RequestToplistID)
-		fmt.Println(endpoint)
+		fmt.Println(tc)
 		req, err := http.NewRequest(tc.RequestMethod, endpoint, nil)
 		if err != nil {
 			t.Fatal(err)

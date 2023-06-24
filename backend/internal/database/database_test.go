@@ -35,7 +35,7 @@ func run(m *testing.M) (code int, err error) {
 	}
 	dbTestConfig = db
 
-	tables := []string{"toplists", "list_items"}
+	tables := []string{"toplists", "list_items", "users", "token_revocations"}
 
 	defer func() {
 		for _, t := range tables {

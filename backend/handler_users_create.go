@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/emilmalmsten/my_top_xyz/internal/auth"
-	"github.com/emilmalmsten/my_top_xyz/internal/database"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/auth"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 )
 
 type createUserRequest struct {
