@@ -76,10 +76,9 @@ func TestGetToplist(t *testing.T) {
 }
 
 func TestListToplists(t *testing.T) {
-	toplist1 := insertToplist(t)
-	toplist2 := insertToplist(t)
-	toplist3 := insertToplist(t)
-	testLists := []Toplist{toplist1, toplist2, toplist3}
+	for i := 0; i < 4; i++ {
+		_ = insertToplist(t)
+	}
 
 	limit := 10
 	offset := 1
@@ -87,10 +86,32 @@ func TestListToplists(t *testing.T) {
 	require.NoError(t, err)
 	require.LessOrEqual(t, len(toplists), limit)
 
-	for i := range testLists {
-		require.NotZero(t, testLists[i].ToplistID)
-		require.NotZero(t, testLists[i].Title)
-		require.NotZero(t, testLists[i].UserID)
+	for i := range toplists {
+		require.NotZero(t, toplists[i].ToplistID)
+		require.NotZero(t, toplists[i].Title)
+		require.NotZero(t, toplists[i].UserID)
+		require.NotZero(t, toplists[i].CreatedAt)
+	}
+}
+
+func TestListRecentToplists(t *testing.T) {
+	for i := 0; i < 4; i++ {
+		_ = insertToplist(t)
+	}
+
+	limit := 10
+	toplists, err := dbTestConfig.ListRecentToplists(limit)
+	require.NoError(t, err)
+	require.LessOrEqual(t, len(toplists), limit)
+
+	for i := 1; i < len(toplists); i++ {
+		require.NotZero(t, toplists[i].ToplistID)
+		require.NotZero(t, toplists[i].Title)
+		require.NotZero(t, toplists[i].UserID)
+		require.NotZero(t, toplists[i].CreatedAt)
+		if !toplists[i-1].CreatedAt.After(toplists[i].CreatedAt) {
+			t.Error("Toplists are not sorted correctly")
+		}
 	}
 }
 

@@ -58,6 +58,7 @@ func main() {
 	router.With(apiCfg.validateJWT).Put("/api/toplists", apiCfg.handlerToplistsUpdate)
 	router.Get("/api/toplists/{toplistID}", apiCfg.handlerToplistsGetOne)
 	router.Get("/api/toplists", apiCfg.handlerToplistsGetMany)
+	router.Get("/api/toplists/recent", apiCfg.handlerToplistsGetRecent)
 	router.With(apiCfg.validateJWT).Delete("/api/toplists/{toplistID}", apiCfg.handlerToplistsDelete)
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)

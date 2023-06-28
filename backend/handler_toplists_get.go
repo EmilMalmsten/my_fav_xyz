@@ -64,3 +64,25 @@ func (cfg apiConfig) handlerToplistsGetMany(w http.ResponseWriter, r *http.Reque
 
 	respondWithJSON(w, http.StatusOK, toplists)
 }
+
+func (cfg apiConfig) handlerToplistsGetRecent(w http.ResponseWriter, r *http.Request) {
+	pageSizeString := r.URL.Query().Get("page_size")
+	pageSize, err := strconv.Atoi(pageSizeString)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid page size parameter")
+		return
+	}
+	maxPageSize := 10
+	if pageSize < 1 || pageSize > maxPageSize {
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Page size needs to be min 1 and max %d", maxPageSize))
+		return
+	}
+
+	toplists, err := cfg.DB.ListRecentToplists(pageSize)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to get toplists")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, toplists)
+}
