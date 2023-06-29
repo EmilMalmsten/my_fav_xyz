@@ -2,13 +2,13 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import React, { useEffect, useState } from 'react';
 
-function ToplistCatalog({ title }) {
+function ToplistCatalog({ title, endpoint }) {
     const [items, setItems] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/toplists`, {
+            const response = await axios.get(import.meta.env.VITE_API_URL + endpoint, {
               params: {
                 page_id: '1',
                 page_size: '5'

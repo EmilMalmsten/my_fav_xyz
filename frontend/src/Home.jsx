@@ -14,10 +14,10 @@ function Home() {
             <AnimatedTitle/>
             <Row>
               <Col className="my-4">
-                <ToplistCatalog title="Most popular toplists"/>
+                <ToplistCatalog title="Most popular toplists" endpoint="/toplists"/>
               </Col>
               <Col className="my-4">
-                <ToplistCatalog title="Recent toplists"/>
+                <ToplistCatalog title="Recent toplists" endpoint="/toplists/recent"/>
               </Col>
             </Row>
           </Col>
