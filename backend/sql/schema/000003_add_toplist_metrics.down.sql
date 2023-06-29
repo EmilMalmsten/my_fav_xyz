@@ -1,0 +1,3 @@
+ALTER TABLE toplists
+DROP COLUMN views,
+DROP COLUMN likes;

@@ -380,3 +380,31 @@ func (dbCfg *DbConfig) ListRecentToplists(limit int) ([]Toplist, error) {
 
 	return toplists, nil
 }
+
+func (dbCfg *DbConfig) UpdateToplistViews(toplistID int) (Toplist, error) {
+
+	updateQuery := `
+		UPDATE toplists SET views = views + 1
+		WHERE id = $1
+		RETURNING id, title, description, user_id, created_at, views
+	`
+
+	var updatedToplist Toplist
+
+	err := dbCfg.database.QueryRow(updateQuery, toplistID).Scan(
+		&updatedToplist.ToplistID,
+		&updatedToplist.Title,
+		&updatedToplist.Description,
+		&updatedToplist.UserID,
+		&updatedToplist.CreatedAt,
+		&updatedToplist.Views,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return Toplist{}, ErrNotExist
+		} else {
+			return Toplist{}, err
+		}
+	}
+	return updatedToplist, nil
+}

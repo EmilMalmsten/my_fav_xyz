@@ -226,3 +226,14 @@ func TestDeleteToplist(t *testing.T) {
 	_, err = dbTestConfig.GetToplist(toplist.ToplistID)
 	require.ErrorIs(t, err, ErrNotExist)
 }
+
+func TestUpdateToplistViews(t *testing.T) {
+	toplist := insertToplist(t)
+
+	updatedToplist, err := dbTestConfig.UpdateToplistViews(toplist.ToplistID)
+	require.NoError(t, err)
+
+	require.Equal(t, toplist.Views+1, updatedToplist.Views)
+	require.Equal(t, toplist.ToplistID, updatedToplist.ToplistID)
+	require.Equal(t, toplist.UserID, updatedToplist.UserID)
+}
