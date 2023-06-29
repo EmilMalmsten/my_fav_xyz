@@ -14,7 +14,7 @@ function Home() {
             <AnimatedTitle/>
             <Row>
               <Col className="my-4">
-                <ToplistCatalog title="Most popular toplists" endpoint="/toplists"/>
+                <ToplistCatalog title="Most popular toplists" endpoint="/toplists/popular"/>
               </Col>
               <Col className="my-4">
                 <ToplistCatalog title="Recent toplists" endpoint="/toplists/recent"/>

@@ -345,10 +345,23 @@ func (dbCfg *DbConfig) ListToplists(limit, offset int) ([]Toplist, error) {
 	return toplists, nil
 }
 
-func (dbCfg *DbConfig) ListRecentToplists(limit int) ([]Toplist, error) {
+func (dbCfg *DbConfig) ListToplistsByProperty(limit int, property string) ([]Toplist, error) {
+	orderClause := ""
+
+	switch property {
+	case "date":
+		orderClause = "created_at DESC"
+	case "views":
+		orderClause = "views DESC"
+	case "likes":
+		orderClause = "likes DESC"
+	default:
+		orderClause = "created_at DESC"
+	}
+
 	query := `
-		SELECT id, title, description, user_id, created_at FROM toplists 
-		ORDER BY created_at DESC
+		SELECT id, title, description, user_id, created_at, views, likes FROM toplists 
+		ORDER BY ` + orderClause + `
 		LIMIT $1
 	`
 
@@ -367,6 +380,8 @@ func (dbCfg *DbConfig) ListRecentToplists(limit int) ([]Toplist, error) {
 			&toplist.Description,
 			&toplist.UserID,
 			&toplist.CreatedAt,
+			&toplist.Views,
+			&toplist.Likes,
 		)
 		if err != nil {
 			return []Toplist{}, err

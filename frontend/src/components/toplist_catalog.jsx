@@ -10,10 +10,10 @@ function ToplistCatalog({ title, endpoint }) {
           try {
             const response = await axios.get(import.meta.env.VITE_API_URL + endpoint, {
               params: {
-                page_id: '1',
                 page_size: '5'
               }
             });
+            console.log(response.data)
             setItems(response.data);
           } catch (error) {
             console.error(error);
@@ -28,7 +28,7 @@ function ToplistCatalog({ title, endpoint }) {
         <h5>{title}</h5>
         <ol>
             {items.map((item) => (
-            <li key={item.id}>{item.title}</li>
+            <li key={item.toplist_id}>{item.title}</li>
             ))}
         </ol>
         <Button variant="outline-dark">View more</Button>

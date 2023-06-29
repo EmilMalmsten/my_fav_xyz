@@ -60,6 +60,7 @@ func main() {
 	router.Get("/api/toplists/{toplistID}", apiCfg.handlerToplistsGetOne)
 	router.Get("/api/toplists", apiCfg.handlerToplistsGetMany)
 	router.Get("/api/toplists/recent", apiCfg.handlerToplistsGetRecent)
+	router.Get("/api/toplists/popular", apiCfg.handlerToplistsGetPopular)
 	router.Post("/api/toplists/views/{toplistID}", apiCfg.handlerToplistsViews)
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)

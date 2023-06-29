@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -100,16 +101,42 @@ func TestListRecentToplists(t *testing.T) {
 	}
 
 	limit := 10
-	toplists, err := dbTestConfig.ListRecentToplists(limit)
+	toplistFilterProp := "date"
+	toplists, err := dbTestConfig.ListToplistsByProperty(limit, toplistFilterProp)
 	require.NoError(t, err)
 	require.LessOrEqual(t, len(toplists), limit)
 
 	for i := 1; i < len(toplists); i++ {
+		fmt.Println(toplists[i].ToplistID)
 		require.NotZero(t, toplists[i].ToplistID)
 		require.NotZero(t, toplists[i].Title)
 		require.NotZero(t, toplists[i].UserID)
 		require.NotZero(t, toplists[i].CreatedAt)
-		if !toplists[i-1].CreatedAt.After(toplists[i].CreatedAt) {
+		if toplists[i-1].CreatedAt.Before(toplists[i].CreatedAt) {
+			t.Error("Toplists are not sorted correctly")
+		}
+	}
+}
+
+func TestListPopularToplists(t *testing.T) {
+	for i := 0; i < 4; i++ {
+		_ = insertToplist(t)
+	}
+
+	limit := 10
+	toplistFilterProp := "views"
+	toplists, err := dbTestConfig.ListToplistsByProperty(limit, toplistFilterProp)
+	require.NoError(t, err)
+	require.LessOrEqual(t, len(toplists), limit)
+
+	for i := 1; i < len(toplists); i++ {
+		fmt.Println(toplists[i].ToplistID)
+		require.NotZero(t, toplists[i].ToplistID)
+		require.NotZero(t, toplists[i].Title)
+		require.NotZero(t, toplists[i].UserID)
+		require.NotZero(t, toplists[i].CreatedAt)
+		require.NotNil(t, toplists[i].Views)
+		if toplists[i-1].Views < toplists[i].Views {
 			t.Error("Toplists are not sorted correctly")
 		}
 	}
