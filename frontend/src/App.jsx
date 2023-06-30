@@ -1,7 +1,7 @@
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Route, Routes } from 'react-router-dom';
-import MainNavbar from './components/main_navbar';
+import MainNavbar from './components/MainNavbar';
 import Home from './Home';
 import Register from './Register';
 import Login from './Login';

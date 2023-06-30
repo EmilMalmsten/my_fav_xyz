@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import React, { useEffect, useState } from 'react';
@@ -28,7 +29,9 @@ function ToplistCatalog({ title, endpoint }) {
         <h5>{title}</h5>
         <ol>
             {items.map((item) => (
-            <li key={item.toplist_id}>{item.title}</li>
+            <li key={item.toplist_id}>
+              <Link to={`/toplists/${item.toplist_id}`}>{item.title}</Link>
+            </li>
             ))}
         </ol>
         <Button variant="outline-dark">View more</Button>

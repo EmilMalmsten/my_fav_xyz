@@ -1,9 +1,9 @@
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import AnimatedTitle from './components/animated_title';
-import ToplistCatalog from './components/toplist_catalog';
-import CallToAction from './components/call_to_action';
+import AnimatedTitle from './components/AnimatedTitle';
+import ToplistCatalog from './components/ToplistCatalog';
+import CallToAction from './components/CallToAction';
 
 function Home() {
   return (
