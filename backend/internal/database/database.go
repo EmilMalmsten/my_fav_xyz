@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"strings"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -21,4 +22,8 @@ func CreateDatabaseConnection(dbUrl string) (*DbConfig, error) {
 	}
 
 	return &DbConfig{database: db}, nil
+}
+
+func isUniqueConstraintError(err error) bool {
+	return strings.Contains(err.Error(), "duplicate key value violates unique constraint")
 }

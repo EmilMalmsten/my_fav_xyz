@@ -72,7 +72,7 @@ func (cfg apiConfig) handlerToplistsGetRecent(w http.ResponseWriter, r *http.Req
 		respondWithError(w, http.StatusBadRequest, "Invalid page size parameter")
 		return
 	}
-	maxPageSize := 10
+	maxPageSize := 100
 	if pageSize < 1 || pageSize > maxPageSize {
 		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Page size needs to be min 1 and max %d", maxPageSize))
 		return
@@ -95,7 +95,7 @@ func (cfg apiConfig) handlerToplistsGetPopular(w http.ResponseWriter, r *http.Re
 		respondWithError(w, http.StatusBadRequest, "Invalid page size parameter")
 		return
 	}
-	maxPageSize := 10
+	maxPageSize := 100
 	if pageSize < 1 || pageSize > maxPageSize {
 		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Page size needs to be min 1 and max %d", maxPageSize))
 		return

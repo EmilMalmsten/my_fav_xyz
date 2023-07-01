@@ -13,6 +13,9 @@ func (dbCfg *DbConfig) InsertUser(user User) (User, error) {
 		&insertedUser.HashedPassword,
 	)
 	if err != nil {
+		if isUniqueConstraintError(err) {
+			return insertedUser, ErrAlreadyExist
+		}
 		return insertedUser, err
 	}
 
