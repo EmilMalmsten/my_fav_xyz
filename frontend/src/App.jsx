@@ -2,12 +2,12 @@ import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Route, Routes } from 'react-router-dom';
 import MainNavbar from './components/MainNavbar';
-import Home from './Home';
-import Register from './Register';
-import Login from './Login';
-import Toplist from './Toplist';
+import Home from './pages/Home';
+import Register from './pages/Register';
+import Login from './pages/Login';
+import Toplist from './pages/Toplist';
 import ToplistsByCategory from './components/ToplistsByCategory';
-import TokenManager from './components/TokenManager';
+import TokenManager from './services/TokenManager';
 
 function App() {
 
