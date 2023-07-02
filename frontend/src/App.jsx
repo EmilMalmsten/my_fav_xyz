@@ -7,11 +7,13 @@ import Register from './Register';
 import Login from './Login';
 import Toplist from './Toplist';
 import ToplistsByCategory from './components/ToplistsByCategory';
+import TokenManager from './components/TokenManager';
 
 function App() {
 
   return (
     <>
+      <TokenManager/>
       <MainNavbar/>
       <Routes>
         <Route path='/' element={<Home/>}></Route>
