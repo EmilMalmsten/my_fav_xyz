@@ -15,9 +15,11 @@ export const AuthProvider = ({ children }) => {
           email,
           password,
         });
-
+        console.log(response)
         const user = {
-            email: email
+            email: response.data.user.email,
+            userID: response.data.user.id,
+            createdAt: response.data.user.created_at,
         }
         localStorage.setItem('accessToken', response.data.token);
         localStorage.setItem('refreshToken', response.data.refresh_token);

@@ -22,7 +22,7 @@ function Home() {
             </Row>
           </Col>
           <Col className="bg-secondary d-flex align-items-center justify-content-center">
-            <CallToAction/>
+            <CallToAction title="Create your own toplist" buttonLink="/toplists/create" />
           </Col>
         </Row>
       </Container>

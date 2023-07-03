@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/auth"
+	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 )
 
 type LoginRequest struct {
@@ -15,8 +16,9 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Token        string `json:"token"`
-	RefreshToken string `json:"refresh_token"`
+	Token        string        `json:"token"`
+	RefreshToken string        `json:"refresh_token"`
+	User         database.User `json:"user"`
 }
 
 func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
@@ -66,5 +68,6 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, LoginResponse{
 		Token:        accessToken,
 		RefreshToken: refreshToken,
+		User:         dbUser,
 	})
 }
