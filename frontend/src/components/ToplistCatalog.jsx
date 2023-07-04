@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 function ToplistCatalog({ title, endpoint }) {
     const [items, setItems] = useState([]);
@@ -45,5 +46,10 @@ function ToplistCatalog({ title, endpoint }) {
         </>
     );
 }
+
+ToplistCatalog.propTypes = {
+    title: PropTypes.string.isRequired,
+    endpoint: PropTypes.string.isRequired,
+};
 
 export default ToplistCatalog;

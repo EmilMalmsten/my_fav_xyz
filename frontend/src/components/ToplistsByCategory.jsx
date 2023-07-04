@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 function ToplistsByCategory({ title, endpoint }) {
     const [toplists, setToplists] = useState([]);
@@ -41,5 +42,10 @@ function ToplistsByCategory({ title, endpoint }) {
         </>
     );
 }
+
+ToplistsByCategory.propTypes = {
+    title: PropTypes.string.isRequired,
+    endpoint: PropTypes.string.isRequired,
+};
 
 export default ToplistsByCategory;

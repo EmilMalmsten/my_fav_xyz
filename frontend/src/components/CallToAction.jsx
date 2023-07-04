@@ -1,5 +1,6 @@
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 function CallToAction({ title, buttonLink }) {
     return (
@@ -13,5 +14,10 @@ function CallToAction({ title, buttonLink }) {
         </div>
     );
 }
+
+CallToAction.propTypes = {
+    title: PropTypes.string.isRequired,
+    buttonLink: PropTypes.string.isRequired,
+};
 
 export default CallToAction;

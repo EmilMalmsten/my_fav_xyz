@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 function MainNavbar() {
     const { logout, authUser, isLoggedIn } = useAuth();
 
-    const handleLogout = async (event) => {
+    const handleLogout = async () => {
         logout();
     };
 
