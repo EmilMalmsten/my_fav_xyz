@@ -1,35 +1,19 @@
 import { Container, Card, Form, Button } from "react-bootstrap";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const CreateToplist = () => {
-    const navigate = useNavigate();
-
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault();
         const form = event.currentTarget;
 
         if (form.checkValidity()) {
-            try {
-                const accessToken = localStorage.getItem("accessToken");
-                const response = await axios.post(
-                    `${import.meta.env.VITE_API_URL}/toplists`,
-                    {
-                        title: form.elements.title.value,
-                        description: form.elements.description.value,
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                        },
-                    }
-                );
-                navigate(`/toplists/${response.data.id}`);
-            } catch (error) {
-                console.log(error);
-            }
+            console.log("Title:", form.elements.title.value);
+            console.log("Description:", form.elements.description.value);
+
+            // Reset form fields
+            form.reset();
+        } else {
+            event.stopPropagation();
         }
-        form.classList.add("was-validated");
     };
 
     return (
@@ -42,7 +26,7 @@ const CreateToplist = () => {
                             controlId="formTitle"
                             style={{ marginBottom: "15px" }}
                         >
-                            <Form.Label>What is your toplist for?</Form.Label>
+                            <Form.Label>Title</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="title"
