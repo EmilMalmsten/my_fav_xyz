@@ -86,7 +86,6 @@ func (dbCfg *DbConfig) InsertToplistItems(toplistItems []ToplistItem, listId int
 }
 
 func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
-
 	query := "SELECT 1 FROM toplists WHERE id = $1"
 	row := dbCfg.database.QueryRowContext(context.Background(), query, toplist.ToplistID)
 
@@ -138,7 +137,6 @@ func rankAlreadyExists(existingRanks []int, rank int) bool {
 }
 
 func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int) ([]ToplistItem, error) {
-
 	existingListItems, err := dbCfg.GetToplistItems(listId)
 	if err != nil {
 		return []ToplistItem{}, err
@@ -160,6 +158,12 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 
 	var updatedItems []ToplistItem
 	for i := range newListItems {
+
+		err = dbCfg.saveImage(newListItems[i], listId)
+		if err != nil {
+			return []ToplistItem{}, err
+		}
+
 		var updatedItem ToplistItem
 		if rankAlreadyExists(existingListItemRanks, newListItems[i].Rank) {
 			updateQuery := `

@@ -26,6 +26,7 @@ type ToplistItem struct {
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	Image       []byte   `json:"-"`
 }
 
 type User struct {

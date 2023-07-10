@@ -36,7 +36,6 @@ function Toplist() {
                     `${import.meta.env.VITE_API_URL}/toplists/${id}`
                 );
                 setToplist(response.data);
-                console.log(response.data);
             } catch (error) {
                 console.error(error);
             }
@@ -46,7 +45,6 @@ function Toplist() {
             updateToplistViews();
         }
         fetchData();
-        console.log(toplist);
     }, []);
     return (
         <>
