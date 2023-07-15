@@ -54,12 +54,16 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const storedAuthUser = localStorage.getItem("authUser");
-        const storedIsLoggedIn = localStorage.getItem("accessToken");
+        const storedAccessToken = localStorage.getItem("accessToken");
+        const storedRefreshToken = localStorage.getItem("refreshToken");
 
-        if (storedAuthUser && storedIsLoggedIn) {
+        if (storedAuthUser && storedAccessToken && storedRefreshToken) {
             const authUser = JSON.parse(storedAuthUser);
             setAuthUser(authUser);
             setIsLoggedIn(true);
+        } else {
+            setAuthUser(null);
+            setIsLoggedIn(false);
         }
     }, []);
 

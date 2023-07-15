@@ -9,13 +9,24 @@ function EditToplistItems() {
     const toplist = location.state || {};
 
     const [items, setItems] = useState(
-        toplist.items || [{ title: "", description: "", rank: 1, imageURL: "" }]
+        toplist.items || [
+            { title: "", description: "", rank: 1, image_path: "" },
+        ]
     );
 
     const handleItemChange = (index, field, value) => {
         setItems((prevItems) =>
             prevItems.map((item, i) =>
-                i === index ? { ...item, [field]: value } : item
+                i === index
+                    ? field === "image_path" && value === ""
+                        ? {
+                              ...item,
+                              [field]: value,
+                              newImageURL: null,
+                              newImageFile: null,
+                          }
+                        : { ...item, [field]: value }
+                    : item
             )
         );
     };
@@ -24,8 +35,8 @@ function EditToplistItems() {
         const newItems = [...items];
         newItems[index] = {
             ...newItems[index],
-            imageURL: URL.createObjectURL(file),
-            imageFile: file,
+            newImageURL: URL.createObjectURL(file),
+            newImageFile: file,
         };
         setItems(newItems);
     };
@@ -67,11 +78,11 @@ function EditToplistItems() {
                         item.description
                     );
                     formData.append(`items[${index}][rank]`, item.rank);
-                    if (item.imageFile) {
+                    if (item.newImageFile) {
                         console.log("apending image");
                         formData.append(
                             `items[${index}][image]`,
-                            item.imageFile
+                            item.newImageFile
                         );
                     }
                 });
@@ -106,6 +117,12 @@ function EditToplistItems() {
     };
 
     const renderItem = (item, index) => {
+        let imageSource;
+        if (item.newImageURL) {
+            imageSource = item.newImageURL;
+        } else if (item.image_path !== "") {
+            imageSource = `http://localhost:8080/images/${item.list_id}/${item.image_path}`;
+        }
         return (
             <Card
                 key={index}
@@ -114,19 +131,20 @@ function EditToplistItems() {
                 }}
             >
                 <Row>
-                    <Col xs={4} md={3}>
-                        <div
-                            className="image-box"
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                border: "2px solid #ccc",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                cursor: "pointer",
-                                position: "relative",
-                            }}
+                    <Col xs={6} md={6}>
+                        {imageSource && (
+                            <img
+                                src={imageSource}
+                                alt={`Item ${index + 1}`}
+                                style={{
+                                    width: "80%",
+                                    height: "60%",
+                                    objectFit: "contain",
+                                    marginBottom: "1rem",
+                                }}
+                            />
+                        )}
+                        <Button
                             onClick={() => {
                                 const fileInput =
                                     document.createElement("input");
@@ -143,38 +161,22 @@ function EditToplistItems() {
                                 fileInput.click();
                             }}
                         >
-                            {item.imageURL && (
-                                <>
-                                    <img
-                                        src={item.imageURL || item.imageFile}
-                                        alt={`Item ${index + 1}`}
-                                        style={{
-                                            maxWidth: "100%",
-                                            maxHeight: "100%",
-                                        }}
-                                    />
-
-                                    <div
-                                        className="change-image-text"
-                                        style={{
-                                            position: "absolute",
-                                            bottom: "0.5rem",
-                                            background: "#fff",
-                                            color: "#000",
-                                            padding: "0.5rem",
-                                            textAlign: "center",
-                                            width: "100%",
-                                            fontSize: "14px",
-                                        }}
-                                    >
-                                        Change Image
-                                    </div>
-                                </>
-                            )}
-                            {!item.imageURL && <span>Upload Image</span>}
-                        </div>
+                            {imageSource ? "Change Image" : "Upload Image"}
+                        </Button>
+                        {imageSource && (
+                            <Button
+                                variant="danger"
+                                style={{ marginLeft: "1rem" }}
+                                onClick={() => {
+                                    handleItemChange(index, "image_path", "");
+                                    handleItemChange(index, "newImageURL", "");
+                                }}
+                            >
+                                Remove Image
+                            </Button>
+                        )}
                     </Col>
-                    <Col xs={8} md={9}>
+                    <Col xs={6} md={6}>
                         <Card.Body>
                             <Card.Title>Rank: {item.rank}</Card.Title>
                             <Form.Group controlId={`title-${index}`}>
@@ -230,7 +232,7 @@ function EditToplistItems() {
     };
 
     return (
-        <Container style={{ maxWidth: "50%", margin: "3rem auto" }}>
+        <Container style={{ maxWidth: "75%", margin: "3rem auto" }}>
             {items.map(renderItem)}
             <Button variant="primary" onClick={handleAddItem}>
                 Add Item

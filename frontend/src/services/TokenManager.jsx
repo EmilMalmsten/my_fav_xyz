@@ -1,9 +1,12 @@
 import { useEffect } from "react";
 import jwtDecode from "jwt-decode";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 function TokenManager() {
-    const checkTokenExpiry = () => {
+    const { logout } = useAuth();
+
+    const checkAccessTokenExpiry = () => {
         const accessToken = localStorage.getItem("accessToken");
         if (
             !accessToken ||
@@ -14,7 +17,7 @@ function TokenManager() {
             return;
         }
 
-        const decodedToken = decodeAccessToken(accessToken);
+        const decodedToken = decodeJWT(accessToken);
         const currentTime = Math.floor(Date.now() / 1000); // ms to s
         if (decodedToken.exp < currentTime) {
             console.log("token expired, refreshing token");
@@ -26,9 +29,31 @@ function TokenManager() {
         console.log("not expired!");
     };
 
-    const decodeAccessToken = (accessToken) => {
+    const checkRefreshTokenExpiry = () => {
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (
+            !refreshToken ||
+            refreshToken === "undefined" ||
+            refreshToken === "null"
+        ) {
+            console.log("no access token");
+            return;
+        }
+
+        const decodedToken = decodeJWT(refreshToken);
+        const currentTime = Math.floor(Date.now() / 1000); // ms to s
+        if (decodedToken.exp < currentTime) {
+            console.log("refresh token expired");
+            logout();
+            return;
+        }
+
+        console.log("not expired!");
+    };
+
+    const decodeJWT = (token) => {
         try {
-            const decodedToken = jwtDecode(accessToken);
+            const decodedToken = jwtDecode(token);
             return decodedToken;
         } catch (error) {
             console.error("Error decoding access token:", error);
@@ -59,8 +84,10 @@ function TokenManager() {
     };
 
     useEffect(() => {
-        checkTokenExpiry();
-        const interval = setInterval(checkTokenExpiry, 20000); // 1 minute interval
+        checkAccessTokenExpiry();
+        checkRefreshTokenExpiry();
+        console.log("token manager useEffect");
+        const interval = setInterval(checkAccessTokenExpiry, 20000); // 1 minute interval
 
         return () => clearInterval(interval);
     }, []);

@@ -35,6 +35,7 @@ function Toplist() {
                 const response = await axios.get(
                     `${import.meta.env.VITE_API_URL}/toplists/${id}`
                 );
+                console.log(response.data);
                 setToplist(response.data);
             } catch (error) {
                 console.error(error);
@@ -51,7 +52,8 @@ function Toplist() {
             <div style={{ display: "flex", alignItems: "center" }}>
                 <h1>{toplist.title}</h1>
 
-                {isLoggedIn && toplist.userId === authUser.id ? (
+                {isLoggedIn &&
+                Number(toplist.user_id) === Number(authUser.userID) ? (
                     <button onClick={handleToplistEdit}>Edit</button>
                 ) : null}
             </div>
@@ -59,15 +61,30 @@ function Toplist() {
             {toplist.items && (
                 <ol>
                     {toplist.items.map((item) => (
-                        <li key={item.item_id}>{item.title}</li>
+                        <li key={item.item_id}>
+                            {item.title}
+                            {item.description}
+                            {item.image_path && (
+                                <img
+                                    src={`http://localhost:8080/images/${item.list_id}/${item.image_path}`}
+                                    alt={item.title}
+                                    width="100"
+                                    height="100"
+                                />
+                            )}
+                        </li>
                     ))}
                 </ol>
             )}
-            {toplist.items === null ? (
-                <button onClick={handleToplistItems}>Add items</button>
-            ) : (
-                <button onClick={handleToplistItems}>Edit items</button>
-            )}
+
+            {isLoggedIn &&
+            Number(toplist.user_id) === Number(authUser.userID) ? (
+                toplist.items === null ? (
+                    <button onClick={handleToplistItems}>Add items</button>
+                ) : (
+                    <button onClick={handleToplistItems}>Edit items</button>
+                )
+            ) : null}
         </>
     );
 }

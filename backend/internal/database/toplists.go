@@ -158,9 +158,10 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 
 	var updatedItems []ToplistItem
 	for i := range newListItems {
-
+		
 		err = dbCfg.saveImage(newListItems[i], listId)
 		if err != nil {
+			fmt.Println(err)
 			return []ToplistItem{}, err
 		}
 
@@ -277,7 +278,13 @@ func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
 		return toplist, err
 	}
 
-	toplist.Items = toplistItems
+	toplistItemsWithImgPaths, err := dbCfg.setImagePaths(toplistItems, listId)
+	if err != nil {
+		fmt.Println(err)
+		return toplist, err
+	}
+
+	toplist.Items = toplistItemsWithImgPaths
 	return toplist, nil
 }
 

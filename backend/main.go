@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 	"github.com/go-chi/chi"
@@ -71,6 +72,8 @@ func main() {
 	router.Post("/api/refresh", apiCfg.handlerRefresh)
 	router.Post("/api/revoke", apiCfg.handlerRevoke)
 
+	FileServer(router, "/images", http.Dir("./internal/database/images"))
+
 	srv := &http.Server{
 		Handler: router,
 		Addr:    serverAddress,
@@ -81,4 +84,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func FileServer(r chi.Router, path string, root http.FileSystem) {
+    if strings.ContainsAny(path, "{}*") {
+		panic("FileServer does not permit URL parameters.")
+	}
+
+	fs := http.StripPrefix(path, http.FileServer(root))
+
+	r.Get(path+"/*", func(w http.ResponseWriter, r *http.Request) {
+		fs.ServeHTTP(w, r)
+	})
 }
