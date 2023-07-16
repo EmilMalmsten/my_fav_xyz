@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Container, Card, Form, Button, Row, Col } from "react-bootstrap";
+import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
+import ToplistItemImage from "../components/ToplistItemImage";
 
 function EditToplistItems() {
     const location = useLocation();
@@ -116,35 +117,52 @@ function EditToplistItems() {
         });
     };
 
+    const handleMoveUp = (index) => {
+        setItems((prevItems) => {
+            if (index === 0) return prevItems;
+            let newArray = [...prevItems];
+            const temp = newArray[index];
+            newArray[index] = newArray[index - 1];
+            newArray[index - 1] = temp;
+
+            // Update the rank of each item based on its new position
+            newArray = newArray.map((item, i) => ({ ...item, rank: i + 1 }));
+
+            return newArray;
+        });
+    };
+
+    const handleMoveDown = (index) => {
+        setItems((prevItems) => {
+            if (index === prevItems.length - 1) return prevItems;
+            let newArray = [...prevItems];
+            const temp = newArray[index];
+            newArray[index] = newArray[index + 1];
+            newArray[index + 1] = temp;
+
+            // Update the rank of each item based on its new position
+            newArray = newArray.map((item, i) => ({ ...item, rank: i + 1 }));
+
+            return newArray;
+        });
+    };
     const renderItem = (item, index) => {
         let imageSource;
         if (item.newImageURL) {
             imageSource = item.newImageURL;
-        } else if (item.image_path !== "") {
+        } else if (item.image_path) {
             imageSource = `http://localhost:8080/images/${item.list_id}/${item.image_path}`;
         }
+
         return (
-            <Card
-                key={index}
-                style={{
-                    marginBottom: "1rem",
-                }}
-            >
+            <>
                 <Row>
-                    <Col xs={6} md={6}>
-                        {imageSource && (
-                            <img
-                                src={imageSource}
-                                alt={`Item ${index + 1}`}
-                                style={{
-                                    width: "80%",
-                                    height: "60%",
-                                    objectFit: "contain",
-                                    marginBottom: "1rem",
-                                }}
-                            />
-                        )}
-                        <Button
+                    <Col xs={1}>
+                        <h4>{item.rank}</h4>
+                    </Col>
+                    <Col xs={2} className="py-4">
+                        <ToplistItemImage item={item} />
+                        <span
                             onClick={() => {
                                 const fileInput =
                                     document.createElement("input");
@@ -160,88 +178,121 @@ function EditToplistItems() {
                                 };
                                 fileInput.click();
                             }}
+                            className="emojiBtn"
                         >
-                            {imageSource ? "Change Image" : "Upload Image"}
-                        </Button>
+                            ✏️
+                        </span>
                         {imageSource && (
-                            <Button
-                                variant="danger"
-                                style={{ marginLeft: "1rem" }}
+                            <span
                                 onClick={() => {
                                     handleItemChange(index, "image_path", "");
                                     handleItemChange(index, "newImageURL", "");
                                 }}
+                                className="emojiBtn"
                             >
-                                Remove Image
-                            </Button>
+                                🗑️
+                            </span>
                         )}
                     </Col>
-                    <Col xs={6} md={6}>
-                        <Card.Body>
-                            <Card.Title>Rank: {item.rank}</Card.Title>
-                            <Form.Group controlId={`title-${index}`}>
-                                <Form.Label>Title</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={item.title}
-                                    required
-                                    maxLength="100"
-                                    onChange={(e) =>
-                                        handleItemChange(
-                                            index,
-                                            "title",
-                                            e.target.value
-                                        )
-                                    }
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Please provide a title (up to 100
-                                    characters).
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group controlId={`description-${index}`}>
-                                <Form.Label>Description</Form.Label>
-                                <Form.Control
-                                    as="textarea"
-                                    rows={3}
-                                    maxLength="1000"
-                                    value={item.description}
-                                    onChange={(e) =>
-                                        handleItemChange(
-                                            index,
-                                            "description",
-                                            e.target.value
-                                        )
-                                    }
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Description can have up to 1000 characters.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Button
-                                variant="danger"
-                                onClick={() => handleRemoveItem(index)}
+                    <Col xs={8}>
+                        <Form.Group controlId={`title-${index}`}>
+                            <Form.Label>Title</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={item.title}
+                                required
+                                maxLength="100"
+                                onChange={(e) =>
+                                    handleItemChange(
+                                        index,
+                                        "title",
+                                        e.target.value
+                                    )
+                                }
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please provide a title (up to 100 characters).
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group controlId={`description-${index}`}>
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={3}
+                                maxLength="1000"
+                                value={item.description}
+                                onChange={(e) =>
+                                    handleItemChange(
+                                        index,
+                                        "description",
+                                        e.target.value
+                                    )
+                                }
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Description can have up to 1000 characters.
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                    <Col
+                        xs={1}
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <span
+                            className="emojiBtn"
+                            onClick={() => handleRemoveItem(index)}
+                        >
+                            ❌
+                        </span>
+                        {index !== 0 && (
+                            <span
+                                className="emojiBtn"
+                                onClick={() => handleMoveUp(index)}
                             >
-                                Remove
-                            </Button>
-                        </Card.Body>
+                                🔼
+                            </span>
+                        )}
+                        {index !== items.length - 1 && (
+                            <span
+                                className="emojiBtn"
+                                onClick={() => handleMoveDown(index)}
+                            >
+                                🔽
+                            </span>
+                        )}
                     </Col>
                 </Row>
-            </Card>
+                <hr />
+            </>
         );
     };
 
     return (
         <Container style={{ maxWidth: "75%", margin: "3rem auto" }}>
             {items.map(renderItem)}
-            <Button variant="primary" onClick={handleAddItem}>
+            <Button
+                className="m-2"
+                variant="outline-primary"
+                onClick={handleAddItem}
+            >
                 Add Item
             </Button>
-            <Button variant="warning" onClick={handleCancel}>
-                Cancel
+            <Button
+                className="m-2"
+                variant="outline-secondary"
+                onClick={handleCancel}
+            >
+                Cancel Edit
             </Button>
-            <Button variant="success" onClick={handleSave}>
-                Save
+            <Button
+                className="m-2"
+                variant="outline-success"
+                onClick={handleSave}
+            >
+                Save Changes
             </Button>
         </Container>
     );

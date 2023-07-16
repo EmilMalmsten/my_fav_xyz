@@ -3,6 +3,8 @@ import axios from "axios";
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Container, Col, Row, Button } from "react-bootstrap";
+import ToplistItemImage from "../components/ToplistItemImage";
 
 function Toplist() {
     const [toplist, setToplist] = useState({});
@@ -49,42 +51,56 @@ function Toplist() {
     }, []);
     return (
         <>
-            <div style={{ display: "flex", alignItems: "center" }}>
-                <h1>{toplist.title}</h1>
+            <Container style={{ maxWidth: "75%", margin: "3rem auto" }}>
+                <div
+                    className="my-4"
+                    style={{ display: "flex", alignItems: "center" }}
+                >
+                    <h1>{toplist.title}</h1>
+
+                    {isLoggedIn &&
+                    Number(toplist.user_id) === Number(authUser.userID) ? (
+                        <span className="mx-2" onClick={handleToplistEdit}>
+                            ✏️
+                        </span>
+                    ) : null}
+                </div>
+                <p>{toplist.description}</p>
+                {toplist.items && (
+                    <ol>
+                        {toplist.items.map((item) => (
+                            <>
+                                <Row key={item.item_id}>
+                                    <Col xs={1}>
+                                        <h4>{item.rank}</h4>
+                                    </Col>
+                                    <Col xs={2}>
+                                        <ToplistItemImage item={item} />
+                                    </Col>
+                                    <Col xs={9}>
+                                        <h5>{item.title}</h5>
+                                        <p>{item.description}</p>
+                                    </Col>
+                                </Row>
+                                <hr />
+                            </>
+                        ))}
+                    </ol>
+                )}
 
                 {isLoggedIn &&
                 Number(toplist.user_id) === Number(authUser.userID) ? (
-                    <button onClick={handleToplistEdit}>Edit</button>
+                    toplist.items === null ? (
+                        <Button variant="primary" onClick={handleToplistItems}>
+                            Add items
+                        </Button>
+                    ) : (
+                        <Button variant="primary" onClick={handleToplistItems}>
+                            Edit items
+                        </Button>
+                    )
                 ) : null}
-            </div>
-            <p>{toplist.description}</p>
-            {toplist.items && (
-                <ol>
-                    {toplist.items.map((item) => (
-                        <li key={item.item_id}>
-                            {item.title}
-                            {item.description}
-                            {item.image_path && (
-                                <img
-                                    src={`http://localhost:8080/images/${item.list_id}/${item.image_path}`}
-                                    alt={item.title}
-                                    width="100"
-                                    height="100"
-                                />
-                            )}
-                        </li>
-                    ))}
-                </ol>
-            )}
-
-            {isLoggedIn &&
-            Number(toplist.user_id) === Number(authUser.userID) ? (
-                toplist.items === null ? (
-                    <button onClick={handleToplistItems}>Add items</button>
-                ) : (
-                    <button onClick={handleToplistItems}>Edit items</button>
-                )
-            ) : null}
+            </Container>
         </>
     );
 }
