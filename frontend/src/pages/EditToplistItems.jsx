@@ -79,8 +79,13 @@ function EditToplistItems() {
                         item.description
                     );
                     formData.append(`items[${index}][rank]`, item.rank);
+                    if (item.image_path) {
+                        formData.append(
+                            `items[${index}][path]`,
+                            item.image_path
+                        );
+                    }
                     if (item.newImageFile) {
-                        console.log("apending image");
                         formData.append(
                             `items[${index}][image]`,
                             item.newImageFile
@@ -162,37 +167,50 @@ function EditToplistItems() {
                     </Col>
                     <Col xs={2} className="py-4">
                         <ToplistItemImage item={item} />
-                        <span
-                            onClick={() => {
-                                const fileInput =
-                                    document.createElement("input");
-                                fileInput.type = "file";
-                                fileInput.accept = "image/*";
-                                fileInput.onchange = (e) => {
-                                    if (e.target.files && e.target.files[0]) {
-                                        handleImageUpload(
-                                            index,
-                                            e.target.files[0]
-                                        );
-                                    }
-                                };
-                                fileInput.click();
-                            }}
-                            className="emojiBtn"
-                        >
-                            ✏️
-                        </span>
-                        {imageSource && (
+                        <div style={{ display: "flex" }}>
                             <span
                                 onClick={() => {
-                                    handleItemChange(index, "image_path", "");
-                                    handleItemChange(index, "newImageURL", "");
+                                    const fileInput =
+                                        document.createElement("input");
+                                    fileInput.type = "file";
+                                    fileInput.accept = "image/*";
+                                    fileInput.onchange = (e) => {
+                                        if (
+                                            e.target.files &&
+                                            e.target.files[0]
+                                        ) {
+                                            handleImageUpload(
+                                                index,
+                                                e.target.files[0]
+                                            );
+                                        }
+                                    };
+                                    fileInput.click();
                                 }}
                                 className="emojiBtn"
                             >
-                                🗑️
+                                ✏️
                             </span>
-                        )}
+                            {imageSource && (
+                                <span
+                                    onClick={() => {
+                                        handleItemChange(
+                                            index,
+                                            "image_path",
+                                            ""
+                                        );
+                                        handleItemChange(
+                                            index,
+                                            "newImageURL",
+                                            ""
+                                        );
+                                    }}
+                                    className="emojiBtn"
+                                >
+                                    🗑️
+                                </span>
+                            )}
+                        </div>
                     </Col>
                     <Col xs={8}>
                         <Form.Group controlId={`title-${index}`}>

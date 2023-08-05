@@ -9,6 +9,8 @@ import ToplistsByCategory from "./components/ToplistsByCategory";
 import { useAuth } from "./context/AuthContext";
 import EditToplist from "./pages/EditToplist";
 import EditToplistItems from "./pages/EditToplistItems";
+import EditUser from "./pages/EditUser";
+import ViewUser from "./pages/ViewUser";
 
 const ProtectedRoute = ({ element }) => {
     const { isLoggedIn } = useAuth();
@@ -44,6 +46,14 @@ const routes = [
     {
         path: "/toplists/create",
         element: <ProtectedRoute element={<CreateToplist />} />,
+    },
+    {
+        path: "/users/:id/edit",
+        element: <ProtectedRoute element={<EditUser />} />,
+    },
+    {
+        path: "/users/:id",
+        element: <ViewUser />,
     },
     {
         path: "/toplists/:id/edit",

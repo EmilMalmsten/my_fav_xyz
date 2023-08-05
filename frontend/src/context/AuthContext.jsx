@@ -11,27 +11,23 @@ export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const login = async (email, password) => {
-        try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/login`,
-                {
-                    email,
-                    password,
-                }
-            );
-            const user = {
-                email: response.data.user.email,
-                userID: response.data.user.id,
-                createdAt: response.data.user.created_at,
-            };
-            localStorage.setItem("accessToken", response.data.token);
-            localStorage.setItem("refreshToken", response.data.refresh_token);
-            localStorage.setItem("authUser", JSON.stringify(user));
-            setIsLoggedIn(true);
-            setAuthUser(user);
-        } catch (e) {
-            console.log(e);
-        }
+        const response = await axios.post(
+            `${import.meta.env.VITE_API_URL}/login`,
+            {
+                email,
+                password,
+            }
+        );
+        const user = {
+            email: response.data.user.email,
+            userID: response.data.user.id,
+            createdAt: response.data.user.created_at,
+        };
+        localStorage.setItem("accessToken", response.data.token);
+        localStorage.setItem("refreshToken", response.data.refresh_token);
+        localStorage.setItem("authUser", JSON.stringify(user));
+        setIsLoggedIn(true);
+        setAuthUser(user);
     };
 
     const logout = async () => {

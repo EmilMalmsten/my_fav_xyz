@@ -7,7 +7,9 @@ function ToplistItemImage({ item }) {
     if (item.newImageURL) {
         src = item.newImageURL;
     } else if (item.image_path) {
-        src = `http://localhost:8080/images/${item.list_id}/${item.image_path}`;
+        src = `http://localhost:8080/images/${item.list_id}/${
+            item.image_path
+        }?v=${Date.now()}`;
     } else {
         src = defaultImage;
     }

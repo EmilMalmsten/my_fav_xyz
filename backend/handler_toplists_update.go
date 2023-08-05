@@ -17,6 +17,8 @@ func (cfg *apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+
+
 	toplistIDStr := r.FormValue("id")
 	toplistID, err := strconv.Atoi(toplistIDStr)
 	if err != nil {
@@ -46,6 +48,7 @@ func (cfg *apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reque
 		item := toplistItemRequest{
 			Title:       r.FormValue(key + "title]"),
 			Description: r.FormValue(key + "description]"),
+			ImagePath: 	 r.FormValue(key + "path]"),
 			Rank:        -1, // Set a default value for Rank
 		}
 

@@ -13,7 +13,7 @@ function Login() {
     const handleLogin = async (event) => {
         event.preventDefault();
         try {
-            login(email, password);
+            await login(email, password);
             navigate("/");
         } catch (error) {
             console.error(error);

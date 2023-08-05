@@ -3,12 +3,18 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function MainNavbar() {
     const { logout, authUser, isLoggedIn } = useAuth();
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         logout();
+    };
+
+    const handleViewUser = () => {
+        navigate(`/users/${authUser.userID}`);
     };
 
     return (
@@ -32,9 +38,9 @@ function MainNavbar() {
                         )}
                         {isLoggedIn && (
                             <>
-                                <Navbar.Text className="nav-link-style">
+                                <Nav.Link onClick={handleViewUser}>
                                     {authUser.email}
-                                </Navbar.Text>
+                                </Nav.Link>
                                 <Nav.Link onClick={handleLogout}>
                                     Logout
                                 </Nav.Link>

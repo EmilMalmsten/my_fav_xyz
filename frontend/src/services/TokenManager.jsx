@@ -86,7 +86,6 @@ function TokenManager() {
     useEffect(() => {
         checkAccessTokenExpiry();
         checkRefreshTokenExpiry();
-        console.log("token manager useEffect");
         const interval = setInterval(checkAccessTokenExpiry, 20000); // 1 minute interval
 
         return () => clearInterval(interval);
