@@ -395,10 +395,15 @@ func (dbCfg *DbConfig) ListToplistsByProperty(limit int, property string) ([]Top
 		if err != nil {
 			return []Toplist{}, err
 		}
-		toplist.Items, err = dbCfg.GetToplistItems(toplist.ToplistID)
+		toplistItems, err := dbCfg.GetToplistItems(toplist.ToplistID)
 		if err != nil {
 			return []Toplist{}, err
 		}
+		toplistItemsWithImgPaths, err := dbCfg.setImagePaths(toplistItems, toplist.ToplistID)
+		if err != nil {
+			return []Toplist{}, err
+		}
+		toplist.Items = toplistItemsWithImgPaths
 		toplists = append(toplists, toplist)
 	}
 
