@@ -3,6 +3,7 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainNavbar from "./components/MainNavbar";
+import Footer from "./components/Footer";
 import routes from "./routes";
 import TokenManager from "./services/TokenManager";
 
@@ -21,6 +22,7 @@ function App() {
                         />
                     ))}
                 </Routes>
+                <Footer />
             </BrowserRouter>
         </React.StrictMode>
     );
