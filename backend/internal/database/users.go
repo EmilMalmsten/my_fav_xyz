@@ -22,16 +22,16 @@ func (dbCfg *DbConfig) InsertUser(user User) (User, error) {
 	return insertedUser, nil
 }
 
-func (dbCfg *DbConfig) UpdateUser(userID int, email, hashedPassword string) (User, error) {
+func (dbCfg *DbConfig) UpdateUserEmail(userID int, email string) (User, error) {
 	updateQuery := `
-		UPDATE users SET email = $1, hashed_password = $2
-		WHERE id = $3
+		UPDATE users SET email = $1
+		WHERE id = $2
 		RETURNING id, email, hashed_password, created_at
 	`
 
 	var updatedUser User
 
-	err := dbCfg.database.QueryRow(updateQuery, email, hashedPassword, userID).Scan(
+	err := dbCfg.database.QueryRow(updateQuery, email, userID).Scan(
 		&updatedUser.ID,
 		&updatedUser.Email,
 		&updatedUser.HashedPassword,

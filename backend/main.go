@@ -65,7 +65,7 @@ func main() {
 	router.Post("/api/toplists/views/{toplistID}", apiCfg.handlerToplistsViews)
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
-	router.With(apiCfg.validateJWT).Put("/api/users", apiCfg.handlerUsersUpdate)
+	router.Put("/api/users/email", apiCfg.handlerUsersUpdateEmail)
 	router.With(apiCfg.validateJWT).Delete("/api/users", apiCfg.handlerUsersDelete)
 
 	router.Post("/api/login", apiCfg.handlerLogin)
