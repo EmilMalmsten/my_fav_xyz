@@ -35,3 +35,27 @@ func insertUser(t *testing.T) User {
 func TestInsertUser(t *testing.T) {
 	insertUser(t)
 }
+
+func TestUpdateUserPassword(t *testing.T) {
+	user := insertUser(t)
+	newHashedPassword := "qjiwoqe347u834jdfhwe"
+
+	updatedUser, err := dbTestConfig.UpdateUserPassword(user.ID, newHashedPassword)
+	require.NoError(t, err)
+	require.NotZero(t, updatedUser)
+	require.Equal(t, user.Email, updatedUser.Email)
+	require.Equal(t, user.ID, updatedUser.ID)
+	require.Equal(t, newHashedPassword, updatedUser.HashedPassword)
+}
+
+func TestUpdateUserEmail(t *testing.T) {
+	user := insertUser(t)
+	newEmail := "new_email@gmail.com"
+
+	updatedUser, err := dbTestConfig.UpdateUserEmail(user.ID, newEmail)
+	require.NoError(t, err)
+	require.NotZero(t, updatedUser)
+	require.Equal(t, newEmail, updatedUser.Email)
+	require.Equal(t, user.ID, updatedUser.ID)
+	require.Equal(t, user.HashedPassword, updatedUser.HashedPassword)
+}

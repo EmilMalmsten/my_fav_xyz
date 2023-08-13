@@ -44,6 +44,28 @@ func (dbCfg *DbConfig) UpdateUserEmail(userID int, email string) (User, error) {
 	return updatedUser, nil
 }
 
+func (dbCfg *DbConfig) UpdateUserPassword(userID int, hashedPassword string) (User, error) {
+	updateQuery := `
+		UPDATE users SET hashed_password = $1
+		WHERE id = $2
+		RETURNING id, email, hashed_password, created_at
+	`
+
+	var updatedUser User
+
+	err := dbCfg.database.QueryRow(updateQuery, hashedPassword, userID).Scan(
+		&updatedUser.ID,
+		&updatedUser.Email,
+		&updatedUser.HashedPassword,
+		&updatedUser.CreatedAt,
+	)
+	if err != nil {
+		return User{}, err
+	}
+
+	return updatedUser, nil
+}
+
 func (dbCfg *DbConfig) GetUserByEmail(email string) (User, error) {
 	query := `
 		SELECT id, email, hashed_password, created_at 

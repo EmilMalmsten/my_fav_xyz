@@ -15,6 +15,12 @@ type updateUserEmailRequest struct {
 	Password string `json:"password"`
 }
 
+type updateUserPasswordRequest struct {
+	OldPassword    string `json:"old_password"`
+	NewPassword    string `json:"new_password"`
+	Email string `json:"email"`
+}
+
 func (cfg *apiConfig) handlerUsersUpdateEmail(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	updateUserEmailRequest := updateUserEmailRequest{}
@@ -50,7 +56,43 @@ func (cfg *apiConfig) handlerUsersUpdateEmail(w http.ResponseWriter, r *http.Req
 		CreatedAt: updatedUser.CreatedAt,
 	}
 
-	fmt.Println(updatedUserResp)
-
 	respondWithJSON(w, http.StatusOK, updatedUserResp)
+}
+
+func (cfg *apiConfig) handlerUsersUpdatePassword(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	updateUserPasswordRequest := updateUserPasswordRequest{}
+	err := decoder.Decode(&updateUserPasswordRequest)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		return
+	}
+
+	dbUser, err := cfg.DB.GetUserByEmail(updateUserPasswordRequest.Email)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't get user")
+		return
+	}
+
+	err = auth.CheckPasswordHash(updateUserPasswordRequest.OldPassword, dbUser.HashedPassword)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Invalid password")
+		return
+	}
+
+	newPasswordHashed, err := auth.HashPassword(updateUserPasswordRequest.NewPassword)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't hash password")
+		return
+	}
+
+	_ , err = cfg.DB.UpdateUserPassword(dbUser.ID, newPasswordHashed)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't update user")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, struct{}{})
 }

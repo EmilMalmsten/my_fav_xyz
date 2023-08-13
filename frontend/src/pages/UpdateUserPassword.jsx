@@ -4,13 +4,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-function UpdateUserEmail() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+function UpdateUserPassword() {
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [repeatNewPassword, setRepeatNewPassword] = useState("");
     const [showFailureAlert, setShowFailureAlert] = useState(false);
     const [failureAlertMessage, setFailureAlertMessage] = useState("");
     const navigate = useNavigate();
-    const { authUser, updateUserInfo } = useAuth();
+    const { authUser } = useAuth();
 
     const handleCancel = () => {
         navigate(`/users/${authUser.userID}`);
@@ -21,21 +22,16 @@ function UpdateUserEmail() {
         const form = event.target;
         if (form.checkValidity()) {
             try {
-                const response = await axios.put(
-                    `${import.meta.env.VITE_API_URL}/users/email`,
+                await axios.put(
+                    `${import.meta.env.VITE_API_URL}/users/password`,
                     {
-                        old_email: authUser.email,
-                        new_email: email,
-                        password: password,
+                        old_password: currentPassword,
+                        new_password: newPassword,
+                        email: authUser.email,
                     }
                 );
-                updateUserInfo(
-                    response.data.email,
-                    response.data.id,
-                    response.data.created_at
-                );
                 navigate("/", {
-                    state: { successAlert: "Email updated successfully" },
+                    state: { successAlert: "Password updated successfully" },
                 });
             } catch (error) {
                 console.error(error);
@@ -45,7 +41,7 @@ function UpdateUserEmail() {
                 } else {
                     setShowFailureAlert(true);
                     setFailureAlertMessage(
-                        "Email update failed. Please try again."
+                        "Password update failed. Please try again."
                     );
                 }
             }
@@ -71,37 +67,63 @@ function UpdateUserEmail() {
                 )}
                 <Form noValidate onSubmit={handleSubmit}>
                     <Form.Group
-                        controlId="email"
-                        style={{ marginBottom: "1rem" }}
-                    >
-                        <Form.Label>Enter New Email</Form.Label>
-                        <Form.Control
-                            required
-                            type="email"
-                            placeholder="Enter email"
-                            value={email}
-                            onChange={(e) => handleInputChange(e, setEmail)}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            Please provide a valid email.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-
-                    <Form.Group
-                        controlId="password"
+                        controlId="currentPassword"
                         style={{ marginBottom: "1rem" }}
                     >
                         <Form.Label>Enter Current Password</Form.Label>
                         <Form.Control
                             required
                             type="password"
-                            placeholder="Enter password"
+                            placeholder="Enter current password"
                             minLength="8"
-                            value={password}
-                            onChange={(e) => handleInputChange(e, setPassword)}
+                            value={currentPassword}
+                            onChange={(e) =>
+                                handleInputChange(e, setCurrentPassword)
+                            }
                         />
                         <Form.Control.Feedback type="invalid">
                             Password must be at least 8 characters.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+
+                    <Form.Group
+                        controlId="newPassword"
+                        style={{ marginBottom: "1rem" }}
+                    >
+                        <Form.Label>Enter New Password</Form.Label>
+                        <Form.Control
+                            required
+                            type="password"
+                            placeholder="Enter new password"
+                            minLength="8"
+                            value={newPassword}
+                            onChange={(e) =>
+                                handleInputChange(e, setNewPassword)
+                            }
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            Password must be at least 8 characters.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+
+                    <Form.Group
+                        controlId="repeatNewPassword"
+                        style={{ marginBottom: "1rem" }}
+                    >
+                        <Form.Label>Repeat New Password</Form.Label>
+                        <Form.Control
+                            required
+                            type="password"
+                            placeholder="Repeat new password"
+                            minLength="8"
+                            value={repeatNewPassword}
+                            onChange={(e) =>
+                                handleInputChange(e, setRepeatNewPassword)
+                            }
+                            pattern={`^${newPassword}$`}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            Passwords do not match.
                         </Form.Control.Feedback>
                     </Form.Group>
 
@@ -121,4 +143,4 @@ function UpdateUserEmail() {
     );
 }
 
-export default UpdateUserEmail;
+export default UpdateUserPassword;
