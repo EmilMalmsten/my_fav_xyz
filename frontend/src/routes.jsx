@@ -9,8 +9,8 @@ import ToplistsByCategory from "./components/ToplistsByCategory";
 import { useAuth } from "./context/AuthContext";
 import EditToplist from "./pages/EditToplist";
 import EditToplistItems from "./pages/EditToplistItems";
-import EditUser from "./pages/EditUser";
-import ViewUser from "./pages/ViewUser";
+import UpdateUserEmail from "./pages/UpdateUserEmail";
+import UserDashboard from "./pages/UserDashboard";
 
 const ProtectedRoute = ({ element }) => {
     const { isLoggedIn } = useAuth();
@@ -48,12 +48,12 @@ const routes = [
         element: <ProtectedRoute element={<CreateToplist />} />,
     },
     {
-        path: "/users/:id/edit",
-        element: <ProtectedRoute element={<EditUser />} />,
+        path: "/users/:id/email",
+        element: <ProtectedRoute element={<UpdateUserEmail />} />,
     },
     {
         path: "/users/:id",
-        element: <ViewUser />,
+        element: <ProtectedRoute element={<UserDashboard />} />,
     },
     {
         path: "/toplists/:id/edit",

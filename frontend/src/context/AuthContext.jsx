@@ -18,16 +18,14 @@ export const AuthProvider = ({ children }) => {
                 password,
             }
         );
-        const user = {
-            email: response.data.user.email,
-            userID: response.data.user.id,
-            createdAt: response.data.user.created_at,
-        };
+        updateUserInfo(
+            response.data.user.email,
+            response.data.user.id,
+            response.data.user.created_at
+        );
         localStorage.setItem("accessToken", response.data.token);
         localStorage.setItem("refreshToken", response.data.refresh_token);
-        localStorage.setItem("authUser", JSON.stringify(user));
         setIsLoggedIn(true);
-        setAuthUser(user);
     };
 
     const logout = async () => {
@@ -48,6 +46,16 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateUserInfo = (email, userID, createdAt) => {
+        const user = {
+            email: email,
+            userID: userID,
+            createdAt: createdAt,
+        };
+        localStorage.setItem("authUser", JSON.stringify(user));
+        setAuthUser(user);
+    };
+
     useEffect(() => {
         const storedAuthUser = localStorage.getItem("authUser");
         const storedAccessToken = localStorage.getItem("accessToken");
@@ -65,6 +73,7 @@ export const AuthProvider = ({ children }) => {
 
     const value = {
         authUser,
+        updateUserInfo,
         login,
         isLoggedIn,
         logout,

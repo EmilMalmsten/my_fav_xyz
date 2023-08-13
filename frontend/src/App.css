@@ -1,3 +1,9 @@
+.main-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 .emojiBtn {
     cursor: pointer;
     padding: 4px;

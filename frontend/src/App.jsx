@@ -12,17 +12,19 @@ function App() {
         <React.StrictMode>
             <TokenManager />
             <BrowserRouter>
-                <MainNavbar />
-                <Routes>
-                    {routes.map((route, index) => (
-                        <Route
-                            key={index}
-                            path={route.path}
-                            element={route.element}
-                        />
-                    ))}
-                </Routes>
-                <Footer />
+                <div className="main-container">
+                    <MainNavbar />
+                    <Routes>
+                        {routes.map((route, index) => (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={route.element}
+                            />
+                        ))}
+                    </Routes>
+                    <Footer />
+                </div>
             </BrowserRouter>
         </React.StrictMode>
     );

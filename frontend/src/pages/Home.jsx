@@ -1,10 +1,21 @@
 import AnimatedTitle from "../components/AnimatedTitle";
 import ToplistCatalog from "../components/ToplistCatalog";
-import { Button, Container, Col, Row } from "react-bootstrap";
+import { Button, Container, Alert } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 
 function Home() {
+    const location = useLocation();
+    const successAlert = location.state && location.state.successAlert;
+
     return (
         <Container style={{ width: "80%", margin: "0 auto" }}>
+            <div className="my-3">
+                {successAlert && (
+                    <Alert variant="success" dismissible>
+                        {successAlert}
+                    </Alert>
+                )}
+            </div>
             <AnimatedTitle />
 
             <ToplistCatalog

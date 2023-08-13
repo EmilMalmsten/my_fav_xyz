@@ -10,6 +10,7 @@ function Footer() {
                 backgroundColor: "#2E2E2E",
                 padding: "50px 0",
                 color: "#fff",
+                marginTop: "auto",
             }}
         >
             <Container>

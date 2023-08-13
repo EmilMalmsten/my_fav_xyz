@@ -1,0 +1,47 @@
+import { useAuth } from "../context/AuthContext";
+import { useParams, useNavigate } from "react-router-dom";
+import { Container, Row, Col, Button } from "react-bootstrap";
+
+function UserDashboard() {
+    const { authUser } = useAuth();
+    const { id } = useParams();
+    const navigate = useNavigate();
+    console.log(authUser, id);
+
+    const handleChangeEmail = () => {
+        navigate(`/users/${authUser.userID}/email`);
+    };
+
+    return (
+        <Container className="text-center my-3">
+            <h2>Dashboard</h2>
+            <Row className="justify-content-center">
+                <Col xs={12} md={6}>
+                    <Button
+                        className="m-2 w-50"
+                        variant="outline-primary"
+                        onClick={handleChangeEmail}
+                    >
+                        Change Email Address
+                    </Button>
+                </Col>
+            </Row>
+            <Row className="justify-content-center">
+                <Col xs={12} md={6}>
+                    <Button className="m-2 w-50" variant="outline-primary">
+                        Change Password
+                    </Button>
+                </Col>
+            </Row>
+            <Row className="justify-content-center">
+                <Col xs={12} md={6}>
+                    <Button className="m-2 w-50" variant="outline-danger">
+                        Delete Account
+                    </Button>
+                </Col>
+            </Row>
+        </Container>
+    );
+}
+
+export default UserDashboard;
