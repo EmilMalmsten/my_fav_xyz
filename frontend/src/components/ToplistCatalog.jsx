@@ -1,12 +1,13 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Container } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import defaultImage from "../assets/defaultItemImage.jpg";
 
 function ToplistCatalog({ title, endpoint }) {
     const [toplists, setToplists] = useState([]);
+    const navigate = useNavigate();
 
     function getImageUrl(toplist) {
         if (toplist && toplist.items && Array.isArray(toplist.items)) {
@@ -21,6 +22,10 @@ function ToplistCatalog({ title, endpoint }) {
         }
         return defaultImage;
     }
+
+    const handleClick = (toplist) => {
+        navigate(`/toplists/${toplist.toplist_id}`);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,43 +51,34 @@ function ToplistCatalog({ title, endpoint }) {
     return (
         <>
             <h5 className="my-3">{title}</h5>
-            <Row>
+
+            <Row style={{ margin: "0 -5px" }}>
                 {toplists.map((toplist) => (
-                    <Col xs={12} sm={6} md={4} lg={3}>
-                        <Link
-                            to={`/toplists/${toplist.toplist_id}`}
-                            style={{ textDecoration: "none" }}
+                    <Col
+                        key={toplist.id}
+                        xs={12}
+                        sm={6}
+                        md={3}
+                        lg={3}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: "5px 5px",
+                        }}
+                    >
+                        <div
+                            className="square-container"
+                            onClick={() => handleClick(toplist)}
+                            style={{
+                                backgroundImage: `url(${getImageUrl(toplist)})`,
+                                backgroundSize: "cover",
+                            }}
                         >
-                            <div className="overlay-container">
-                                <div
-                                    style={{
-                                        backgroundImage: `url(${getImageUrl(
-                                            toplist
-                                        )})`,
-                                        backgroundSize: "cover",
-                                        width: "100%",
-                                        height: "100%",
-                                        position: "absolute",
-                                        zIndex: 1,
-                                    }}
-                                />
-                                <div className="overlay" />
-                                <div
-                                    style={{
-                                        position: "relative",
-                                        zIndex: 3,
-                                        color: "white",
-                                        width: "100%",
-                                        height: "100%",
-                                        display: "flex",
-                                        padding: "0 10px",
-                                        fontSize: "20px",
-                                    }}
-                                >
-                                    {toplist.title}
-                                </div>
+                            <div className="overlay">
+                                <p className="mx-2">{toplist.title}</p>
                             </div>
-                        </Link>
+                        </div>
                     </Col>
                 ))}
             </Row>
