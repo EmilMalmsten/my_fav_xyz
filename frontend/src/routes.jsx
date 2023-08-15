@@ -12,6 +12,7 @@ import EditToplistItems from "./pages/EditToplistItems";
 import UpdateUserEmail from "./pages/UpdateUserEmail";
 import UserDashboard from "./pages/UserDashboard";
 import UpdateUserPassword from "./pages/UpdateUserPassword";
+import DeleteUser from "./pages/DeleteUser";
 
 const ProtectedRoute = ({ element }) => {
     const { isLoggedIn } = useAuth();
@@ -55,6 +56,10 @@ const routes = [
     {
         path: "/users/:id/password",
         element: <ProtectedRoute element={<UpdateUserPassword />} />,
+    },
+    {
+        path: "/users/:id/delete",
+        element: <ProtectedRoute element={<DeleteUser />} />,
     },
     {
         path: "/users/:id",

@@ -16,6 +16,10 @@ function UserDashboard() {
         navigate(`/users/${authUser.userID}/password`);
     };
 
+    const handleDeleteAccount = () => {
+        navigate(`/users/${authUser.userID}/delete`);
+    };
+
     return (
         <Container className="text-center my-3">
             <h2>Dashboard</h2>
@@ -43,7 +47,11 @@ function UserDashboard() {
             </Row>
             <Row className="justify-content-center">
                 <Col xs={12} md={6}>
-                    <Button className="m-2 w-50" variant="outline-danger">
+                    <Button
+                        className="m-2 w-50"
+                        variant="outline-danger"
+                        onClick={handleDeleteAccount}
+                    >
                         Delete Account
                     </Button>
                 </Col>
