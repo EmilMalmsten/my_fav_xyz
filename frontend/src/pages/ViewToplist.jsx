@@ -18,6 +18,33 @@ function Toplist() {
         navigate(`/toplists/${id}/edit`, { state: toplist });
     };
 
+    const handleToplistDelete = async () => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete the toplist?"
+        );
+
+        if (confirmed) {
+            try {
+                const accessToken = localStorage.getItem("accessToken");
+                await axios.delete(
+                    `${import.meta.env.VITE_API_URL}/toplists/${
+                        toplist.toplist_id
+                    }`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
+                navigate("/", {
+                    state: { successAlert: "Toplist deleted successfully" },
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    };
+
     const handleToplistItems = () => {
         navigate(`/toplists/${id}/items`, { state: toplist });
     };
@@ -90,15 +117,30 @@ function Toplist() {
 
                 {isLoggedIn &&
                 Number(toplist.user_id) === Number(authUser.userID) ? (
-                    toplist.items === null ? (
-                        <Button variant="primary" onClick={handleToplistItems}>
-                            Add items
+                    <>
+                        {toplist.items === null ? (
+                            <Button
+                                variant="outline-primary"
+                                onClick={handleToplistItems}
+                            >
+                                Add items
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="outline-primary"
+                                onClick={handleToplistItems}
+                            >
+                                Edit items
+                            </Button>
+                        )}
+
+                        <Button
+                            variant="outline-danger"
+                            onClick={handleToplistDelete}
+                        >
+                            Delete Toplist
                         </Button>
-                    ) : (
-                        <Button variant="primary" onClick={handleToplistItems}>
-                            Edit items
-                        </Button>
-                    )
+                    </>
                 ) : null}
             </Container>
         </>

@@ -34,7 +34,7 @@ function ToplistCatalog({ title, endpoint }) {
                     import.meta.env.VITE_API_URL + endpoint,
                     {
                         params: {
-                            page_size: "8",
+                            page_size: "12",
                         },
                     }
                 );
@@ -55,11 +55,11 @@ function ToplistCatalog({ title, endpoint }) {
             <Row style={{ margin: "0 -5px" }}>
                 {toplists.map((toplist) => (
                     <Col
-                        key={toplist.id}
+                        key={toplist.created_at}
                         xs={12}
                         sm={6}
                         md={3}
-                        lg={3}
+                        lg={2}
                         style={{
                             display: "flex",
                             alignItems: "center",

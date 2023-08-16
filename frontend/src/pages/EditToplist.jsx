@@ -64,10 +64,14 @@ function EditToplist() {
                         required
                     />
                 </Form.Group>
-                <Button variant="primary" onClick={handleSave}>
+                <Button variant="outline-primary" onClick={handleSave}>
                     Save
-                </Button>{" "}
-                <Button variant="secondary" onClick={handleCancel}>
+                </Button>
+                <Button
+                    className="m-2"
+                    variant="outline-secondary"
+                    onClick={handleCancel}
+                >
                     Cancel
                 </Button>
             </Form>
