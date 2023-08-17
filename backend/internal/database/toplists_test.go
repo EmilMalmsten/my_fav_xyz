@@ -167,7 +167,7 @@ func TestUpdateToplist(t *testing.T) {
 
 }
 
-func TestUpdateToplistLonger(t *testing.T) {
+func TestUpdateToplistAddItems(t *testing.T) {
 	toplist1 := insertToplist(t)
 
 	toplist2 := Toplist{
@@ -185,7 +185,8 @@ func TestUpdateToplistLonger(t *testing.T) {
 		Description: "Description 3",
 	})
 
-	toplist2, err := dbTestConfig.UpdateToplist(toplist2)
+	var err error
+	toplist2.Items, err = dbTestConfig.UpdateToplistItems(toplist2.Items, toplist2.ToplistID)
 	require.NoError(t, err)
 
 	require.Greater(t, len(toplist2.Items), len(toplist1.Items))
@@ -201,7 +202,7 @@ func TestUpdateToplistLonger(t *testing.T) {
 	}
 }
 
-func TestUpdateToplistShorter(t *testing.T) {
+func TestUpdateToplistRemoveItems(t *testing.T) {
 	toplist1 := insertToplist(t)
 
 	toplist2 := Toplist{
@@ -228,7 +229,8 @@ func TestUpdateToplistShorter(t *testing.T) {
 
 	toplist2.Items = newItems
 
-	toplist2, err := dbTestConfig.UpdateToplist(toplist2)
+	var err error
+	toplist2.Items, err = dbTestConfig.UpdateToplistItems(toplist2.Items, toplist2.ToplistID)
 	require.NoError(t, err)
 
 	require.Less(t, len(toplist2.Items), len(toplist1.Items))

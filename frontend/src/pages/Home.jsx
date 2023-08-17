@@ -38,6 +38,7 @@ function Home() {
                 title="Recent toplists"
                 endpoint="/toplists/recent"
             />
+            <br />
         </Container>
     );
 }

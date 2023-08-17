@@ -118,17 +118,6 @@ func (dbCfg *DbConfig) UpdateToplist(toplist Toplist) (Toplist, error) {
 		return Toplist{}, err
 	}
 
-	itemsWithImageChangesApplied, err := handleImageChanges(toplist.Items, toplist.ToplistID)
-	if err != nil {
-		return Toplist{}, err
-	}
-
-	updatedItems, err := dbCfg.UpdateToplistItems(itemsWithImageChangesApplied, toplist.ToplistID)
-	if err != nil {
-		return Toplist{}, err
-	}
-
-	updatedToplist.Items = updatedItems
 	return updatedToplist, nil
 }
 
@@ -142,6 +131,12 @@ func rankAlreadyExists(existingRanks []int, rank int) bool {
 }
 
 func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int) ([]ToplistItem, error) {
+
+	newListItems, err := handleImageChanges(newListItems, listId)
+	if err != nil {
+		return []ToplistItem{}, err
+	}
+
 	existingListItems, err := dbCfg.GetToplistItems(listId)
 	if err != nil {
 		return []ToplistItem{}, err

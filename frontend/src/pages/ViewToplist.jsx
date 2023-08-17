@@ -137,6 +137,7 @@ function Toplist() {
                         <Button
                             variant="outline-danger"
                             onClick={handleToplistDelete}
+                            className="mx-2"
                         >
                             Delete Toplist
                         </Button>

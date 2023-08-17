@@ -56,6 +56,7 @@ func main() {
 	router.Use(corsMiddleware.Handler)
 
 	router.With(apiCfg.validateJWT).Post("/api/toplists", apiCfg.handlerToplistsCreate)
+	router.With(apiCfg.validateJWT).Put("/api/toplists/items", apiCfg.handlerToplistsUpdateItems)
 	router.With(apiCfg.validateJWT).Put("/api/toplists", apiCfg.handlerToplistsUpdate)
 	router.With(apiCfg.validateJWT).Delete("/api/toplists/{toplistID}", apiCfg.handlerToplistsDelete)
 	router.Get("/api/toplists/{toplistID}", apiCfg.handlerToplistsGetOne)

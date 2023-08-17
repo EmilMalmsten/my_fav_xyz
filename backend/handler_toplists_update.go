@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -11,13 +12,41 @@ import (
 )
 
 func (cfg *apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Request) {
+	userIDValue := r.Context().Value(userIDKey)
+	userID, ok := userIDValue.(int)
+	if !ok {
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID type")
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var toplist toplistRequest
+	err := decoder.Decode(&toplist)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		return
+	}
+	toplist.UserID = userID
+
+	dbToplist := toplist.ToDBToplist()
+
+	_ , err = cfg.DB.UpdateToplist(dbToplist)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Failed to update toplist")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, struct{}{})
+}
+
+func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Failed to parse form data")
 		return
 	}
-
-
 
 	toplistIDStr := r.FormValue("id")
 	toplistID, err := strconv.Atoi(toplistIDStr)
@@ -100,7 +129,7 @@ func (cfg *apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reque
 
 	dbToplist := toplist.ToDBToplist()
 
-	_, err = cfg.DB.UpdateToplist(dbToplist)
+	_, err = cfg.DB.UpdateToplistItems(dbToplist.Items, dbToplist.ToplistID)
 	if err != nil {
 		if errors.Is(err, database.ErrNotExist) {
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")

@@ -2,7 +2,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 
 function Footer() {
-    const { authUser, isLoggedIn } = useAuth();
+    const { isLoggedIn } = useAuth();
 
     return (
         <div

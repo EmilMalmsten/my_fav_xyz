@@ -23,7 +23,6 @@ function EditToplist() {
                         id: toplist.toplist_id,
                         title: form.elements.formTitle.value,
                         description: form.elements.formDescription.value,
-                        items: toplist.items,
                     },
                     {
                         headers: {
