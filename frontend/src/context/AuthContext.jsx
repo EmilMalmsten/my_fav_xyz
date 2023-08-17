@@ -56,6 +56,18 @@ export const AuthProvider = ({ children }) => {
         setAuthUser(user);
     };
 
+    const getLoginStatus = () => {
+        const storedAuthUser = localStorage.getItem("authUser");
+        const storedAccessToken = localStorage.getItem("accessToken");
+        const storedRefreshToken = localStorage.getItem("refreshToken");
+
+        if (storedAuthUser && storedAccessToken && storedRefreshToken) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
     useEffect(() => {
         const storedAuthUser = localStorage.getItem("authUser");
         const storedAccessToken = localStorage.getItem("accessToken");
@@ -74,6 +86,7 @@ export const AuthProvider = ({ children }) => {
     const value = {
         authUser,
         updateUserInfo,
+        getLoginStatus,
         login,
         isLoggedIn,
         logout,

@@ -15,13 +15,14 @@ import UpdateUserPassword from "./pages/UpdateUserPassword";
 import DeleteUser from "./pages/DeleteUser";
 
 const ProtectedRoute = ({ element }) => {
-    const { isLoggedIn } = useAuth();
+    const { getLoginStatus } = useAuth();
+    const loggedIn = getLoginStatus();
 
-    if (!isLoggedIn) {
+    if (loggedIn) {
+        return element;
+    } else {
         return <Navigate to="/login" />;
     }
-
-    return element;
 };
 
 ProtectedRoute.propTypes = {

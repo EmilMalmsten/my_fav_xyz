@@ -1,3 +1,4 @@
+import React from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
@@ -94,10 +95,10 @@ function Toplist() {
                 </div>
                 <p>{toplist.description}</p>
                 {toplist.items && (
-                    <ol>
+                    <>
                         {toplist.items.map((item) => (
-                            <>
-                                <Row key={item.item_id}>
+                            <React.Fragment key={item.item_id}>
+                                <Row>
                                     <Col xs={1}>
                                         <h4>{item.rank}</h4>
                                     </Col>
@@ -110,9 +111,9 @@ function Toplist() {
                                     </Col>
                                 </Row>
                                 <hr />
-                            </>
+                            </React.Fragment>
                         ))}
-                    </ol>
+                    </>
                 )}
 
                 {isLoggedIn &&

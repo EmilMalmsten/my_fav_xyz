@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function AnimatedTitle() {
+function Searchbar() {
     const texts = [
         "Restaurants in London",
         "Cat cafes in Tokyo",
@@ -85,4 +85,4 @@ function AnimatedTitle() {
     );
 }
 
-export default AnimatedTitle;
+export default Searchbar;

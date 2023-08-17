@@ -1,4 +1,4 @@
-import AnimatedTitle from "../components/AnimatedTitle";
+import Searchbar from "../components/Searchbar";
 import ToplistCatalog from "../components/ToplistCatalog";
 import { Button, Container, Alert } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ function Home() {
                     </Alert>
                 )}
             </div>
-            <AnimatedTitle />
+            <Searchbar />
 
             <ToplistCatalog
                 title="Most popular toplists"

@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import React from "react";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
@@ -160,7 +161,7 @@ function EditToplistItems() {
         }
 
         return (
-            <>
+            <React.Fragment key={item.item_id}>
                 <Row>
                     <Col xs={1}>
                         <h4>{item.rank}</h4>
@@ -284,7 +285,7 @@ function EditToplistItems() {
                     </Col>
                 </Row>
                 <hr />
-            </>
+            </React.Fragment>
         );
     };
 
