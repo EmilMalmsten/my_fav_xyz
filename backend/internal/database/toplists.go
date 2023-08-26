@@ -432,3 +432,37 @@ func (dbCfg *DbConfig) UpdateToplistViews(toplistID int) (Toplist, error) {
 	}
 	return updatedToplist, nil
 }
+
+func (dbCfg *DbConfig) SearchToplists(searchTerm string, limit, offset int) ([]Toplist, error) {
+	query := `
+		SELECT id, title, description, user_id, created_at FROM toplists
+		WHERE title ILIKE '%' || $1 || '%'
+		ORDER BY id desc
+		LIMIT $2
+		OFFSET $3
+	`
+
+	rows, err := dbCfg.database.QueryContext(context.Background(), query, searchTerm, limit, offset)
+	if err != nil {
+		return []Toplist{}, err
+	}
+	defer rows.Close()
+
+	var toplists []Toplist
+	for rows.Next() {
+		var toplist Toplist
+		err := rows.Scan(
+			&toplist.ToplistID,
+			&toplist.Title,
+			&toplist.Description,
+			&toplist.UserID,
+			&toplist.CreatedAt,
+		)
+		if err != nil {
+			return []Toplist{}, err
+		}
+		toplists = append(toplists, toplist)
+	}
+
+	return toplists, nil
+}

@@ -64,6 +64,7 @@ func main() {
 	router.Get("/api/toplists/recent", apiCfg.handlerToplistsGetRecent)
 	router.Get("/api/toplists/popular", apiCfg.handlerToplistsGetPopular)
 	router.Post("/api/toplists/views/{toplistID}", apiCfg.handlerToplistsViews)
+	router.Get("/api/toplists/search", apiCfg.handlerToplistsSearch)
 
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
 	router.Put("/api/users/email", apiCfg.handlerUsersUpdateEmail)

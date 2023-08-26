@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Searchbar() {
     const texts = [
@@ -12,6 +14,7 @@ function Searchbar() {
     const [isErasing, setIsErasing] = useState(false);
     const [isInputFocused, setIsInputFocused] = useState(false);
     const [inputValue, setInputValue] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!isInputFocused) {
@@ -51,9 +54,24 @@ function Searchbar() {
         setInputValue(e.target.value);
     };
 
-    const handleInputKeyDown = (e) => {
+    const handleSearch = async (e) => {
         if (e.key === "Enter") {
-            console.log("searching");
+            try {
+                const resp = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/toplists/search`,
+                    {
+                        params: {
+                            term: inputValue,
+                            page: 1,
+                        },
+                    }
+                );
+                navigate(`/toplists/search?searchTerm=${inputValue}&page=1`, {
+                    state: resp.data,
+                });
+            } catch (error) {
+                console.error(error);
+            }
         }
     };
 
@@ -70,7 +88,7 @@ function Searchbar() {
                         onFocus={handleInputFocus}
                         onBlur={handleInputBlur}
                         onChange={handleInputChange}
-                        onKeyDown={handleInputKeyDown}
+                        onKeyDown={handleSearch}
                     />
                 ) : (
                     <input
