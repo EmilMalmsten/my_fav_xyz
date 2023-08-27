@@ -56,22 +56,11 @@ function Searchbar() {
 
     const handleSearch = async (e) => {
         if (e.key === "Enter") {
-            try {
-                const resp = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/toplists/search`,
-                    {
-                        params: {
-                            term: inputValue,
-                            page: 1,
-                        },
-                    }
-                );
-                navigate(`/toplists/search?searchTerm=${inputValue}&page=1`, {
-                    state: resp.data,
-                });
-            } catch (error) {
-                console.error(error);
-            }
+            const limit = 20;
+            const offset = 0;
+            navigate(
+                `/toplists/search?searchTerm=${inputValue}&limit=${limit}&offset=${offset}`
+            );
         }
     };
 
