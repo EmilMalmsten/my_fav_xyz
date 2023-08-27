@@ -1,6 +1,6 @@
-import { Row, Col, Container, Button } from "react-bootstrap";
+import { Row, Col, Container, Button, Card } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 function ToplistSearchResults() {
@@ -15,9 +15,6 @@ function ToplistSearchResults() {
 
     async function searchToplists() {
         try {
-            console.log("term is " + searchTerm);
-            console.log("limit is " + limit);
-            console.log("offset is " + offset);
             const resp = await axios.get(
                 `${import.meta.env.VITE_API_URL}/toplists/search`,
                 {
@@ -28,7 +25,6 @@ function ToplistSearchResults() {
                     },
                 }
             );
-            console.log(resp.data);
             setSearchResultCount(resp.data.length);
             setToplists(resp.data.slice(0, pageSize));
         } catch (e) {
@@ -55,20 +51,23 @@ function ToplistSearchResults() {
     }
 
     useEffect(() => {
-        console.log("rendering");
         searchToplists();
     }, []);
 
-    console.log("offset is " + offset);
-
     return (
-        <Container>
+        <Container className="my-4">
             <h1>Search results for: {searchTerm}</h1>
+            {toplists.length === 0 && <h5>No results found</h5>}
             {toplists.map((toplist) => (
                 <Row>
                     <Col>
-                        <h4>{toplist.title}</h4>
-                        <p>{toplist.description}</p>
+                        <Link
+                            to={`/toplists/${toplist.toplist_id}`}
+                            className="link-no-styling"
+                        >
+                            <h4>{toplist.title}</h4>
+                            <p>{toplist.description}</p>
+                        </Link>
                     </Col>
                 </Row>
             ))}

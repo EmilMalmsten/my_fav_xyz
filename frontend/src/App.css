@@ -80,3 +80,13 @@
     background: rgba(0, 0, 0, 0.7);
     cursor: pointer;
 }
+
+.link-no-styling {
+    color: black; /* Default text color */
+    text-decoration: none; /* Remove underline by default */
+}
+
+.link-no-styling:hover {
+    color: blue; /* Text color on hover */
+    text-decoration: underline; /* Underline on hover */
+}
