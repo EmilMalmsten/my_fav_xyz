@@ -79,7 +79,7 @@ function Toplist() {
     }, []);
     return (
         <>
-            <Container style={{ maxWidth: "75%", margin: "2rem auto" }}>
+            <Container style={{ width: "80%", margin: "2rem auto" }}>
                 <div
                     className="my-4"
                     style={{ display: "flex", alignItems: "center" }}

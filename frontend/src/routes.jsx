@@ -14,6 +14,7 @@ import UserDashboard from "./pages/UserDashboard";
 import UpdateUserPassword from "./pages/UpdateUserPassword";
 import DeleteUser from "./pages/DeleteUser";
 import ToplistSearchResults from "./pages/ToplistSearchResults";
+import ViewToplistsByUser from "./pages/ViewToplistsByUser";
 
 const ProtectedRoute = ({ element }) => {
     const { getLoginStatus } = useAuth();
@@ -46,6 +47,10 @@ const routes = [
     {
         path: "/toplists/:id",
         element: <Toplist />,
+    },
+    {
+        path: "/toplists/user/:id",
+        element: <ViewToplistsByUser />,
     },
     {
         path: "/toplists/search",

@@ -290,7 +290,7 @@ function EditToplistItems() {
     };
 
     return (
-        <Container style={{ maxWidth: "75%", margin: "3rem auto" }}>
+        <Container style={{ width: "80%", margin: "3rem auto" }}>
             {items.map(renderItem)}
             <Button
                 className="m-2"

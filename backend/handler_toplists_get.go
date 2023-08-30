@@ -110,3 +110,23 @@ func (cfg apiConfig) handlerToplistsGetPopular(w http.ResponseWriter, r *http.Re
 
 	respondWithJSON(w, http.StatusOK, toplists)
 }
+
+func (cfg apiConfig) handlerToplistsByUser(w http.ResponseWriter, r *http.Request) {
+	userIDString := chi.URLParam(r, "userID")
+	userID, err := strconv.Atoi(userIDString)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
+
+	limit := 50
+	offset := 0
+
+	toplists, err := cfg.DB.ListToplistsByUser(userID, limit, offset)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to get toplists")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, toplists)
+}

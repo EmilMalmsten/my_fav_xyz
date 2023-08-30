@@ -61,7 +61,7 @@ function Footer() {
                                     }}
                                 >
                                     <a
-                                        href="#link1"
+                                        href="/toplists/create"
                                         style={{
                                             color: "#fff",
                                             textDecoration: "none",
