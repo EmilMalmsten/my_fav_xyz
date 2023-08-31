@@ -1,8 +1,9 @@
 import { Container, Row, Col } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 function Footer() {
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, authUser } = useAuth();
 
     return (
         <div
@@ -28,15 +29,15 @@ function Footer() {
                                         textAlign: "right",
                                     }}
                                 >
-                                    <a
-                                        href="#link1"
+                                    <Link
+                                        to={`/users/${authUser.userID}`}
                                         style={{
                                             color: "#fff",
                                             textDecoration: "none",
                                         }}
                                     >
                                         My account
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li
                                     style={{
@@ -44,15 +45,15 @@ function Footer() {
                                         textAlign: "right",
                                     }}
                                 >
-                                    <a
-                                        href="#link1"
+                                    <Link
+                                        to={`/toplists/user/${authUser.userID}`}
                                         style={{
                                             color: "#fff",
                                             textDecoration: "none",
                                         }}
                                     >
                                         My toplists
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li
                                     style={{
@@ -60,15 +61,15 @@ function Footer() {
                                         textAlign: "right",
                                     }}
                                 >
-                                    <a
-                                        href="/toplists/create"
+                                    <Link
+                                        to="/toplists/create"
                                         style={{
                                             color: "#fff",
                                             textDecoration: "none",
                                         }}
                                     >
                                         Create new toplist
-                                    </a>
+                                    </Link>
                                 </li>
                             </ul>
                         ) : (
@@ -79,15 +80,15 @@ function Footer() {
                                         textAlign: "right",
                                     }}
                                 >
-                                    <a
-                                        href="#link1"
+                                    <Link
+                                        to="/login"
                                         style={{
                                             color: "#fff",
                                             textDecoration: "none",
                                         }}
                                     >
                                         Login
-                                    </a>
+                                    </Link>
                                 </li>
                                 <li
                                     style={{
@@ -95,15 +96,15 @@ function Footer() {
                                         textAlign: "right",
                                     }}
                                 >
-                                    <a
-                                        href="#link1"
+                                    <Link
+                                        to="/register"
                                         style={{
                                             color: "#fff",
                                             textDecoration: "none",
                                         }}
                                     >
                                         Create Account
-                                    </a>
+                                    </Link>
                                 </li>
                             </ul>
                         )}
@@ -116,15 +117,15 @@ function Footer() {
                                     textAlign: "right",
                                 }}
                             >
-                                <a
-                                    href="#link1"
+                                <Link
+                                    to="/cookies"
                                     style={{
                                         color: "#fff",
                                         textDecoration: "none",
                                     }}
                                 >
                                     Cookie Policy
-                                </a>
+                                </Link>
                             </li>
                             <li
                                 style={{
@@ -132,15 +133,15 @@ function Footer() {
                                     textAlign: "right",
                                 }}
                             >
-                                <a
-                                    href="#link1"
+                                <Link
+                                    to="/tos"
                                     style={{
                                         color: "#fff",
                                         textDecoration: "none",
                                     }}
                                 >
                                     Terms of Service
-                                </a>
+                                </Link>
                             </li>
                             <li
                                 style={{
@@ -148,15 +149,15 @@ function Footer() {
                                     textAlign: "right",
                                 }}
                             >
-                                <a
-                                    href="#link1"
+                                <Link
+                                    to="/privacy"
                                     style={{
                                         color: "#fff",
                                         textDecoration: "none",
                                     }}
                                 >
                                     Privacy Policy
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </Col>

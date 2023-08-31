@@ -15,6 +15,10 @@ import UpdateUserPassword from "./pages/UpdateUserPassword";
 import DeleteUser from "./pages/DeleteUser";
 import ToplistSearchResults from "./pages/ToplistSearchResults";
 import ViewToplistsByUser from "./pages/ViewToplistsByUser";
+import NotFound from "./pages/404";
+import CookiePolicy from "./pages/CookiePolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const ProtectedRoute = ({ element }) => {
     const { getLoginStatus } = useAuth();
@@ -43,6 +47,10 @@ const routes = [
     {
         path: "/login",
         element: <Login />,
+    },
+    {
+        path: "/404",
+        element: <NotFound />,
     },
     {
         path: "/toplists/:id",
@@ -115,8 +123,20 @@ const routes = [
         ),
     },
     {
+        path: "/cookies",
+        element: <CookiePolicy />,
+    },
+    {
+        path: "/privacy",
+        element: <PrivacyPolicy />,
+    },
+    {
+        path: "/tos",
+        element: <TermsOfService />,
+    },
+    {
         path: "*",
-        element: <Navigate to="/" />,
+        element: <Navigate to="/404" />,
     },
 ];
 

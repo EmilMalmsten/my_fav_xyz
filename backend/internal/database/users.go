@@ -86,6 +86,26 @@ func (dbCfg *DbConfig) GetUserByEmail(email string) (User, error) {
 	return user, nil
 }
 
+func (dbCfg *DbConfig) GetUserByID(userID int) (User, error) {
+	query := `
+		SELECT id, email, hashed_password, created_at 
+		FROM users WHERE id = $1
+	`
+
+	var user User
+	err := dbCfg.database.QueryRow(query, userID).Scan(
+		&user.ID,
+		&user.Email,
+		&user.HashedPassword,
+		&user.CreatedAt,
+	)
+	if err != nil {
+		return User{}, err
+	}
+
+	return user, nil
+}
+
 func (dbCfg *DbConfig) DeleteUser(userID int) error {
 	query := "DELETE FROM users WHERE id = $1"
 	_, err := dbCfg.database.Exec(query, userID)
