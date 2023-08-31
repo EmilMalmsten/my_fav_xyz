@@ -1,0 +1,2 @@
+ALTER TABLE users
+DROP COLUMN password_reset_token_expire_at;

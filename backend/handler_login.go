@@ -8,6 +8,7 @@ import (
 
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/auth"
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
+	"github.com/thanhpk/randstr"
 )
 
 type LoginRequest struct {
@@ -70,4 +71,53 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		RefreshToken: refreshToken,
 		User:         dbUser,
 	})
+}
+
+type ForgotPasswordRequest struct {
+	Email    string `json:"email"`
+}
+
+func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var forgotPasswordRequest ForgotPasswordRequest
+	err := decoder.Decode(&forgotPasswordRequest)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		return
+	}
+
+	dbUser, err := cfg.DB.GetUserByEmail(forgotPasswordRequest.Email)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't find user")
+		return
+	}
+
+	resetToken := randstr.String(20)
+	passwordResetToken := auth.Encode(resetToken)
+	dbUser.PasswordResetToken = passwordResetToken
+	dbUser.PasswordResetTokenExpireAt = time.Now().Add(time.Minute * 15)
+
+	err = cfg.DB.InsertPasswordResetToken(dbUser)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Failed to save pw reset token")
+		return
+	}
+
+	emailData := EmailData{
+		URL:       cfg.serverAddress + "/resetpassword/" + resetToken,
+		Subject:   "Your password reset token (valid for 15min)",
+	}
+
+	err = cfg.SendEmail(&dbUser, &emailData, "resetPassword.html")
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Failed to send email")
+		return
+	}
+
+	message := "You will receive a reset email if user with that email exist"
+	respondWithJSON(w, http.StatusOK, message)
 }

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
@@ -15,6 +16,12 @@ import (
 type apiConfig struct {
 	DB        *database.DbConfig
 	jwtSecret string
+	EmailFrom string
+	SMTPHost  string
+	SMTPUser  string
+	SMTPPass  string
+	SMTPPort  int
+	serverAddress string
 }
 
 func main() {
@@ -34,6 +41,36 @@ func main() {
 		log.Fatal("JWT_SECRET env var is not set")
 	}
 
+	emailFrom := os.Getenv("EMAIL_FROM")
+	if emailFrom == "" {
+		log.Fatal("EMAIL_FROM env var is not set")
+	}
+
+	SMTPHost := os.Getenv("SMTP_HOST")
+	if SMTPHost == "" {
+		log.Fatal("SMTP_HOST env var is not set")
+	}
+
+	SMTPUser := os.Getenv("SMTP_USER")
+	if SMTPUser == "" {
+		log.Fatal("SMTP_USER env var is not set")
+	}
+
+	SMTPPass := os.Getenv("SMTP_PASS")
+	if SMTPPass == "" {
+		log.Fatal("SMTP_PASS env var is not set")
+	}
+
+	SMTPPortStr := os.Getenv("SMTP_PORT")
+	if SMTPPortStr == "" {
+		log.Fatal("SMTP_PASS env var is not set")
+	}
+
+	SMTPPort, err := strconv.Atoi(SMTPPortStr)
+	if err != nil {
+		log.Fatal("SMTPPort string conversion failed")
+	}
+
 	db, err := database.CreateDatabaseConnection(dbUrl)
 	if err != nil {
 		log.Fatalf("unable to initialize database: %v", err)
@@ -42,6 +79,12 @@ func main() {
 	apiCfg := apiConfig{
 		DB:        db,
 		jwtSecret: jwtSecret,
+		EmailFrom: emailFrom,
+		SMTPHost: SMTPHost,
+		SMTPUser: SMTPUser,
+		SMTPPass: SMTPPass,
+		SMTPPort: SMTPPort,
+		serverAddress: serverAddress,
 	}
 
 	router := chi.NewRouter()
@@ -76,6 +119,7 @@ func main() {
 	router.Post("/api/login", apiCfg.handlerLogin)
 	router.Post("/api/refresh", apiCfg.handlerRefresh)
 	router.Post("/api/revoke", apiCfg.handlerRevoke)
+	router.Post("/api/forgotpassword", apiCfg.handlerForgotPassword)
 
 	FileServer(router, "/images", http.Dir("./internal/database/images"))
 

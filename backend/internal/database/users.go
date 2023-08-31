@@ -114,3 +114,17 @@ func (dbCfg *DbConfig) DeleteUser(userID int) error {
 	}
 	return nil
 }
+
+func (dbCfg *DbConfig) InsertPasswordResetToken(user User) error {
+	query := `
+		UPDATE users SET password_reset_token = $1,
+		password_reset_token_expire_at = $2
+		WHERE id = $3
+	`
+	_, err := dbCfg.database.Exec(query, user.PasswordResetToken, user.PasswordResetTokenExpireAt, user.ID)
+	if err != nil {
+		return err
+	}
+	
+	return nil
+}

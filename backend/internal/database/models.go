@@ -35,6 +35,8 @@ type User struct {
 	Email          string    `json:"email"`
 	HashedPassword string    `json:"hashed_password"`
 	CreatedAt      time.Time `json:"created_at"`
+	PasswordResetToken string `json:"password_reset_token"`
+	PasswordResetTokenExpireAt time.Time `json:"password_reset_token_expire_at"`
 }
 
 type Revocation struct {
