@@ -92,7 +92,7 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 	dbUser, err := cfg.DB.GetUserByEmail(forgotPasswordRequest.Email)
 	if err != nil {
 		fmt.Println(err)
-		respondWithError(w, http.StatusInternalServerError, "Couldn't find user")
+		respondWithError(w, http.StatusNotFound, "Couldn't find user")
 		return
 	}
 

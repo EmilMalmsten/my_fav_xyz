@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
@@ -72,6 +72,15 @@ function Login() {
                     <Button variant="primary" type="submit">
                         Login
                     </Button>
+                    <Link
+                        to={`/forgot-password`}
+                        style={{
+                            textDecoration: "none",
+                            marginLeft: "10px",
+                        }}
+                    >
+                        Forgot password? Click here
+                    </Link>
                 </Form>
             </div>
         </Container>
