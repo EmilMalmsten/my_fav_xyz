@@ -10,6 +10,7 @@ import (
 
 var ErrNotExist = errors.New("resource does not exist")
 var ErrAlreadyExist = errors.New("already exists")
+var ErrIsExpired = errors.New("already expired")
 
 func CreateDatabaseConnection(dbUrl string) (*DbConfig, error) {
 	db, err := sql.Open("pgx", dbUrl)

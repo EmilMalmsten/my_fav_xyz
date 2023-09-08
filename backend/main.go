@@ -120,6 +120,7 @@ func main() {
 	router.Post("/api/refresh", apiCfg.handlerRefresh)
 	router.Post("/api/revoke", apiCfg.handlerRevoke)
 	router.Post("/api/forgotpassword", apiCfg.handlerForgotPassword)
+	router.Patch("/api/resetpassword/{resetToken}", apiCfg.handlerResetPassword)
 
 	FileServer(router, "/images", http.Dir("./internal/database/images"))
 

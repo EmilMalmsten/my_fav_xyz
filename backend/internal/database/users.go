@@ -128,3 +128,33 @@ func (dbCfg *DbConfig) InsertPasswordResetToken(user User) error {
 	
 	return nil
 }
+
+func (dbCfg *DbConfig) ResetPassword(newPasswordHash, resetToken string) error {
+	var tokenExists bool
+	err := dbCfg.database.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE password_reset_token = $1)", resetToken).Scan(&tokenExists)
+	if err != nil {
+		return err
+	}
+	if !tokenExists {
+		return ErrNotExist
+	}
+
+	query := `
+		UPDATE users
+		SET hashed_password = $1
+		WHERE password_reset_token = $2
+		AND current_timestamp < password_reset_token_expire_at
+	`
+
+	result, err := dbCfg.database.Exec(query, newPasswordHash, resetToken)
+	if err != nil {
+		return err
+	} 
+
+	rowCount, _ := result.RowsAffected()
+	if rowCount == 0 {
+		return ErrIsExpired
+	} 
+
+	return nil
+}

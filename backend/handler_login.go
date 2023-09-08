@@ -2,12 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/auth"
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
+	"github.com/go-chi/chi"
 	"github.com/thanhpk/randstr"
 )
 
@@ -107,7 +109,7 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 	}
 
 	emailData := EmailData{
-		URL:       cfg.serverAddress + "/resetpassword/" + resetToken,
+		URL:       cfg.serverAddress + "/api/resetpassword/" + resetToken,
 		Subject:   "Your password reset token (valid for 15min)",
 	}
 
@@ -120,4 +122,44 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 
 	message := "You will receive a reset email if user with that email exist"
 	respondWithJSON(w, http.StatusOK, message)
+}
+
+type ResetPasswordRequest struct {
+	Password    string `json:"password"`
+}
+
+func (cfg *apiConfig) handlerResetPassword(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var resetPasswordRequest ResetPasswordRequest
+	err := decoder.Decode(&resetPasswordRequest)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		return
+	}
+
+	resetToken := chi.URLParam(r, "resetToken")
+	encodedResetToken := auth.Encode(resetToken)
+
+	hashedPassword, err := auth.HashPassword(resetPasswordRequest.Password)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't hash new password")
+		return
+	}
+
+	err = cfg.DB.ResetPassword(hashedPassword, encodedResetToken)
+	if err != nil {
+		if errors.Is(err, database.ErrNotExist) {
+			respondWithError(w, http.StatusNotFound, "Incorrect reset token")
+			return
+		} else if errors.Is(err, database.ErrIsExpired){
+			respondWithError(w, http.StatusBadRequest, "Reset token is already expired")
+			return
+		}
+		respondWithError(w, http.StatusInternalServerError, "Failed to reset password")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, struct{}{})
 }
