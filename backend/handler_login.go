@@ -150,6 +150,7 @@ func (cfg *apiConfig) handlerResetPassword(w http.ResponseWriter, r *http.Reques
 
 	err = cfg.DB.ResetPassword(hashedPassword, encodedResetToken)
 	if err != nil {
+		fmt.Println(err)
 		if errors.Is(err, database.ErrNotExist) {
 			respondWithError(w, http.StatusNotFound, "Incorrect reset token")
 			return

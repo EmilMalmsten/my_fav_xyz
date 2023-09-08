@@ -141,7 +141,8 @@ func (dbCfg *DbConfig) ResetPassword(newPasswordHash, resetToken string) error {
 
 	query := `
 		UPDATE users
-		SET hashed_password = $1
+		SET hashed_password = $1,
+		password_reset_token = null
 		WHERE password_reset_token = $2
 		AND current_timestamp < password_reset_token_expire_at
 	`

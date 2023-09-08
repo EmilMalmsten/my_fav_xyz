@@ -20,6 +20,7 @@ import CookiePolicy from "./pages/CookiePolicy";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const ProtectedRoute = ({ element }) => {
     const { getLoginStatus } = useAuth();
@@ -138,6 +139,10 @@ const routes = [
     {
         path: "/forgot-password",
         element: <ForgotPassword />,
+    },
+    {
+        path: "/reset-password/:resetToken",
+        element: <ResetPassword />,
     },
     {
         path: "*",
