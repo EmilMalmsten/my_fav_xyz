@@ -13,8 +13,8 @@ import (
 )
 
 type EmailData struct {
-	URL       string
-	Subject   string
+	URL     string
+	Subject string
 }
 
 // ? Email template parser
@@ -69,9 +69,8 @@ func (cfg *apiConfig) SendEmail(user *database.User, data *EmailData, emailTemp 
 
 	// Send Email
 	if err := d.DialAndSend(m); err != nil {
-		return err 
+		return err
 	}
 
 	return nil
 }
-

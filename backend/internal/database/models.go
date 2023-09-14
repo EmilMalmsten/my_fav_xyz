@@ -26,16 +26,16 @@ type ToplistItem struct {
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	Image       []byte   `json:"-"`
-	ImagePath string `json:"image_path"`
+	Image       []byte `json:"-"`
+	ImagePath   string `json:"image_path"`
 }
 
 type User struct {
-	ID             int       `json:"id"`
-	Email          string    `json:"email"`
-	HashedPassword string    `json:"hashed_password"`
-	CreatedAt      time.Time `json:"created_at"`
-	PasswordResetToken string `json:"password_reset_token"`
+	ID                         int       `json:"id"`
+	Email                      string    `json:"email"`
+	HashedPassword             string    `json:"hashed_password"`
+	CreatedAt                  time.Time `json:"created_at"`
+	PasswordResetToken         string    `json:"password_reset_token"`
 	PasswordResetTokenExpireAt time.Time `json:"password_reset_token_expire_at"`
 }
 

@@ -10,9 +10,9 @@ import (
 
 func (cfg *apiConfig) handlerUsersGetByID(w http.ResponseWriter, r *http.Request) {
 	type getUserResp struct {
-		ID             int       `json:"id"`
-		Email          string    `json:"email"`
-		CreatedAt      time.Time `json:"created_at"`
+		ID        int       `json:"id"`
+		Email     string    `json:"email"`
+		CreatedAt time.Time `json:"created_at"`
 	}
 
 	userIDString := chi.URLParam(r, "userID")
@@ -29,8 +29,8 @@ func (cfg *apiConfig) handlerUsersGetByID(w http.ResponseWriter, r *http.Request
 	}
 
 	respondWithJSON(w, http.StatusOK, getUserResp{
-		ID: dbUser.ID,
-		Email: dbUser.Email,
+		ID:        dbUser.ID,
+		Email:     dbUser.Email,
 		CreatedAt: dbUser.CreatedAt,
 	})
 }

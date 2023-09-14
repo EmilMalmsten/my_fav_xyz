@@ -31,7 +31,7 @@ func (cfg *apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reque
 
 	dbToplist := toplist.ToDBToplist()
 
-	_ , err = cfg.DB.UpdateToplist(dbToplist)
+	_, err = cfg.DB.UpdateToplist(dbToplist)
 	if err != nil {
 		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to update toplist")
@@ -77,7 +77,7 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 		item := toplistItemRequest{
 			Title:       r.FormValue(key + "title]"),
 			Description: r.FormValue(key + "description]"),
-			ImagePath: 	 r.FormValue(key + "path]"),
+			ImagePath:   r.FormValue(key + "path]"),
 			Rank:        -1, // Set a default value for Rank
 		}
 

@@ -125,7 +125,7 @@ func (dbCfg *DbConfig) InsertPasswordResetToken(user User) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -150,12 +150,12 @@ func (dbCfg *DbConfig) ResetPassword(newPasswordHash, resetToken string) error {
 	result, err := dbCfg.database.Exec(query, newPasswordHash, resetToken)
 	if err != nil {
 		return err
-	} 
+	}
 
 	rowCount, _ := result.RowsAffected()
 	if rowCount == 0 {
 		return ErrIsExpired
-	} 
+	}
 
 	return nil
 }

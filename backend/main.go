@@ -14,13 +14,13 @@ import (
 )
 
 type apiConfig struct {
-	DB        *database.DbConfig
-	jwtSecret string
-	EmailFrom string
-	SMTPHost  string
-	SMTPUser  string
-	SMTPPass  string
-	SMTPPort  int
+	DB            *database.DbConfig
+	jwtSecret     string
+	EmailFrom     string
+	SMTPHost      string
+	SMTPUser      string
+	SMTPPass      string
+	SMTPPort      int
 	serverAddress string
 }
 
@@ -77,13 +77,13 @@ func main() {
 	}
 
 	apiCfg := apiConfig{
-		DB:        db,
-		jwtSecret: jwtSecret,
-		EmailFrom: emailFrom,
-		SMTPHost: SMTPHost,
-		SMTPUser: SMTPUser,
-		SMTPPass: SMTPPass,
-		SMTPPort: SMTPPort,
+		DB:            db,
+		jwtSecret:     jwtSecret,
+		EmailFrom:     emailFrom,
+		SMTPHost:      SMTPHost,
+		SMTPUser:      SMTPUser,
+		SMTPPass:      SMTPPass,
+		SMTPPort:      SMTPPort,
 		serverAddress: serverAddress,
 	}
 
@@ -137,7 +137,7 @@ func main() {
 }
 
 func FileServer(r chi.Router, path string, root http.FileSystem) {
-    if strings.ContainsAny(path, "{}*") {
+	if strings.ContainsAny(path, "{}*") {
 		panic("FileServer does not permit URL parameters.")
 	}
 

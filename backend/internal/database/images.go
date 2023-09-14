@@ -38,8 +38,8 @@ func saveImage(item ToplistItem, listID int) error {
 	mimeType := http.DetectContentType(item.Image)
 	ext := getExtensionFromMimeType(mimeType)
 	if ext == "" {
-        return errors.New("unsupported img type")
-    }
+		return errors.New("unsupported img type")
+	}
 
 	imagePath := filepath.Join(toplistDir, fmt.Sprintf("%d%s", item.Rank, ext))
 
@@ -77,23 +77,23 @@ func (dbCfg *DbConfig) setImagePaths(items []ToplistItem, listID int) ([]Toplist
 		if err != nil {
 			return []ToplistItem{}, err
 		}
-	
+
 		imageMap := make(map[int]string) // maps rank to image path
 
-        for _, file := range imgFiles {
-            fileBase := filepath.Base(file.Name())
-            fileWithoutExt := strings.TrimSuffix(fileBase, filepath.Ext(fileBase))
-            rank, err := strconv.Atoi(fileWithoutExt)
-            if err == nil {
-                imageMap[rank] = file.Name()
-            }
-        }
+		for _, file := range imgFiles {
+			fileBase := filepath.Base(file.Name())
+			fileWithoutExt := strings.TrimSuffix(fileBase, filepath.Ext(fileBase))
+			rank, err := strconv.Atoi(fileWithoutExt)
+			if err == nil {
+				imageMap[rank] = file.Name()
+			}
+		}
 
-        for i, item := range items {
-            if path, exists := imageMap[item.Rank]; exists {
-                items[i].ImagePath = path
-            }
-        }
+		for i, item := range items {
+			if path, exists := imageMap[item.Rank]; exists {
+				items[i].ImagePath = path
+			}
+		}
 	} else {
 		if !os.IsNotExist(err) {
 			return []ToplistItem{}, err
@@ -102,6 +102,7 @@ func (dbCfg *DbConfig) setImagePaths(items []ToplistItem, listID int) ([]Toplist
 
 	return items, nil
 }
+
 /*
 func (dbCfg *DbConfig) deleteToplistImages(listID int) error {
 	currentDir, err := os.Getwd()
@@ -125,7 +126,6 @@ func (dbCfg *DbConfig) deleteToplistImages(listID int) error {
 	return nil
 }
 */
-
 
 func updateImage(item, swapItem *ToplistItem, listID int) error {
 
@@ -167,16 +167,16 @@ func findSwapItem(items []ToplistItem, currentItem *ToplistItem) *ToplistItem {
 	for i := range items {
 		fileRank := getRankFromFileName(items[i].ImagePath)
 
-        if currentItem.Rank == fileRank {
+		if currentItem.Rank == fileRank {
 			// we found the item to swap with
-            return &items[i]
-        }
-    }
+			return &items[i]
+		}
+	}
 
 	return nil
 }
 
-func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error){
+func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) {
 	for i := range items {
 
 		if items[i].ImagePath == "" && len(items[i].Image) > 0 {

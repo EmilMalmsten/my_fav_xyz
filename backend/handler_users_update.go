@@ -10,15 +10,15 @@ import (
 )
 
 type updateUserEmailRequest struct {
-	OldEmail    string `json:"old_email"`
-	NewEmail    string `json:"new_email"`
+	OldEmail string `json:"old_email"`
+	NewEmail string `json:"new_email"`
 	Password string `json:"password"`
 }
 
 type updateUserPasswordRequest struct {
-	OldPassword    string `json:"old_password"`
-	NewPassword    string `json:"new_password"`
-	Email string `json:"email"`
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+	Email       string `json:"email"`
 }
 
 func (cfg *apiConfig) handlerUsersUpdateEmail(w http.ResponseWriter, r *http.Request) {
@@ -51,8 +51,8 @@ func (cfg *apiConfig) handlerUsersUpdateEmail(w http.ResponseWriter, r *http.Req
 	}
 
 	updatedUserResp := database.User{
-		ID: updatedUser.ID,
-		Email: updatedUser.Email,
+		ID:        updatedUser.ID,
+		Email:     updatedUser.Email,
 		CreatedAt: updatedUser.CreatedAt,
 	}
 
@@ -87,7 +87,7 @@ func (cfg *apiConfig) handlerUsersUpdatePassword(w http.ResponseWriter, r *http.
 		return
 	}
 
-	_ , err = cfg.DB.UpdateUserPassword(dbUser.ID, newPasswordHashed)
+	_, err = cfg.DB.UpdateUserPassword(dbUser.ID, newPasswordHashed)
 	if err != nil {
 		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't update user")

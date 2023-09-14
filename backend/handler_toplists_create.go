@@ -22,8 +22,8 @@ type toplistItemRequest struct {
 	Rank        int    `json:"rank"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	ImagePath string `json:"image_path"`
-	Image       []byte   `json:"-"`
+	ImagePath   string `json:"image_path"`
+	Image       []byte `json:"-"`
 }
 
 func (t toplistRequest) ToDBToplist() database.Toplist {
@@ -46,8 +46,8 @@ func (t toplistItemRequest) ToDBToplistItem() database.ToplistItem {
 		Rank:        t.Rank,
 		Title:       t.Title,
 		Description: t.Description,
-		ImagePath: t.ImagePath,
-		Image: t.Image,
+		ImagePath:   t.ImagePath,
+		Image:       t.Image,
 	}
 }
 

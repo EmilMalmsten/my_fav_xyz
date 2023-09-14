@@ -10,7 +10,7 @@ import (
 
 type deleteUserRequest struct {
 	Email    string `json:"email"`
-	Password    string `json:"password"`
+	Password string `json:"password"`
 }
 
 func (cfg *apiConfig) handlerUsersDelete(w http.ResponseWriter, r *http.Request) {

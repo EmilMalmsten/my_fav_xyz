@@ -76,7 +76,7 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 type ForgotPasswordRequest struct {
-	Email    string `json:"email"`
+	Email string `json:"email"`
 }
 
 func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Request) {
@@ -109,8 +109,8 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 	}
 
 	emailData := EmailData{
-		URL:       cfg.serverAddress + "/api/resetpassword/" + resetToken,
-		Subject:   "Your password reset token (valid for 15min)",
+		URL:     cfg.serverAddress + "/api/resetpassword/" + resetToken,
+		Subject: "Your password reset token (valid for 15min)",
 	}
 
 	err = cfg.SendEmail(&dbUser, &emailData, "resetPassword.html")
@@ -125,7 +125,7 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 }
 
 type ResetPasswordRequest struct {
-	Password    string `json:"password"`
+	Password string `json:"password"`
 }
 
 func (cfg *apiConfig) handlerResetPassword(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +154,7 @@ func (cfg *apiConfig) handlerResetPassword(w http.ResponseWriter, r *http.Reques
 		if errors.Is(err, database.ErrNotExist) {
 			respondWithError(w, http.StatusNotFound, "Incorrect reset token")
 			return
-		} else if errors.Is(err, database.ErrIsExpired){
+		} else if errors.Is(err, database.ErrIsExpired) {
 			respondWithError(w, http.StatusBadRequest, "Reset token is already expired")
 			return
 		}
