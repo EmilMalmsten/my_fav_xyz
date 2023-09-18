@@ -17,7 +17,9 @@ function ToplistCatalog({ title, endpoint }) {
             );
 
             if (itemWithImagePath) {
-                return `http://localhost:8080/images/${itemWithImagePath.list_id}/${itemWithImagePath.image_path}`;
+                return `${import.meta.env.VITE_IMG_URL}/${
+                    itemWithImagePath.list_id
+                }/${itemWithImagePath.image_path}`;
             }
         }
         return defaultImage;
@@ -39,7 +41,9 @@ function ToplistCatalog({ title, endpoint }) {
                     }
                 );
                 console.log(response.data);
-                setToplists(response.data);
+                if (response.data) {
+                    setToplists(response.data);
+                }
             } catch (error) {
                 console.error(error);
             }

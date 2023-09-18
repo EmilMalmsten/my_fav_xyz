@@ -21,60 +21,70 @@ type apiConfig struct {
 	SMTPUser      string
 	SMTPPass      string
 	SMTPPort      int
-	serverAddress string
 }
 
 func main() {
-	godotenv.Load()
-	dbUrl := os.Getenv("DB_URL")
-	if dbUrl == "" {
-		log.Fatal("DB_URL env var is not set")
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Failed to load env file")
 	}
 
-	serverAddress := os.Getenv("SERVER_ADDRESS")
+	dbUrl := os.Getenv("DB_URL")
 	if dbUrl == "" {
-		log.Fatal("SERVER_ADDRESS env var is not set")
+		log.Println("DB_URL env var is not set")
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Println("PORT env var is not set")
 	}
 
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
-		log.Fatal("JWT_SECRET env var is not set")
+		log.Println("JWT_SECRET env var is not set")
 	}
 
 	emailFrom := os.Getenv("EMAIL_FROM")
 	if emailFrom == "" {
-		log.Fatal("EMAIL_FROM env var is not set")
+		log.Println("EMAIL_FROM env var is not set")
 	}
 
 	SMTPHost := os.Getenv("SMTP_HOST")
 	if SMTPHost == "" {
-		log.Fatal("SMTP_HOST env var is not set")
+		log.Println("SMTP_HOST env var is not set")
 	}
 
 	SMTPUser := os.Getenv("SMTP_USER")
 	if SMTPUser == "" {
-		log.Fatal("SMTP_USER env var is not set")
+		log.Println("SMTP_USER env var is not set")
 	}
 
 	SMTPPass := os.Getenv("SMTP_PASS")
 	if SMTPPass == "" {
-		log.Fatal("SMTP_PASS env var is not set")
+		log.Println("SMTP_PASS env var is not set")
 	}
 
 	SMTPPortStr := os.Getenv("SMTP_PORT")
 	if SMTPPortStr == "" {
-		log.Fatal("SMTP_PASS env var is not set")
+		log.Println("SMTP_PORT env var is not set")
 	}
 
 	SMTPPort, err := strconv.Atoi(SMTPPortStr)
 	if err != nil {
-		log.Fatal("SMTPPort string conversion failed")
+		log.Println("SMTPPort string conversion failed")
 	}
 
-	db, err := database.CreateDatabaseConnection(dbUrl)
-	if err != nil {
-		log.Fatalf("unable to initialize database: %v", err)
+	var db *database.DbConfig
+	if dbUrl != "" {
+		db, err = database.CreateDatabaseConnection(dbUrl)
+		if err != nil {
+			log.Fatalf("unable to initialize database: %v", err)
+		}
+	} else {
+		log.Println("DATABASE_URL environment variable is not set")
+		log.Println("Running without CRUD endpoints")
 	}
+
 
 	apiCfg := apiConfig{
 		DB:            db,
@@ -84,7 +94,6 @@ func main() {
 		SMTPUser:      SMTPUser,
 		SMTPPass:      SMTPPass,
 		SMTPPort:      SMTPPort,
-		serverAddress: serverAddress,
 	}
 
 	router := chi.NewRouter()
@@ -126,10 +135,10 @@ func main() {
 
 	srv := &http.Server{
 		Handler: router,
-		Addr:    serverAddress,
+		Addr:    ":" + port,
 	}
 
-	log.Printf("Server listening on %s", serverAddress)
+	log.Printf("Server listening on %s", port)
 	err = srv.ListenAndServe()
 	if err != nil {
 		log.Fatal(err)

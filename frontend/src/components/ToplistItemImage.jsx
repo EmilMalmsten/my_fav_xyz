@@ -2,11 +2,12 @@ import PropTypes from "prop-types";
 import defaultImage from "../assets/defaultItemImage.jpg";
 
 function ToplistItemImage({ item }) {
+    console.log(import.meta.env.VITE_IMG_URL);
     let src;
     if (item.newImageURL) {
         src = item.newImageURL;
     } else if (item.image_path) {
-        src = `http://localhost:8080/images/${item.list_id}/${
+        src = `${import.meta.env.VITE_IMG_URL}/${item.list_id}/${
             item.image_path
         }?v=${Date.now()}`;
     } else {
