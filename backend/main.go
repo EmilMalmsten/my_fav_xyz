@@ -105,6 +105,7 @@ func main() {
 		AllowCredentials: true,
 		MaxAge:           300,
 	})
+	router.Use(rateLimiter)
 	router.Use(corsMiddleware.Handler)
 
 	router.With(apiCfg.validateJWT).Post("/api/toplists", apiCfg.handlerToplistsCreate)

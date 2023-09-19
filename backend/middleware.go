@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"golang.org/x/time/rate"
+
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/auth"
 )
 
@@ -39,4 +41,16 @@ func (cfg *apiConfig) validateJWT(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+func rateLimiter(next http.Handler) http.Handler {
+    limiter := rate.NewLimiter(2, 4)
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        if !limiter.Allow() {
+            message := "The API is at capacity, try again later."
+            http.Error(w, message, http.StatusTooManyRequests)
+            return
+        }
+        next.ServeHTTP(w, r)
+    })
 }
