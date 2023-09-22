@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -132,7 +133,14 @@ func main() {
 	router.Post("/api/forgotpassword", apiCfg.handlerForgotPassword)
 	router.Patch("/api/resetpassword/{resetToken}", apiCfg.handlerResetPassword)
 
-	FileServer(router, "/images", http.Dir("./internal/database/images"))
+
+	exePath, err := os.Executable()
+    if err != nil {
+		log.Println(err)
+    }
+    exeDir := filepath.Dir(exePath)
+	imagesDir := filepath.Join(exeDir, "images")
+	FileServer(router, "/images", http.Dir(imagesDir))
 
 	srv := &http.Server{
 		Handler: router,

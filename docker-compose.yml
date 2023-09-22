@@ -10,11 +10,15 @@ services:
             - PORT=${PORT}
             - DB_URL=${DB_URL}
             - JWT_SECRET=${JWT_SECRET}
+        volumes:
+            - images:/app/images
         depends_on:
             - postgres
 
     postgres:
         image: postgres:latest
+        volumes:
+            - pg_data:/var/lib/postgresql/data
         env_file: .env
         environment:
             - POSTGRES_DB=${POSTGRES_DB}
@@ -49,3 +53,7 @@ services:
             context: ./frontend
         ports:
             - "8080:8080"
+
+volumes:
+    pg_data:
+    images:

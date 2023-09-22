@@ -13,12 +13,15 @@ import (
 )
 
 func getToplistDir(listID int) (string, error) {
-	currentDir, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
 
-	imagesDir := filepath.Join(currentDir, "internal", "database", "images")
+	exePath, err := os.Executable()
+    if err != nil {
+		return "", err
+    }
+
+    exeDir := filepath.Dir(exePath)
+
+	imagesDir := filepath.Join(exeDir, "images")
 	toplistDir := filepath.Join(imagesDir, fmt.Sprintf("%d", listID))
 	return toplistDir, nil
 }
