@@ -41,7 +41,7 @@ services:
                 "-path",
                 "/migrations",
                 "-database",
-                "postgres://myuser:mypassword@postgres:5432/mydb?sslmode=disable",
+                "${DB_URL}",
             ]
         
         command: ["up"]
