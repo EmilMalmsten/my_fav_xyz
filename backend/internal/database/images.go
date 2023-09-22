@@ -74,7 +74,10 @@ func getExtensionFromMimeType(mimeType string) string {
 }
 
 func (dbCfg *DbConfig) setImagePaths(items []ToplistItem, listID int) ([]ToplistItem, error) {
-	imageDirPath := fmt.Sprintf("./internal/database/images/%d/", listID)
+	imageDirPath, err := getToplistDir(listID)
+	if err != nil {
+		return []ToplistItem{}, err
+	}
 	if _, err := os.Stat(imageDirPath); err == nil {
 		imgFiles, err := os.ReadDir(imageDirPath)
 		if err != nil {

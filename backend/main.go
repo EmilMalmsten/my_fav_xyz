@@ -133,7 +133,6 @@ func main() {
 	router.Post("/api/forgotpassword", apiCfg.handlerForgotPassword)
 	router.Patch("/api/resetpassword/{resetToken}", apiCfg.handlerResetPassword)
 
-
 	exePath, err := os.Executable()
     if err != nil {
 		log.Println(err)
