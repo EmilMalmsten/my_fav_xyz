@@ -4,8 +4,11 @@ import path from "path";
 import dotenv from "dotenv";
 
 export default defineConfig(({ mode }) => {
-    const envFile =
-        mode === "development" ? ".env.development" : ".env.production";
+    const envFile = path.join(
+        __dirname,
+        "..",
+        mode === "development" ? ".env.development" : ".env.production"
+    );
     dotenv.config({ path: envFile });
     return {
         plugins: [react()],
