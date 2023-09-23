@@ -7,8 +7,7 @@ on:
 env:
     # Use docker.io for Docker Hub if empty
     REGISTRY: ghcr.io
-    GITHUB_ACTOR_LOWER: ${{ github.actor | lower }}
-    BACKEND_IMAGE_NAME: ${{ env.GITHUB_ACTOR_LOWER }}/top-xyz-backend:latest
+    BACKEND_IMAGE_NAME: top-xyz-backend:latest
 
 jobs:
     publish_backend:
@@ -17,10 +16,13 @@ jobs:
 
         steps:
             - uses: actions/checkout@v3
+            - name: downcase github actor
+              run: |
+                  echo "ACTOR=${github.actor,,}" >>${GITHUB_ENV}
             - name: Login
               run: |
-                  echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ env.GITHUB_ACTOR_LOWER }} --password-stdin
+                  echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ env.ACTOR }} --password-stdin
             - name: Build and Publish Backend
               run: |
-                  docker build ./backend --tag ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
-                  docker push ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
+                  docker build ./backend --tag ${{ env.REGISTRY }}/${{ env.ACTOR }}/{{ env.BACKEND_IMAGE_NAME }}
+                  docker push ${{ env.REGISTRY }}/${{ env.ACTOR }}/{{ env.BACKEND_IMAGE_NAME }}
