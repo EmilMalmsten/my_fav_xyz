@@ -67,7 +67,6 @@ func (cfg *apiConfig) SendEmail(user *database.User, data *EmailData, emailTemp 
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
-	// Send Email
 	if err := d.DialAndSend(m); err != nil {
 		return err
 	}

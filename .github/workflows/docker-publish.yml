@@ -1,0 +1,25 @@
+name: publish
+
+on:
+    push:
+        branches: ["main"]
+
+env:
+    # Use docker.io for Docker Hub if empty
+    REGISTRY: ghcr.io
+    BACKEND_IMAGE_NAME: ${{ github.actor }}/top-xyz-backend:latest
+
+jobs:
+    publish_backend:
+        name: publish backend image
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+            - name: Login
+              run: |
+                  echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            - name: Build and Publish Backend
+              run: |
+                  docker build ./backend --tag ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
+                  docker push ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
