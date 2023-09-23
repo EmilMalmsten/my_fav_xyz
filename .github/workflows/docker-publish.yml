@@ -8,10 +8,11 @@ env:
     # Use docker.io for Docker Hub if empty
     REGISTRY: ghcr.io
     BACKEND_IMAGE_NAME: top-xyz-backend:latest
+    FRONTEND_IMAGE_NAME: top-xyz-frontend:latest
 
 jobs:
-    publish_backend:
-        name: publish backend image
+    publish:
+        name: publish frontend & backend images
         runs-on: ubuntu-latest
 
         steps:
@@ -27,3 +28,7 @@ jobs:
               run: |
                   docker build ./backend --tag ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.BACKEND_IMAGE_NAME }}
                   docker push ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.BACKEND_IMAGE_NAME }}
+            - name: Build and Publish Frontend
+              run: |
+                  docker build ./frontend --tag ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.FRONTEND_IMAGE_NAME }}
+                  docker push ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.FRONTEND_IMAGE_NAME }}
