@@ -18,7 +18,8 @@ jobs:
             - uses: actions/checkout@v3
             - name: downcase github actor
               run: |
-                  echo "ACTOR=${github.actor,,}" >>${GITHUB_ENV}
+                  ACTOR="$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')"
+                  echo "ACTOR=${ACTOR}" >>${GITHUB_ENV}
             - name: Login
               run: |
                   echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ env.ACTOR }} --password-stdin
