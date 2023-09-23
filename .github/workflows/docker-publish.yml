@@ -25,5 +25,5 @@ jobs:
                   echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ env.ACTOR }} --password-stdin
             - name: Build and Publish Backend
               run: |
-                  docker build ./backend --tag ${{ env.REGISTRY }}/${{ env.ACTOR }}/{{ env.BACKEND_IMAGE_NAME }}
+                  docker build ./backend --tag ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.BACKEND_IMAGE_NAME }}
                   docker push ${{ env.REGISTRY }}/${{ env.ACTOR }}/{{ env.BACKEND_IMAGE_NAME }}
