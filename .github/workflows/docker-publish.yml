@@ -30,5 +30,8 @@ jobs:
                   docker push ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.BACKEND_IMAGE_NAME }}
             - name: Build and Publish Frontend
               run: |
-                  docker build ./frontend --tag ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.FRONTEND_IMAGE_NAME }}
+                  docker build ./frontend \
+                    --build-arg VITE_API_URL_ARG=http://149.28.156.176:8000/api \
+                    --build-arg VITE_IMG_URL_ARG=http://149.28.156.176:8000/images \
+                    --tag ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.FRONTEND_IMAGE_NAME }}
                   docker push ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.FRONTEND_IMAGE_NAME }}
