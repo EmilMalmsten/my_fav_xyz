@@ -51,6 +51,9 @@ services:
     frontend:
         build:
             context: ./frontend
+            args:
+                - VITE_API_URL_ARG=${VITE_API_URL_ARG}
+                - VITE_IMG_URL_ARG=${VITE_IMG_URL_ARG}
         ports:
             - "8080:8080"
 
