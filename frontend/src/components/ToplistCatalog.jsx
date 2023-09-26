@@ -33,7 +33,7 @@ function ToplistCatalog({ title, endpoint }) {
         const fetchData = async () => {
             try {
                 const response = await axios.get(
-                    import.meta.env.VITE_API_URL + endpoint,
+                    "https://api.topxyz.com/api" + endpoint,
                     {
                         params: {
                             page_size: "12",
