@@ -49,6 +49,6 @@ jobs:
                   echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
                   ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
             - name: connect, pull and run db migrations
-              run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker compose pull && docker-compose run backend migrate -path /migrations -database ${{ secrets.POSTGRES_URL }} up && docker compose up -d && exit"
+              run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker compose up -d && docker compose pull && docker-compose run backend migrate -path /migrations -database ${{ secrets.POSTGRES_URL }} up && exit"
             - name: cleanup
               run: rm -rf ~/.ssh
