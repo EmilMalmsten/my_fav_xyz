@@ -31,8 +31,8 @@ jobs:
             - name: Build and Publish Frontend
               run: |
                   docker build ./frontend \
-                    --build-arg VITE_API_URL_ARG="http://backend:8000/api" \
-                    --build-arg VITE_IMG_URL_ARG="http://backend:8000/images" \
+                    --build-arg VITE_API_URL_ARG="/api" \
+                    --build-arg VITE_IMG_URL_ARG="/images" \
                     --tag ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.FRONTEND_IMAGE_NAME }}
                   docker push ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.FRONTEND_IMAGE_NAME }}
     deploy:
@@ -48,7 +48,7 @@ jobs:
                   install -m 600 -D /dev/null ~/.ssh/id_rsa
                   echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
                   ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-            - name: connect, pull and run db migrations
+            - name: connect and pull
               run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && docker compose up -d && docker compose pull && exit"
             - name: cleanup
               run: rm -rf ~/.ssh
