@@ -31,8 +31,8 @@ jobs:
             - name: Build and Publish Frontend
               run: |
                   docker build ./frontend \
-                    --build-arg VITE_API_URL_ARG=http://backend:8000/api \
-                    --build-arg VITE_IMG_URL_ARG=http://backend:8000/images }} \
+                    --build-arg VITE_API_URL_ARG="http://backend:8000/api" \
+                    --build-arg VITE_IMG_URL_ARG="http://backend:8000/images" }} \
                     --tag ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.FRONTEND_IMAGE_NAME }}
                   docker push ${{ env.REGISTRY }}/${{ env.ACTOR }}/${{ env.FRONTEND_IMAGE_NAME }}
     deploy:
