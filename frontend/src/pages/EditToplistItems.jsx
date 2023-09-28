@@ -163,10 +163,10 @@ function EditToplistItems() {
         return (
             <React.Fragment key={item.item_id}>
                 <Row>
-                    <Col xs={1}>
+                    <Col xs={1} s={1} md={1}>
                         <h4>{item.rank}</h4>
                     </Col>
-                    <Col xs={2} className="py-4">
+                    <Col xs={11} s={3} md={2} className="py-4">
                         <ToplistItemImage item={item} />
                         <div style={{ display: "flex" }}>
                             <span
@@ -213,75 +213,86 @@ function EditToplistItems() {
                             )}
                         </div>
                     </Col>
-                    <Col xs={8}>
-                        <Form.Group controlId={`title-${index}`}>
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control
-                                type="text"
-                                value={item.title}
-                                required
-                                maxLength="100"
-                                onChange={(e) =>
-                                    handleItemChange(
-                                        index,
-                                        "title",
-                                        e.target.value
-                                    )
-                                }
-                            />
-                            <Form.Control.Feedback type="invalid">
-                                Please provide a title (up to 100 characters).
-                            </Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group controlId={`description-${index}`}>
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                maxLength="1000"
-                                value={item.description}
-                                onChange={(e) =>
-                                    handleItemChange(
-                                        index,
-                                        "description",
-                                        e.target.value
-                                    )
-                                }
-                            />
-                            <Form.Control.Feedback type="invalid">
-                                Description can have up to 1000 characters.
-                            </Form.Control.Feedback>
-                        </Form.Group>
-                    </Col>
                     <Col
-                        xs={1}
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
+                        xs={12}
+                        s={8}
+                        md={9}
+                        style={{ display: "flex", alignItems: "flex-start" }}
                     >
-                        <span
-                            className="emojiBtn"
-                            onClick={() => handleRemoveItem(index)}
+                        <div style={{ flex: "1" }}>
+                            <Form.Group controlId={`title-${index}`}>
+                                <Form.Label>Title</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    value={item.title}
+                                    required
+                                    maxLength="100"
+                                    onChange={(e) =>
+                                        handleItemChange(
+                                            index,
+                                            "title",
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    Please provide a title (up to 100
+                                    characters).
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group controlId={`description-${index}`}>
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    maxLength="1000"
+                                    value={item.description}
+                                    onChange={(e) =>
+                                        handleItemChange(
+                                            index,
+                                            "description",
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    Description can have up to 1000 characters.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </div>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "flex-end",
+                                justifyContent: "center",
+                                height: "100%",
+                                marginLeft: "10px",
+                            }}
                         >
-                            ❌
-                        </span>
-                        {index !== 0 && (
                             <span
                                 className="emojiBtn"
-                                onClick={() => handleMoveUp(index)}
+                                onClick={() => handleRemoveItem(index)}
                             >
-                                🔼
+                                ❌
                             </span>
-                        )}
-                        {index !== items.length - 1 && (
-                            <span
-                                className="emojiBtn"
-                                onClick={() => handleMoveDown(index)}
-                            >
-                                🔽
-                            </span>
-                        )}
+                            {index !== 0 && (
+                                <span
+                                    className="emojiBtn"
+                                    onClick={() => handleMoveUp(index)}
+                                >
+                                    🔼
+                                </span>
+                            )}
+                            {index !== items.length - 1 && (
+                                <span
+                                    className="emojiBtn"
+                                    onClick={() => handleMoveDown(index)}
+                                >
+                                    🔽
+                                </span>
+                            )}
+                        </div>
                     </Col>
                 </Row>
                 <hr />

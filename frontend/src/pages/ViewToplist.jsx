@@ -99,13 +99,13 @@ function Toplist() {
                         {toplist.items.map((item) => (
                             <React.Fragment key={item.item_id}>
                                 <Row>
-                                    <Col xs={1}>
+                                    <Col xs={1} s={1} md={1}>
                                         <h4>{item.rank}</h4>
                                     </Col>
-                                    <Col xs={2}>
+                                    <Col xs={4} s={3} md={2}>
                                         <ToplistItemImage item={item} />
                                     </Col>
-                                    <Col xs={9}>
+                                    <Col xs={7} s={8} md={9}>
                                         <h5>{item.title}</h5>
                                         <p>{item.description}</p>
                                     </Col>
