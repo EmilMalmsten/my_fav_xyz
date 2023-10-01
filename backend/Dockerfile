@@ -9,5 +9,6 @@ FROM alpine:3.14
 COPY --from=build-backend /go/bin/migrate /usr/local/bin/
 COPY --from=build-backend /app/out /app/
 COPY ./sql/schema /migrations
+COPY ./templates /app/templates
 
 CMD ["/app/out"]

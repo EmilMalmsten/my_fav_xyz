@@ -25,7 +25,14 @@ function Home() {
             />
 
             <div
-                style={{ textAlign: "center", backgroundColor: "lightGray" }}
+                style={{
+                    textAlign: "center",
+                    background:
+                        "linear-gradient(90deg, #FDE3C0, #B9EAEF, #F0CFCD)",
+                    backgroundSize: "cover",
+                    backgroundRepeat: "no-repeat",
+                    backgroundAttachment: "fixed",
+                }}
                 className="my-3 py-3"
             >
                 <h5>Make your own toplist!</h5>
