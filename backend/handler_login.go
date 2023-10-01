@@ -109,7 +109,7 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 	}
 
 	emailData := EmailData{
-		URL:     "/api/resetpassword/" + resetToken,
+		URL:     "https://topxyz.net/reset-password/" + resetToken,
 		Subject: "Your password reset token (valid for 15min)",
 	}
 

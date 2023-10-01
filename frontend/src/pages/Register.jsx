@@ -7,20 +7,9 @@ function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
-    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [showFailureAlert, setShowFailureAlert] = useState(false);
     const [failureAlertMessage, setFailureAlertMessage] = useState("");
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (showSuccessAlert) {
-            const timeout = setTimeout(() => {
-                navigate("/login");
-            }, 3000);
-
-            return () => clearTimeout(timeout);
-        }
-    }, [showSuccessAlert, navigate]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -31,8 +20,11 @@ function Register() {
                     email,
                     password,
                 });
-                setShowFailureAlert(false);
-                setShowSuccessAlert(true);
+                navigate("/", {
+                    state: {
+                        successAlert: "Success! You can now login",
+                    },
+                });
             } catch (error) {
                 console.error(error);
                 if (error.response && error.response.data) {
@@ -56,15 +48,6 @@ function Register() {
     return (
         <Container style={{ maxWidth: "50%", margin: "3rem auto" }}>
             <div style={{ margin: "0 auto" }}>
-                {showSuccessAlert && (
-                    <Alert
-                        variant="success"
-                        onClose={() => setShowSuccessAlert(false)}
-                        dismissible
-                    >
-                        Registration successful! Redirecting to login page...
-                    </Alert>
-                )}
                 {showFailureAlert && (
                     <Alert
                         variant="danger"

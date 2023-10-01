@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Button, Container, Alert } from "react-bootstrap";
+import { Form, Button, Container, Alert, Spinner } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -7,12 +7,14 @@ function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [showFailureAlert, setShowFailureAlert] = useState(false);
     const [failureAlertMessage, setFailureAlertMessage] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         const form = event.target;
         if (form.checkValidity()) {
+            setLoading(true);
             try {
                 const resp = await axios.post(
                     `${import.meta.env.VITE_API_URL}/forgotpassword`,
@@ -33,6 +35,7 @@ function ForgotPassword() {
                 }
                 console.log(error);
             }
+            setLoading(false);
         }
         form.classList.add("was-validated");
     };
@@ -74,9 +77,15 @@ function ForgotPassword() {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Button variant="outline-primary" type="submit">
-                        Reset Password
-                    </Button>
+                    {loading ? (
+                        <Spinner animation="border" role="status">
+                            <span className="sr-only"></span>
+                        </Spinner>
+                    ) : (
+                        <Button variant="outline-primary" type="submit">
+                            Reset Password
+                        </Button>
+                    )}
                 </Form>
             </div>
         </Container>
