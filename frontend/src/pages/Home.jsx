@@ -25,15 +25,8 @@ function Home() {
             />
 
             <div
-                style={{
-                    textAlign: "center",
-                    background:
-                        "linear-gradient(90deg, #FDE3C0, #B9EAEF, #F0CFCD)",
-                    backgroundSize: "cover",
-                    backgroundRepeat: "no-repeat",
-                    backgroundAttachment: "fixed",
-                }}
-                className="my-3 py-3"
+                style={{ textAlign: "center" }}
+                className="my-3 py-3 bg-body-tertiary"
             >
                 <h5>Make your own toplist!</h5>
                 <Button onClick={() => navigate("/toplists/create")}>
