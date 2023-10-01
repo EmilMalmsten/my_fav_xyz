@@ -50,7 +50,7 @@ jobs:
                   ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
             - name: connect and pull
               run: |
-                  ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} cd ${{ secrets.WORK_DIR }} \
+                  ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} \
                   && docker compose down \
                   && docker compose pull \
                   && docker compose up -d && exit"
