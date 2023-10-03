@@ -53,7 +53,6 @@ jobs:
                   ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} \
                   && docker compose down \
                   && docker compose pull \
-                  && docker image rm nginx \
                   && docker compose up -d && exit"
             - name: cleanup
               run: rm -rf ~/.ssh

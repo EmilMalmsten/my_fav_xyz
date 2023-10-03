@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -131,6 +132,7 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 
 	_, err = cfg.DB.UpdateToplistItems(dbToplist.Items, dbToplist.ToplistID)
 	if err != nil {
+		log.Println(err)
 		if errors.Is(err, database.ErrNotExist) {
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")
 			return

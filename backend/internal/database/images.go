@@ -211,9 +211,6 @@ func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) 
 			updateImage(item, swapItem, listID)
 
 		} else if items[i].ImagePath == "" && len(items[i].Image) == 0 {
-			// Potentially remove image if it exists for this item rank
-
-			// construct filepath
 			toplistDir, err := getToplistDir(listID)
 			if err != nil {
 				return []ToplistItem{}, err
@@ -221,7 +218,7 @@ func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) 
 
 			imageFiles, err := os.ReadDir(toplistDir)
 			if err != nil {
-				return []ToplistItem{}, err
+				continue
 			}
 
 			for _, imageFile := range imageFiles {
