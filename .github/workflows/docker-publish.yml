@@ -52,8 +52,7 @@ jobs:
               run: |
                   ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} \
                   && docker compose down \
-                  && docker volume rm top_xyz_fe_build \
                   && docker compose pull \
-                  && docker compose up -d && exit"
+                  && docker compose up -d --force-recreate && exit"
             - name: cleanup
               run: rm -rf ~/.ssh
