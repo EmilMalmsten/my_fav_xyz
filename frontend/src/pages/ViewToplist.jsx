@@ -98,14 +98,19 @@ function Toplist() {
                     <>
                         {toplist.items.map((item) => (
                             <React.Fragment key={item.item_id}>
-                                <Row>
+                                <Row className="my-5">
                                     <Col xs={1} s={1} md={1}>
                                         <h4>{item.rank}</h4>
                                     </Col>
-                                    <Col xs={4} s={3} md={2}>
+                                    <Col
+                                        xs={11}
+                                        s={6}
+                                        md={4}
+                                        style={{ maxWidth: "220px" }}
+                                    >
                                         <ToplistItemImage item={item} />
                                     </Col>
-                                    <Col xs={7} s={8} md={9}>
+                                    <Col xs={12} s={5} md={7} className="mx-4">
                                         <h5>{item.title}</h5>
                                         <p>{item.description}</p>
                                     </Col>
@@ -118,7 +123,7 @@ function Toplist() {
 
                 {isLoggedIn &&
                 Number(toplist.user_id) === Number(authUser.userID) ? (
-                    <>
+                    <div className="my-5">
                         {toplist.items === null ? (
                             <Button
                                 variant="outline-primary"
@@ -142,7 +147,7 @@ function Toplist() {
                         >
                             Delete Toplist
                         </Button>
-                    </>
+                    </div>
                 ) : null}
             </Container>
         </>

@@ -166,7 +166,13 @@ function EditToplistItems() {
                     <Col xs={1} s={1} md={1}>
                         <h4>{item.rank}</h4>
                     </Col>
-                    <Col xs={11} s={3} md={2} className="py-4">
+                    <Col
+                        xs={11}
+                        s={6}
+                        md={4}
+                        className="py-4"
+                        style={{ maxWidth: "220px" }}
+                    >
                         <ToplistItemImage item={item} />
                         <div style={{ display: "flex" }}>
                             <span
@@ -215,8 +221,8 @@ function EditToplistItems() {
                     </Col>
                     <Col
                         xs={12}
-                        s={8}
-                        md={9}
+                        s={5}
+                        md={7}
                         style={{ display: "flex", alignItems: "flex-start" }}
                     >
                         <div style={{ flex: "1" }}>

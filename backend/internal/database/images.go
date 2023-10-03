@@ -144,19 +144,19 @@ func updateImage(item, swapItem *ToplistItem, listID int) error {
 	currItemFullPath := filepath.Join(toplistDir, item.ImagePath)
 	tempPath := filepath.Join(toplistDir, "temp.png")
 
-	fmt.Printf("swapping %s to temp\n", swapItemFullPath)
+	//fmt.Printf("swapping %s to temp\n", swapItemFullPath)
 	err = os.Rename(swapItemFullPath, tempPath)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("swapping %s to %s\n", currItemFullPath, swapItemFullPath)
+	//fmt.Printf("swapping %s to %s\n", currItemFullPath, swapItemFullPath)
 	err = os.Rename(currItemFullPath, swapItemFullPath)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("swapping temp to %s\n", currItemFullPath)
+	//fmt.Printf("swapping temp to %s\n", currItemFullPath)
 	err = os.Rename(tempPath, currItemFullPath)
 	if err != nil {
 		return err
@@ -195,17 +195,16 @@ func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) 
 			//  check if item needs to update img file
 			fileRank := getRankFromFileName(items[i].ImagePath)
 			if fileRank == items[i].Rank {
-				fmt.Println("Item rank and path matches already, no swaps needed")
 				continue
 			}
 
 			item := &items[i]
 
-			fmt.Printf("Filename update req, filename is %d, but rank is %d\n", fileRank, item.Rank)
+			//fmt.Printf("Filename update req, filename is %d, but rank is %d\n", fileRank, item.Rank)
 			swapItem := findSwapItem(items, item)
 
 			if swapItem == nil {
-				fmt.Println("no swap match found")
+				//fmt.Println("no swap match found")
 				continue
 			}
 
@@ -213,12 +212,7 @@ func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) 
 
 		}
 	}
-
-	for i := range items {
-		fmt.Println(items[i].Title)
-		fmt.Println(items[i].Rank)
-		fmt.Println(items[i].ImagePath)
-	}
+	
 	return items, nil
 }
 
