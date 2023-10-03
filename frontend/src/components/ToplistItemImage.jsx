@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import defaultImage from "../assets/defaultItemImage.jpg";
 
 function ToplistItemImage({ item }) {
-    console.log(import.meta.env.VITE_IMG_URL);
     let src;
     if (item.newImageURL) {
         src = item.newImageURL;

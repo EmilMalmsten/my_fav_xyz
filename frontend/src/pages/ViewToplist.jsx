@@ -65,7 +65,6 @@ function Toplist() {
                 const response = await axios.get(
                     `${import.meta.env.VITE_API_URL}/toplists/${id}`
                 );
-                console.log(response.data);
                 setToplist(response.data);
             } catch (error) {
                 console.error(error);

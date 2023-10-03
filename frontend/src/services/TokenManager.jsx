@@ -13,20 +13,16 @@ function TokenManager() {
             accessToken === "undefined" ||
             accessToken === "null"
         ) {
-            console.log("no access token");
             return;
         }
 
         const decodedToken = decodeJWT(accessToken);
         const currentTime = Math.floor(Date.now() / 1000); // ms to s
         if (decodedToken.exp < currentTime) {
-            console.log("token expired, refreshing token");
             const refreshToken = localStorage.getItem("refreshToken");
             refreshAccessToken(refreshToken);
             return;
         }
-
-        console.log("not expired!");
     };
 
     const checkRefreshTokenExpiry = () => {
@@ -36,19 +32,15 @@ function TokenManager() {
             refreshToken === "undefined" ||
             refreshToken === "null"
         ) {
-            console.log("no access token");
             return;
         }
 
         const decodedToken = decodeJWT(refreshToken);
         const currentTime = Math.floor(Date.now() / 1000); // ms to s
         if (decodedToken.exp < currentTime) {
-            console.log("refresh token expired");
             logout();
             return;
         }
-
-        console.log("not expired!");
     };
 
     const decodeJWT = (token) => {
@@ -75,7 +67,6 @@ function TokenManager() {
 
             const { token: newAccessToken } = response.data;
             localStorage.setItem("accessToken", newAccessToken);
-            console.log("token refreshed");
             return newAccessToken;
         } catch (error) {
             console.error("Error refreshing token:", error);

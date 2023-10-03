@@ -40,7 +40,6 @@ function ToplistCatalog({ title, endpoint }) {
                         },
                     }
                 );
-                console.log(response.data);
                 if (response.data) {
                     setToplists(response.data);
                 }

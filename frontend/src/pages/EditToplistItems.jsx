@@ -72,6 +72,8 @@ function EditToplistItems() {
                 formData.append("title", toplist.title);
                 formData.append("description", toplist.description);
 
+                console.log(items);
+
                 // Add the item data
                 items.forEach((item, index) => {
                     formData.append(`items[${index}][title]`, item.title);

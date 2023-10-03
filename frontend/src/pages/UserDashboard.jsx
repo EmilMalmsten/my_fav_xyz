@@ -6,7 +6,6 @@ function UserDashboard() {
     const { authUser } = useAuth();
     const { id } = useParams();
     const navigate = useNavigate();
-    console.log(authUser, id);
 
     const handleChangeEmail = () => {
         navigate(`/users/${authUser.userID}/email`);
