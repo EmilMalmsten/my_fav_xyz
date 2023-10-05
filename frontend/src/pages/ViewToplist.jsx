@@ -107,7 +107,9 @@ function Toplist() {
                                         md={4}
                                         style={{ maxWidth: "220px" }}
                                     >
-                                        <ToplistItemImage item={item} />
+                                        {item.image_path && (
+                                            <ToplistItemImage item={item} />
+                                        )}
                                     </Col>
                                     <Col xs={12} s={5} md={7} className="mx-4">
                                         <h5>{item.title}</h5>
