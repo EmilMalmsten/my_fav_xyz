@@ -43,10 +43,6 @@ const routes = [
         element: <Home />,
     },
     {
-        path: "/test",
-        element: <Home />,
-    },
-    {
         path: "/register",
         element: <Register />,
     },
