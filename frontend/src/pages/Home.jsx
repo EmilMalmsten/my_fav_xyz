@@ -1,14 +1,13 @@
-//import Searchbar from "../components/Searchbar";
-//import ToplistCatalog from "../components/ToplistCatalog";
-//import { Button, Container, Alert } from "react-bootstrap";
-//import { useLocation, useNavigate } from "react-router-dom";
+import Searchbar from "../components/Searchbar";
+import ToplistCatalog from "../components/ToplistCatalog";
+import { Button, Container, Alert } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Home() {
-    //const location = useLocation();
-    //const navigate = useNavigate();
-    //const successAlert = location.state && location.state.successAlert;
+    const location = useLocation();
+    const navigate = useNavigate();
+    const successAlert = location.state && location.state.successAlert;
 
-    /*
     return (
         <Container style={{ width: "80%", margin: "0 auto" }}>
             <div className="my-3">
@@ -20,10 +19,12 @@ function Home() {
             </div>
             <Searchbar />
 
+            {/*
             <ToplistCatalog
                 title="Most popular toplists"
                 endpoint="/toplists/popular"
             />
+            */}
 
             <div
                 style={{ textAlign: "center" }}
@@ -35,15 +36,15 @@ function Home() {
                 </Button>
             </div>
 
+            {/*
             <ToplistCatalog
                 title="Recent toplists"
                 endpoint="/toplists/recent"
             />
+            */}
             <br />
         </Container>
     );
-    */
-    return <h1>hello world</h1>;
 }
 
 export default Home;
