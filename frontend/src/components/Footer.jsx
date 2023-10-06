@@ -18,7 +18,7 @@ function Footer() {
                 <Row>
                     <Col>
                         <h5>My Top XYZ &copy; 2023</h5>
-                        <p>info@mytopxyz.com</p>
+                        <p>topxyzinfo@gmail.com</p>
                     </Col>
                     <Col>
                         {isLoggedIn ? (

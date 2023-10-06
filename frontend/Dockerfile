@@ -17,8 +17,15 @@ COPY . .
 RUN npm run build
 
 # Step 2: Set up the production environment
-FROM nginx:stable-alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
+#FROM nginx:stable-alpine
+#COPY --from=builder /app/dist /usr/share/nginx/html
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+#EXPOSE 80
+#CMD ["nginx", "-g", "daemon off;"]
+
+# Create a shared volume and copy the built files to it
+FROM alpine:3.14 as fileserver
+WORKDIR /app
+COPY --from=builder /app/dist /app/dist
+
+VOLUME ["/app/dist"]
