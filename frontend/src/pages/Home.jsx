@@ -19,12 +19,10 @@ function Home() {
             </div>
             <Searchbar />
 
-            {/*
             <ToplistCatalog
                 title="Most popular toplists"
                 endpoint="/toplists/popular"
             />
-            */}
 
             <div
                 style={{ textAlign: "center" }}
@@ -36,12 +34,11 @@ function Home() {
                 </Button>
             </div>
 
-            {/*
             <ToplistCatalog
                 title="Recent toplists"
                 endpoint="/toplists/recent"
             />
-            */}
+
             <br />
         </Container>
     );

@@ -1,11 +1,12 @@
 version: "3"
 services:
     backend:
+        container_name: backend
+        env_file: .env
         build:
             context: ./backend
         ports:
             - "8000:8000"
-        env_file: .env
         environment:
             - PORT=${PORT}
             - DB_URL=${DB_URL}
@@ -16,6 +17,7 @@ services:
             - postgres
 
     postgres:
+        container_name: postgres
         image: postgres:latest
         volumes:
             - pg_data:/var/lib/postgresql/data
@@ -27,36 +29,33 @@ services:
         ports:
             - "5432:5432"
 
-    migrate:
-        image: migrate/migrate
-        volumes:
-            - ./backend/sql/schema:/migrations
-        env_file: .env
-        environment:
-            - DB_URL=${DB_URL}
-
-        entrypoint:
-            [
-                "migrate",
-                "-path",
-                "/migrations",
-                "-database",
-                "${DB_URL}",
-            ]
-        
-        command: ["up"]
-        depends_on:
-            - postgres
-
     frontend:
+        container_name: frontend
+        env_file: .env
         build:
             context: ./frontend
             args:
                 - VITE_API_URL_ARG=${VITE_API_URL_ARG}
                 - VITE_IMG_URL_ARG=${VITE_IMG_URL_ARG}
+        volumes:
+            - fe_build:/app/dist
+        depends_on:
+            - backend
+
+    nginx:
+        container_name: nginx
+        restart: unless-stopped
+        image: nginx
         ports:
-            - "8080:8080"
+            - 8080:8080
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+            - fe_build:/usr/share/nginx/html
+        depends_on:
+            - frontend
+            - backend
 
 volumes:
     pg_data:
     images:
+    fe_build:
