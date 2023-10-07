@@ -32,14 +32,13 @@ function ToplistCatalog({ title, endpoint }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(
-                    import.meta.env.VITE_API_URL + endpoint,
-                    {
-                        params: {
-                            page_size: "12",
-                        },
-                    }
-                );
+                const requestURL = import.meta.env.VITE_API_URL + endpoint;
+                console.log(requestURL);
+                const response = await axios.get(requestURL, {
+                    params: {
+                        page_size: "12",
+                    },
+                });
                 if (response.data) {
                     console.log(response.data);
                     setToplists(response.data);
