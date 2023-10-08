@@ -44,7 +44,7 @@ func (cfg *apiConfig) validateJWT(next http.Handler) http.Handler {
 }
 
 func rateLimiter(next http.Handler) http.Handler {
-    limiter := rate.NewLimiter(1, 20)
+    limiter := rate.NewLimiter(1, 100)
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         if !limiter.Allow() {
             message := "The API is at capacity, try again later."

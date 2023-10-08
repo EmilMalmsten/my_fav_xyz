@@ -65,7 +65,12 @@ function Toplist() {
                 const response = await axios.get(
                     `${import.meta.env.VITE_API_URL}/toplists/${id}`
                 );
-                setToplist(response.data);
+                let toplist = response.data;
+                const sortedItems = toplist.items.sort(
+                    (a, b) => a.rank - b.rank
+                );
+                toplist.items = sortedItems;
+                setToplist(toplist);
             } catch (error) {
                 console.error(error);
             }
