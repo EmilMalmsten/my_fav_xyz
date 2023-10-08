@@ -1,13 +1,14 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 )
@@ -48,7 +49,7 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 		respondWithError(w, http.StatusInternalServerError, "Failed to parse form data")
 		return
 	}
-
+	
 	toplistIDStr := r.FormValue("id")
 	toplistID, err := strconv.Atoi(toplistIDStr)
 	if err != nil {
@@ -68,10 +69,8 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 	for index := 0; ; index++ {
 		key := fmt.Sprintf("items[%d][", index)
 
-		// Check if the title key exists in the form data
 		_, hasTitle := r.Form[key+"title]"]
 		if !hasTitle {
-			// Key not found, exit the loop
 			break
 		}
 
@@ -79,36 +78,37 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 			Title:       r.FormValue(key + "title]"),
 			Description: r.FormValue(key + "description]"),
 			ImagePath:   r.FormValue(key + "path]"),
-			Rank:        -1, // Set a default value for Rank
+			Rank:        -1,
 		}
 
 		rankStr := r.FormValue(key + "rank]")
-		if rankStr != "" {
-			rank, err := strconv.Atoi(rankStr)
-			if err != nil {
-				respondWithError(w, http.StatusBadRequest, "Invalid item rank")
-				return
-			}
-			item.Rank = rank
+		if rankStr == "" {
+			respondWithError(w, http.StatusInternalServerError, "Missing item rank")
+			return
 		}
+		rank, err := strconv.Atoi(rankStr)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "Item rank string conversion failed")
+			return
+		}
+		item.Rank = rank
 
-		// Check if the image key exists in the form data
-		_, fileHeader, err := r.FormFile(key + "image]")
-		if err == nil && fileHeader != nil {
-			file, err := fileHeader.Open()
-			if err != nil {
-				respondWithError(w, http.StatusInternalServerError, "Failed to read item image")
+		imageBase64 := r.FormValue(key + "image]")
+		if imageBase64 != "" {
+			dataParts := strings.SplitN(imageBase64, ",", 2)
+			if len(dataParts) != 2 {
+				respondWithError(w, http.StatusBadRequest, "Invalid base64 image data")
 				return
 			}
-			defer file.Close()
+			base64Data := dataParts[1]
 
-			fileBytes, err := io.ReadAll(file)
+			imageBytes, err := base64.StdEncoding.DecodeString(base64Data)
 			if err != nil {
-				respondWithError(w, http.StatusInternalServerError, "Failed to read item image")
+				respondWithError(w, http.StatusInternalServerError, "Failed to decode base64 image")
 				return
 			}
 
-			item.Image = fileBytes
+			item.Image = imageBytes
 		}
 
 		items = append(items, item)

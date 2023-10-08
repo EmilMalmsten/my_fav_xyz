@@ -3,8 +3,8 @@ import defaultImage from "../assets/defaultItemImage.jpg";
 
 function ToplistItemImage({ item }) {
     let src;
-    if (item.newImageURL) {
-        src = item.newImageURL;
+    if (item.newImageFile) {
+        src = item.newImageFile;
     } else if (item.image_path) {
         src = `${import.meta.env.VITE_IMG_URL}/${item.list_id}/${
             item.image_path

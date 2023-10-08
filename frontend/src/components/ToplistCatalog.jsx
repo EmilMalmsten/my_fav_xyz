@@ -40,7 +40,6 @@ function ToplistCatalog({ title, endpoint }) {
                     },
                 });
                 if (response.data) {
-                    console.log(response.data);
                     setToplists(response.data);
                 }
             } catch (error) {
@@ -50,8 +49,6 @@ function ToplistCatalog({ title, endpoint }) {
 
         fetchData();
     }, []);
-
-    console.log("toplists:", toplists);
 
     return (
         <>

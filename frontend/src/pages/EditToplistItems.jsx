@@ -4,6 +4,23 @@ import { Container, Form, Button, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
 import ToplistItemImage from "../components/ToplistItemImage";
+import Resizer from "react-image-file-resizer";
+
+const resizeFile = (file) =>
+    new Promise((resolve) => {
+        Resizer.imageFileResizer(
+            file,
+            400,
+            400,
+            "JPEG",
+            100,
+            0,
+            (uri) => {
+                resolve(uri);
+            },
+            "base64"
+        );
+    });
 
 function EditToplistItems() {
     const location = useLocation();
@@ -33,12 +50,13 @@ function EditToplistItems() {
         );
     };
 
-    const handleImageUpload = (index, file) => {
+    const handleImageUpload = async (index, file) => {
+        const image = await resizeFile(file);
         const newItems = [...items];
         newItems[index] = {
             ...newItems[index],
             newImageURL: URL.createObjectURL(file),
-            newImageFile: file,
+            newImageFile: image,
         };
         setItems(newItems);
     };
@@ -154,14 +172,16 @@ function EditToplistItems() {
     };
     const renderItem = (item, index) => {
         let imageSource;
-        if (item.newImageURL) {
-            imageSource = item.newImageURL;
+        if (item.newImageFile) {
+            imageSource = item.newImageFile;
         } else if (item.image_path) {
-            imageSource = `http://localhost:8080/images/${item.list_id}/${item.image_path}`;
+            imageSource = `${import.meta.env.VITE_IMG_URL}/${item.list_id}/${
+                item.image_path
+            }`;
         }
 
         return (
-            <React.Fragment key={item.item_id}>
+            <React.Fragment key={item.created_at}>
                 <Row>
                     <Col xs={1} s={1} md={1}>
                         <h4>{item.rank}</h4>
