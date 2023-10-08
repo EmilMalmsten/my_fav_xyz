@@ -66,10 +66,12 @@ function Toplist() {
                     `${import.meta.env.VITE_API_URL}/toplists/${id}`
                 );
                 let toplist = response.data;
-                const sortedItems = toplist.items.sort(
-                    (a, b) => a.rank - b.rank
-                );
-                toplist.items = sortedItems;
+                if (toplist.items) {
+                    const sortedItems = toplist.items.sort(
+                        (a, b) => a.rank - b.rank
+                    );
+                    toplist.items = sortedItems;
+                }
                 setToplist(toplist);
             } catch (error) {
                 console.error(error);

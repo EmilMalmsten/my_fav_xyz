@@ -222,6 +222,11 @@ func (dbCfg *DbConfig) DeleteToplist(listId int) error {
 	if err != nil {
 		return err
 	}
+
+	err = deleteToplistImages(listId)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

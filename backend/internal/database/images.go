@@ -109,29 +109,20 @@ func (dbCfg *DbConfig) setImagePaths(items []ToplistItem, listID int) ([]Toplist
 	return items, nil
 }
 
-/*
-func (dbCfg *DbConfig) deleteToplistImages(listID int) error {
-	currentDir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	imagesDir := filepath.Join(currentDir, "internal", "database", "images")
-	toplistDir := filepath.Join(imagesDir, fmt.Sprintf("%d", listID))
-	filePaths, err := filepath.Glob(filepath.Join(toplistDir, "*"))
+
+func deleteToplistImages(listID int) error {
+	toplistDir, err := getToplistDir(listID)
 	if err != nil {
 		return err
 	}
 
-	for _, filePath := range filePaths {
-		err := os.Remove(filePath)
-		if err != nil {
-			return err
-		}
+	err = os.RemoveAll(toplistDir)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
-*/
 
 func updateImage(item, swapItem *ToplistItem, listID int) error {
 
