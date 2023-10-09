@@ -39,11 +39,6 @@ cd my_top_xyz
 
 3. Run the project with `docker compose up`
 
-### Run tests
-
-1.  cd in to the backend directory
-2.  `go test ./...`
-
 ### Submit a pull request
 
 If you'd like to contribute, please fork the repository and open a pull request to the `main` branch.
