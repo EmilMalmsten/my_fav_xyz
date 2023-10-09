@@ -1,5 +1,7 @@
 # Top XYZ
 
+![build](https://github.com/EmilMalmsten/my_top_xyz/actions/workflows/docker-publish.yml/badge.svg?event=push)
+
 Create a toplist for anything!
 We all have areas in our lives where we are a bit extra passionate. For you it could be horror movies, hamburger restaurants, cat breeds, or anything else.
 
