@@ -37,7 +37,13 @@ cd my_top_xyz
 
 2. Read .env.example, re-name it to .env and set up the required environment variables.
 
-3. Run the project with `docker compose up`
+3. Build the project with `docker compose build`
+4. Start with `docker compose up -d`
+5. Run database migrations within the backend container. Replace DB_URL with the actual url used in .env
+    ```
+    docker exec -it backend sh
+    migrate -path migrations -database ${DB_URL} up
+    ```
 
 ### Submit a pull request
 
