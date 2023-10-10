@@ -26,6 +26,8 @@ function EditToplistItems() {
     const location = useLocation();
     const navigate = useNavigate();
     const toplist = location.state || {};
+    const [showFailureAlert, setShowFailureAlert] = useState(false);
+    const [failureAlertMessage, setFailureAlertMessage] = useState("");
 
     const [items, setItems] = useState(
         toplist.items || [
@@ -182,7 +184,7 @@ function EditToplistItems() {
 
         return (
             <React.Fragment key={item.created_at}>
-                <Row>
+                <Row key={item.created_at}>
                     <Col xs={1} s={1} md={1}>
                         <h4>{item.rank}</h4>
                     </Col>
@@ -328,28 +330,35 @@ function EditToplistItems() {
 
     return (
         <Container style={{ width: "80%", margin: "3rem auto" }}>
-            {items.map(renderItem)}
-            <Button
-                className="m-2"
-                variant="outline-primary"
-                onClick={handleAddItem}
-            >
-                Add Item
-            </Button>
-            <Button
-                className="m-2"
-                variant="outline-secondary"
-                onClick={handleCancel}
-            >
-                Cancel Edit
-            </Button>
-            <Button
-                className="m-2"
-                variant="outline-success"
-                onClick={handleSave}
-            >
-                Save Changes
-            </Button>
+            {showFailureAlert && (
+                <Alert
+                    variant="danger"
+                    onClose={() => setShowFailureAlert(false)}
+                    dismissible
+                >
+                    {failureAlertMessage}
+                </Alert>
+            )}
+            <Form noValidate onSubmit={handleSave}>
+                {items.map(renderItem)}
+                <Button
+                    className="m-2"
+                    variant="outline-primary"
+                    onClick={handleAddItem}
+                >
+                    Add Item
+                </Button>
+                <Button
+                    className="m-2"
+                    variant="outline-secondary"
+                    onClick={handleCancel}
+                >
+                    Cancel Edit
+                </Button>
+                <Button className="m-2" variant="outline-success" type="submit">
+                    Save Changes
+                </Button>
+            </Form>
         </Container>
     );
 }
