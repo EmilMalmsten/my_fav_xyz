@@ -368,7 +368,7 @@ func (dbCfg *DbConfig) ListToplistsByProperty(limit int, property string) ([]Top
 		orderClause = "created_at DESC"
 	}
 
-	query := `
+	query := ` 
 		SELECT id, title, description, user_id, created_at, views, likes FROM toplists 
 		ORDER BY ` + orderClause + `
 		LIMIT $1

@@ -46,7 +46,7 @@ func saveImage(item ToplistItem, listID int) error {
 
 	imagePath := filepath.Join(toplistDir, fmt.Sprintf("%d%s", item.Rank, ext))
 
-	file, err := os.Create(imagePath)
+	file, err := os.Create(filepath.Clean(imagePath))
 	if err != nil {
 		return err
 	}
@@ -195,7 +195,10 @@ func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) 
 				continue
 			}
 
-			updateImage(item, swapItem, listID)
+			err := updateImage(item, swapItem, listID)
+			if err != nil {
+				return []ToplistItem{}, err
+			}
 
 		} else if items[i].ImagePath == "" && len(items[i].Image) == 0 {
 			toplistDir, err := getToplistDir(listID)

@@ -51,7 +51,10 @@ func (cfg *apiConfig) SendEmail(user *database.User, data *EmailData, emailTemp 
 		return err
 	}
 
-	template.ExecuteTemplate(&body, emailTemp, &data)
+	err = template.ExecuteTemplate(&body, emailTemp, &data)
+	if err != nil {
+		return err
+	}
 
 	m := gomail.NewMessage()
 
