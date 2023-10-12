@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"crypto/tls"
 	"html/template"
 	"os"
 	"path/filepath"
@@ -16,8 +15,6 @@ type EmailData struct {
 	URL     string
 	Subject string
 }
-
-// ? Email template parser
 
 func ParseTemplateDir(dir string) (*template.Template, error) {
 	var paths []string
@@ -65,7 +62,6 @@ func (cfg *apiConfig) SendEmail(user *database.User, data *EmailData, emailTemp 
 	m.AddAlternative("text/plain", html2text.HTML2Text(body.String()))
 
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	if err := d.DialAndSend(m); err != nil {
 		return err
