@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
 	"github.com/go-chi/chi"
@@ -144,6 +145,8 @@ func main() {
 	srv := &http.Server{
 		Handler: router,
 		Addr:    ":" + port,
+		ReadTimeout: 5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	log.Printf("Server listening on %s", port)
