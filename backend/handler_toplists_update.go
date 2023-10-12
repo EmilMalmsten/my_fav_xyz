@@ -44,6 +44,9 @@ func (cfg *apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reque
 }
 
 func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.Request) {
+	currentLimit := r.ContentLength
+
+	log.Printf("Current request body size limit: %d bytes\n", currentLimit)
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Failed to parse form data")
