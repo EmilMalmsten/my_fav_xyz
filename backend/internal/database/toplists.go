@@ -500,6 +500,16 @@ func (dbCfg *DbConfig) ListToplistsByUser(userID, limit, offset int) ([]Toplist,
 		if err != nil {
 			return []Toplist{}, err
 		}
+		toplistItems, err := dbCfg.GetToplistItems(toplist.ToplistID)
+		if err != nil {
+			return []Toplist{}, err
+		}
+		toplistItemsWithImgPaths, err := dbCfg.setImagePaths(toplistItems, toplist.ToplistID)
+		if err != nil {
+			return []Toplist{}, err
+		}
+		toplist.Items = toplistItemsWithImgPaths
+		
 		toplists = append(toplists, toplist)
 	}
 
