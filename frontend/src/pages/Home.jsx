@@ -39,7 +39,7 @@ function Home() {
                 endpoint="/toplists/recent"
             />
 
-            <br />
+            <div style={{ height: "100px" }}></div>
         </Container>
     );
 }
