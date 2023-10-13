@@ -339,6 +339,10 @@ function EditToplistItems() {
                     {failureAlertMessage}
                 </Alert>
             )}
+            <div style={{ display: "flex", alignItems: "center" }}>
+                <h1>{toplist.title}</h1>
+            </div>
+            <p style={{ marginBottom: "50px" }}>{toplist.description}</p>
             <Form noValidate onSubmit={handleSave}>
                 {items.map(renderItem)}
                 <Button
