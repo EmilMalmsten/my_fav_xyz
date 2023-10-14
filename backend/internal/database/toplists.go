@@ -276,7 +276,7 @@ func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
 		return toplist, err
 	}
 
-	toplistItemsWithImgPaths, err := dbCfg.setImagePaths(toplistItems, listId)
+	toplistItemsWithImgPaths, err := setImagePaths(toplistItems, listId)
 	if err != nil {
 		fmt.Println(err)
 		return toplist, err
@@ -399,7 +399,7 @@ func (dbCfg *DbConfig) ListToplistsByProperty(limit int, property string) ([]Top
 		if err != nil {
 			return []Toplist{}, err
 		}
-		toplistItemsWithImgPaths, err := dbCfg.setImagePaths(toplistItems, toplist.ToplistID)
+		toplistItemsWithImgPaths, err := setImagePaths(toplistItems, toplist.ToplistID)
 		if err != nil {
 			return []Toplist{}, err
 		}
@@ -504,7 +504,7 @@ func (dbCfg *DbConfig) ListToplistsByUser(userID, limit, offset int) ([]Toplist,
 		if err != nil {
 			return []Toplist{}, err
 		}
-		toplistItemsWithImgPaths, err := dbCfg.setImagePaths(toplistItems, toplist.ToplistID)
+		toplistItemsWithImgPaths, err := setImagePaths(toplistItems, toplist.ToplistID)
 		if err != nil {
 			return []Toplist{}, err
 		}

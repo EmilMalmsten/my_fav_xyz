@@ -69,7 +69,7 @@ func getExtensionFromMimeType(mimeType string) string {
 	}
 }
 
-func (dbCfg *DbConfig) setImagePaths(items []ToplistItem, listID int) ([]ToplistItem, error) {
+func setImagePaths(items []ToplistItem, listID int) ([]ToplistItem, error) {
 	imageDirPath, err := getToplistDir(listID)
 	if err != nil {
 		return []ToplistItem{}, err
