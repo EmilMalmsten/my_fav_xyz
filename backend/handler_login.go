@@ -67,6 +67,7 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create refresh JWT")
 		return
 	}
+	dbUser.HashedPassword = ""
 
 	respondWithJSON(w, http.StatusOK, LoginResponse{
 		Token:        accessToken,
