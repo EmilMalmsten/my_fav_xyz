@@ -20,7 +20,7 @@ function Register() {
                     email,
                     password,
                 });
-                navigate("/", {
+                navigate("/login", {
                     state: {
                         successAlert: "Success! You can now login",
                     },
