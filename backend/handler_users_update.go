@@ -30,6 +30,11 @@ func (cfg *apiConfig) handlerUsersUpdateEmail(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	if !validEmail(updateUserEmailRequest.NewEmail) {
+		respondWithError(w, http.StatusBadRequest, "Incorrect email format")
+		return
+	}
+
 	dbUser, err := cfg.DB.GetUserByEmail(updateUserEmailRequest.OldEmail)
 	if err != nil {
 		fmt.Println(err)
@@ -65,6 +70,11 @@ func (cfg *apiConfig) handlerUsersUpdatePassword(w http.ResponseWriter, r *http.
 	err := decoder.Decode(&updateUserPasswordRequest)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		return
+	}
+
+	if len(updateUserPasswordRequest.NewPassword) < 8 {
+		respondWithError(w, http.StatusBadRequest, "Password needs to be minimum 8 characters")
 		return
 	}
 

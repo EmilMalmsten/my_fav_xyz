@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/mail"
 
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/auth"
 	"github.com/emilmalmsten/my_top_xyz/backend/internal/database"
@@ -25,6 +26,16 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 	err := decoder.Decode(&createUserRequest)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		return
+	}
+
+	if !validEmail(createUserRequest.Email) {
+		respondWithError(w, http.StatusBadRequest, "Incorrect email format")
+		return
+	}
+
+	if len(createUserRequest.Password) < 8 {
+		respondWithError(w, http.StatusBadRequest, "Password needs to be minimum 8 characters")
 		return
 	}
 
@@ -51,4 +62,9 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 	respondWithJSON(w, http.StatusCreated, resp{
 		Id: createdUser.ID,
 	})
+}
+
+func validEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }
