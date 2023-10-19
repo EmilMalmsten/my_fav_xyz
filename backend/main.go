@@ -16,13 +16,13 @@ import (
 )
 
 type apiConfig struct {
-	DB            *database.DbConfig
-	jwtSecret     string
-	EmailFrom     string
-	SMTPHost      string
-	SMTPUser      string
-	SMTPPass      string
-	SMTPPort      int
+	DB        *database.DbConfig
+	jwtSecret string
+	EmailFrom string
+	SMTPHost  string
+	SMTPUser  string
+	SMTPPass  string
+	SMTPPort  int
 }
 
 func main() {
@@ -87,15 +87,14 @@ func main() {
 		log.Println("Running without CRUD endpoints")
 	}
 
-
 	apiCfg := apiConfig{
-		DB:            db,
-		jwtSecret:     jwtSecret,
-		EmailFrom:     emailFrom,
-		SMTPHost:      SMTPHost,
-		SMTPUser:      SMTPUser,
-		SMTPPass:      SMTPPass,
-		SMTPPort:      SMTPPort,
+		DB:        db,
+		jwtSecret: jwtSecret,
+		EmailFrom: emailFrom,
+		SMTPHost:  SMTPHost,
+		SMTPUser:  SMTPUser,
+		SMTPPass:  SMTPPass,
+		SMTPPort:  SMTPPort,
 	}
 
 	router := chi.NewRouter()
@@ -109,7 +108,7 @@ func main() {
 	})
 	router.Use(rateLimiter)
 	router.Use(corsMiddleware.Handler)
-
+	router.Get("/api/healthz", handlerReadiness)
 	router.With(apiCfg.validateJWT).Post("/api/toplists", apiCfg.handlerToplistsCreate)
 	router.With(apiCfg.validateJWT).Put("/api/toplists/items", apiCfg.handlerToplistsUpdateItems)
 	router.With(apiCfg.validateJWT).Put("/api/toplists", apiCfg.handlerToplistsUpdate)
@@ -135,17 +134,17 @@ func main() {
 	router.Patch("/api/resetpassword/{resetToken}", apiCfg.handlerResetPassword)
 
 	exePath, err := os.Executable()
-    if err != nil {
+	if err != nil {
 		log.Println(err)
-    }
-    exeDir := filepath.Dir(exePath)
+	}
+	exeDir := filepath.Dir(exePath)
 	imagesDir := filepath.Join(exeDir, "images")
 	FileServer(router, "/images", http.Dir(imagesDir))
 
 	srv := &http.Server{
-		Handler: router,
-		Addr:    ":" + port,
-		ReadTimeout: 5 * time.Second,
+		Handler:      router,
+		Addr:         ":" + port,
+		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
