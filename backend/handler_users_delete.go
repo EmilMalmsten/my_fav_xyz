@@ -25,7 +25,7 @@ func (cfg *apiConfig) handlerUsersDelete(w http.ResponseWriter, r *http.Request)
 	dbUser, err := cfg.DB.GetUserByEmail(deleteUserRequest.Email)
 	if err != nil {
 		fmt.Println(err)
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get user")
+		respondWithError(w, http.StatusNotFound, "No user found with that email")
 		return
 	}
 

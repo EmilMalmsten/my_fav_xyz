@@ -15,14 +15,14 @@ func (cfg *apiConfig) handlerRefresh(w http.ResponseWriter, r *http.Request) {
 	refreshToken, err := auth.GetBearerToken(r.Header)
 	if err != nil {
 		fmt.Println(err)
-		respondWithError(w, http.StatusBadRequest, "Couldn't find JWT")
+		respondWithError(w, http.StatusBadRequest, "Refresh token missing in request auth header")
 		return
 	}
 
 	isRevoked, err := cfg.DB.IsTokenRevoked(refreshToken)
 	if err != nil {
 		fmt.Println(err)
-		respondWithError(w, http.StatusInternalServerError, "Couldn't check session")
+		respondWithError(w, http.StatusInternalServerError, "Failed to check token revocation status")
 		return
 	}
 	if isRevoked {
@@ -34,7 +34,7 @@ func (cfg *apiConfig) handlerRefresh(w http.ResponseWriter, r *http.Request) {
 	accessToken, err := auth.RefreshToken(refreshToken, cfg.jwtSecret)
 	if err != nil {
 		fmt.Println(err)
-		respondWithError(w, http.StatusUnauthorized, "Couldn't validate JWT")
+		respondWithError(w, http.StatusUnauthorized, "Invalid refresh token")
 		return
 	}
 
@@ -46,7 +46,7 @@ func (cfg *apiConfig) handlerRefresh(w http.ResponseWriter, r *http.Request) {
 func (cfg *apiConfig) handlerRevoke(w http.ResponseWriter, r *http.Request) {
 	refreshToken, err := auth.GetBearerToken(r.Header)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Couldn't find JWT")
+		respondWithError(w, http.StatusBadRequest, "Refresh token missing in request auth header")
 		return
 	}
 

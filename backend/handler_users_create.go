@@ -52,7 +52,7 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		fmt.Println(err)
 		if errors.Is(err, database.ErrAlreadyExist) {
-			respondWithError(w, http.StatusNotFound, "Email already in use")
+			respondWithError(w, http.StatusBadRequest, "Email already in use")
 			return
 		}
 		respondWithError(w, http.StatusInternalServerError, "Error occurred when creating new user")

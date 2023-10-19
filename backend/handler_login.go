@@ -36,7 +36,7 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 	dbUser, err := cfg.DB.GetUserByEmail(loginRequest.Email)
 	if err != nil {
 		fmt.Println(err)
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get user")
+		respondWithError(w, http.StatusNotFound, "User with that email not found")
 		return
 	}
 
@@ -53,7 +53,7 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		auth.TokenTypeAccess,
 	)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't create access JWT")
+		respondWithError(w, http.StatusInternalServerError, "Failed to create access token")
 		return
 	}
 
@@ -64,15 +64,20 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		auth.TokenTypeRefresh,
 	)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't create refresh JWT")
+		respondWithError(w, http.StatusInternalServerError, "Failed to create refresh token")
 		return
 	}
-	dbUser.HashedPassword = ""
+
+	userResp := database.User{
+		ID:        dbUser.ID,
+		Email:     dbUser.Email,
+		CreatedAt: dbUser.CreatedAt,
+	}
 
 	respondWithJSON(w, http.StatusOK, LoginResponse{
 		Token:        accessToken,
 		RefreshToken: refreshToken,
-		User:         dbUser,
+		User:         userResp,
 	})
 }
 
@@ -105,7 +110,7 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 	err = cfg.DB.InsertPasswordResetToken(dbUser)
 	if err != nil {
 		fmt.Println(err)
-		respondWithError(w, http.StatusInternalServerError, "Failed to save pw reset token")
+		respondWithError(w, http.StatusInternalServerError, "Failed to insert passwrod reset token")
 		return
 	}
 
@@ -116,7 +121,6 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 
 	err = cfg.SendEmail(&dbUser, &emailData, "resetPassword.html")
 	if err != nil {
-		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to send email")
 		return
 	}
@@ -144,7 +148,6 @@ func (cfg *apiConfig) handlerResetPassword(w http.ResponseWriter, r *http.Reques
 
 	hashedPassword, err := auth.HashPassword(resetPasswordRequest.Password)
 	if err != nil {
-		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't hash new password")
 		return
 	}
@@ -153,7 +156,7 @@ func (cfg *apiConfig) handlerResetPassword(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		fmt.Println(err)
 		if errors.Is(err, database.ErrNotExist) {
-			respondWithError(w, http.StatusNotFound, "Incorrect reset token")
+			respondWithError(w, http.StatusNotFound, "No user found with that password reset token")
 			return
 		} else if errors.Is(err, database.ErrIsExpired) {
 			respondWithError(w, http.StatusBadRequest, "Reset token is already expired")

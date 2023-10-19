@@ -23,7 +23,7 @@ func (cfg *apiConfig) handlerToplistsDelete(w http.ResponseWriter, r *http.Reque
 	userIDValue := r.Context().Value(userIDKey)
 	userID, ok := userIDValue.(int)
 	if !ok {
-		respondWithError(w, http.StatusBadRequest, "Invalid user ID type")
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID data type")
 		return
 	}
 
@@ -34,7 +34,7 @@ func (cfg *apiConfig) handlerToplistsDelete(w http.ResponseWriter, r *http.Reque
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")
 			return
 		}
-		respondWithError(w, http.StatusInternalServerError, "Could not find toplist")
+		respondWithError(w, http.StatusInternalServerError, "Error while trying to find toplist")
 		return
 	}
 

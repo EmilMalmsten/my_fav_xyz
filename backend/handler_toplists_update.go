@@ -52,7 +52,7 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 		respondWithError(w, http.StatusInternalServerError, "Failed to parse form data")
 		return
 	}
-	
+
 	toplistIDStr := r.FormValue("id")
 	toplistID, err := strconv.Atoi(toplistIDStr)
 	if err != nil {
@@ -86,7 +86,7 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 
 		rankStr := r.FormValue(key + "rank]")
 		if rankStr == "" {
-			respondWithError(w, http.StatusInternalServerError, "Missing item rank")
+			respondWithError(w, http.StatusBadRequest, "Missing item rank")
 			return
 		}
 		rank, err := strconv.Atoi(rankStr)

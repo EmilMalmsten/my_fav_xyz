@@ -24,7 +24,7 @@ func (cfg *apiConfig) handlerToplistsGetOne(w http.ResponseWriter, r *http.Reque
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")
 			return
 		}
-		respondWithError(w, http.StatusBadRequest, "Could not get toplist")
+		respondWithError(w, http.StatusInternalServerError, "Error when trying to get toplist")
 		return
 	}
 

@@ -59,7 +59,7 @@ func (cfg *apiConfig) handlerToplistsCreate(w http.ResponseWriter, r *http.Reque
 	userIDValue := r.Context().Value(userIDKey)
 	userID, ok := userIDValue.(int)
 	if !ok {
-		respondWithError(w, http.StatusBadRequest, "Invalid user ID type")
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID data type")
 		return
 	}
 

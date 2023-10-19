@@ -26,7 +26,7 @@ func (cfg *apiConfig) handlerToplistsViews(w http.ResponseWriter, r *http.Reques
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")
 			return
 		}
-		respondWithError(w, http.StatusBadRequest, "Could not update toplist views")
+		respondWithError(w, http.StatusInternalServerError, "Could not update toplist views")
 		return
 	}
 
