@@ -44,9 +44,6 @@ func (cfg *apiConfig) handlerToplistsUpdate(w http.ResponseWriter, r *http.Reque
 }
 
 func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.Request) {
-	currentLimit := r.ContentLength
-
-	log.Printf("Current request body size limit: %d bytes\n", currentLimit)
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Failed to parse form data")
@@ -70,6 +67,8 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 
 	items := make([]toplistItemRequest, 0)
 	for index := 0; ; index++ {
+		// Form data is in key value pairs
+		// First we need to build the keys to access each value
 		key := fmt.Sprintf("items[%d][", index)
 
 		_, hasTitle := r.Form[key+"title]"]
@@ -98,6 +97,7 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 
 		imageBase64 := r.FormValue(key + "image]")
 		if imageBase64 != "" {
+			// Remove the first part which is file info before the actual image data
 			dataParts := strings.SplitN(imageBase64, ",", 2)
 			if len(dataParts) != 2 {
 				respondWithError(w, http.StatusBadRequest, "Invalid base64 image data")
