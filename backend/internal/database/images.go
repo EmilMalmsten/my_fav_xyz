@@ -15,11 +15,11 @@ import (
 func getToplistDir(listID int) (string, error) {
 
 	exePath, err := os.Executable()
-    if err != nil {
+	if err != nil {
 		return "", err
-    }
+	}
 
-    exeDir := filepath.Dir(exePath)
+	exeDir := filepath.Dir(exePath)
 
 	imagesDir := filepath.Join(exeDir, "images")
 	toplistDir := filepath.Join(imagesDir, fmt.Sprintf("%d", listID))
@@ -44,6 +44,8 @@ func saveImage(item ToplistItem, listID int) error {
 		return errors.New("unsupported img type")
 	}
 
+	// Toplist item images are saved in a folder named after the toplist ID
+	// The image file name is the rank of the item it belongs to.
 	imagePath := filepath.Join(toplistDir, fmt.Sprintf("%d%s", item.Rank, ext))
 
 	file, err := os.Create(filepath.Clean(imagePath))
@@ -69,6 +71,8 @@ func getExtensionFromMimeType(mimeType string) string {
 	}
 }
 
+// This function is used for responding to a request with toplist items
+// The filepath for each toplist item image gets put together and added to the item
 func setImagePaths(items []ToplistItem, listID int) ([]ToplistItem, error) {
 	imageDirPath, err := getToplistDir(listID)
 	if err != nil {
@@ -91,6 +95,7 @@ func setImagePaths(items []ToplistItem, listID int) ([]ToplistItem, error) {
 			}
 		}
 
+		// Set each items image path if it exists
 		for i, item := range items {
 			if path, exists := imageMap[item.Rank]; exists {
 				items[i].ImagePath = path
@@ -104,7 +109,6 @@ func setImagePaths(items []ToplistItem, listID int) ([]ToplistItem, error) {
 
 	return items, nil
 }
-
 
 func deleteToplistImages(listID int) error {
 	toplistDir, err := getToplistDir(listID)
@@ -120,6 +124,7 @@ func deleteToplistImages(listID int) error {
 	return nil
 }
 
+// Swap the image paths of item A and item B
 func updateImage(item, swapItem *ToplistItem, listID int) error {
 
 	toplistDir, err := getToplistDir(listID)
@@ -131,24 +136,25 @@ func updateImage(item, swapItem *ToplistItem, listID int) error {
 	currItemFullPath := filepath.Join(toplistDir, item.ImagePath)
 	tempPath := filepath.Join(toplistDir, "temp.png")
 
-	//fmt.Printf("swapping %s to temp\n", swapItemFullPath)
+	// Set item B image path to a temporary path
 	err = os.Rename(swapItemFullPath, tempPath)
 	if err != nil {
 		return err
 	}
 
-	//fmt.Printf("swapping %s to %s\n", currItemFullPath, swapItemFullPath)
+	// Set the path of Item A to its target path (Item B's initial path)
 	err = os.Rename(currItemFullPath, swapItemFullPath)
 	if err != nil {
 		return err
 	}
 
-	//fmt.Printf("swapping temp to %s\n", currItemFullPath)
+	// Set the path of Item B to its target path (Item A's initial path)
 	err = os.Rename(tempPath, currItemFullPath)
 	if err != nil {
 		return err
 	}
 
+	// Swap the image paths on the item structs
 	tmp := item.ImagePath
 	item.ImagePath = swapItem.ImagePath
 	swapItem.ImagePath = tmp
@@ -169,29 +175,32 @@ func findSwapItem(items []ToplistItem, currentItem *ToplistItem) *ToplistItem {
 	return nil
 }
 
+// When user updates the toplist this function checks for needed image changes
 func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) {
 	for i := range items {
 
 		if items[i].ImagePath == "" && len(items[i].Image) > 0 {
+			// item did not have an image previously but now got one added
 			err := saveImage(items[i], listID)
 			if err != nil {
 				fmt.Println(err)
 				return []ToplistItem{}, err
 			}
 		} else if items[i].ImagePath != "" && len(items[i].Image) == 0 {
-			//  check if item needs to update img file
+			// item did have an item previosly, and no new one got uploaded
+			// check if the item rank matches with its img file path
+			// if it doesnt match, it means the user swapped item ranks
+			// and filepaths needs to be updated
+
 			fileRank := getRankFromFileName(items[i].ImagePath)
 			if fileRank == items[i].Rank {
+				// no image path changes needed
 				continue
 			}
 
 			item := &items[i]
-
-			//fmt.Printf("Filename update req, filename is %d, but rank is %d\n", fileRank, item.Rank)
 			swapItem := findSwapItem(items, item)
-
 			if swapItem == nil {
-				//fmt.Println("no swap match found")
 				continue
 			}
 
@@ -201,6 +210,7 @@ func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) 
 			}
 
 		} else if items[i].ImagePath == "" && len(items[i].Image) == 0 {
+			// Item should no longer have an image. Check if one exists and if so, delete it
 			toplistDir, err := getToplistDir(listID)
 			if err != nil {
 				return []ToplistItem{}, err
