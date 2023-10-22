@@ -125,7 +125,7 @@ func deleteToplistImages(listID int) error {
 }
 
 // Swap the image paths of item A and item B
-func updateImage(item, swapItem *ToplistItem, listID int) error {
+func swapImageFiles(item, swapItem *ToplistItem, listID int) error {
 
 	toplistDir, err := getToplistDir(listID)
 	if err != nil {
@@ -175,6 +175,28 @@ func findSwapItem(items []ToplistItem, currentItem *ToplistItem) *ToplistItem {
 	return nil
 }
 
+// Move image file from oldPath to newPath
+func moveImage(currentFileName string, itemRank, listID int) error {
+	toplistDir, err := getToplistDir(listID)
+	if err != nil {
+		return err
+	}
+
+	dotIndex := strings.LastIndex(currentFileName, ".")
+	itemRankString := strconv.Itoa(itemRank)
+	newFileName := itemRankString + currentFileName[dotIndex:]
+
+	oldPath := filepath.Join(toplistDir, currentFileName)
+	newPath := filepath.Join(toplistDir, newFileName)
+
+	err = os.Rename(oldPath, newPath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // When user updates the toplist this function checks for needed image changes
 func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) {
 	for i := range items {
@@ -201,10 +223,16 @@ func handleImageChanges(items []ToplistItem, listID int) ([]ToplistItem, error) 
 			item := &items[i]
 			swapItem := findSwapItem(items, item)
 			if swapItem == nil {
+				// no swap items means that item got removed, so just need to change
+				// the old image path to match the new rank
+				err := moveImage(items[i].ImagePath, items[i].Rank, listID)
+				if err != nil {
+					return []ToplistItem{}, err
+				}
 				continue
 			}
 
-			err := updateImage(item, swapItem, listID)
+			err := swapImageFiles(item, swapItem, listID)
 			if err != nil {
 				return []ToplistItem{}, err
 			}
