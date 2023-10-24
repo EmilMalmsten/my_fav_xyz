@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
     const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ function Register() {
     const [repeatPassword, setRepeatPassword] = useState("");
     const [showFailureAlert, setShowFailureAlert] = useState(false);
     const [failureAlertMessage, setFailureAlertMessage] = useState("");
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -20,9 +22,11 @@ function Register() {
                     email,
                     password,
                 });
-                navigate("/login", {
+                await login(email, password);
+                navigate("/", {
                     state: {
-                        successAlert: "Success! You can now login",
+                        successAlert:
+                            "Registration successful! You are now logged in.",
                     },
                 });
             } catch (error) {
