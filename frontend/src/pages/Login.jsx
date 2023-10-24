@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
@@ -9,10 +9,6 @@ function Login() {
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const navigate = useNavigate();
     const { login } = useAuth();
-    const location = useLocation();
-    const [showSuccessAlert, setShowSuccessAlert] = useState(
-        location.state && location.state.successAlert
-    );
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -21,7 +17,6 @@ function Login() {
             navigate("/");
         } catch (error) {
             console.error(error);
-            setShowSuccessAlert(false);
             setShowErrorAlert(true);
         }
     };
@@ -36,15 +31,6 @@ function Login() {
                         dismissible
                     >
                         Login failed. Please check your email and password.
-                    </Alert>
-                )}
-                {showSuccessAlert && (
-                    <Alert
-                        variant="success"
-                        onClose={() => setShowSuccessAlert(false)}
-                        dismissible
-                    >
-                        {showSuccessAlert}
                     </Alert>
                 )}
                 <h1 style={{ marginBottom: "30px" }}>Login</h1>
