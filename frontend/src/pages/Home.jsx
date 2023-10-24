@@ -8,11 +8,19 @@ function Home() {
     const navigate = useNavigate();
     const successAlert = location.state && location.state.successAlert;
 
+    const removeSuccessAlert = () => {
+        window.history.replaceState({}, document.title);
+    };
+
     return (
         <Container style={{ width: "80%", margin: "0 auto" }}>
             <div className="my-3">
                 {successAlert && (
-                    <Alert variant="success" dismissible>
+                    <Alert
+                        variant="success"
+                        onClose={() => removeSuccessAlert()}
+                        dismissible
+                    >
                         {successAlert}
                     </Alert>
                 )}
