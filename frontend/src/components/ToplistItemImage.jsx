@@ -8,21 +8,17 @@ function ToplistItemImage({ item }) {
 
     useEffect(() => {
         const getSrc = async () => {
-            let src;
+            console.log(item);
             if (item.newImageFile) {
-                src = item.newImageFile;
+                setSrc(item.newImageFile);
             } else if (item.image_path) {
-                src = `${import.meta.env.VITE_IMG_URL}/${item.list_id}/${
+                setSrc(`${import.meta.env.VITE_IMG_URL}/${item.list_id}/${
                     item.image_path
-                }?v=${Date.now()}`;
+                }?v=${Date.now()}`);
             }
-            setTimeout(() => {
-                setSrc(src);
-            }, 400);
         };
-
         getSrc();
-    }, []);
+    }, [item]);
 
     return (
         <div style={{ width: "200px", height: "200px", overflow: "hidden" }}>
@@ -35,7 +31,7 @@ function ToplistItemImage({ item }) {
                     objectFit: "cover",
                     display: loading ? "none" : "block",
                 }}
-                onLoad={(e) => {
+                onLoad={() => {
                     setLoading(false);
                 }}
             />
