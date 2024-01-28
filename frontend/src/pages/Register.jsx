@@ -118,7 +118,7 @@ function Register() {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Button variant="primary" type="submit">
+                    <Button className="brand-button" type="submit">
                         Register
                     </Button>
                 </Form>

@@ -72,7 +72,11 @@ const CreateToplist = () => {
                             </Form.Control.Feedback>
                         </Form.Group>
 
-                        <Button variant="primary" type="submit">
+                        <Button
+                            variant="primary"
+                            type="submit"
+                            className="brand-button"
+                        >
                             Create
                         </Button>
                     </Form>

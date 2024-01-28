@@ -127,7 +127,11 @@ function UpdateUserPassword() {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Button variant="outline-primary" type="submit">
+                    <Button
+                        variant="outline-primary"
+                        type="submit"
+                        className="brand-button-outline"
+                    >
                         Save
                     </Button>
                     <Button

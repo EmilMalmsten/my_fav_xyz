@@ -32,12 +32,12 @@ function Home() {
                 endpoint="/toplists/popular"
             />
 
-            <div
-                style={{ textAlign: "center" }}
-                className="my-3 py-3 bg-body-tertiary"
-            >
-                <h5>Make your own toplist!</h5>
-                <Button onClick={() => navigate("/toplists/create")}>
+            <div style={{ textAlign: "center" }} className="my-3 py-3">
+                <h4>Make a toplist for anything!</h4>
+                <Button
+                    className="brand-button"
+                    onClick={() => navigate("/toplists/create")}
+                >
                     Create now
                 </Button>
             </div>

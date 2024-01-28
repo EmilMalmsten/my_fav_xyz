@@ -74,6 +74,7 @@ function ToplistCatalog({ title, endpoint }) {
                             style={{
                                 backgroundImage: `url(${getImageUrl(toplist)})`,
                                 backgroundSize: "cover",
+                                borderRadius: "5px",
                             }}
                         >
                             <div className="overlay">

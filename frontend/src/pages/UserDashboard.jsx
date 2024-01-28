@@ -21,11 +21,11 @@ function UserDashboard() {
 
     return (
         <Container className="text-center my-3">
-            <h2>Dashboard</h2>
+            <h2>Manage account</h2>
             <Row className="justify-content-center">
                 <Col xs={12} md={6}>
                     <Button
-                        className="m-2 w-50"
+                        className="m-2 w-50 brand-button-outline"
                         variant="outline-primary"
                         onClick={handleChangeEmail}
                     >
@@ -36,7 +36,7 @@ function UserDashboard() {
             <Row className="justify-content-center">
                 <Col xs={12} md={6}>
                     <Button
-                        className="m-2 w-50"
+                        className="m-2 w-50 brand-button-outline"
                         variant="outline-primary"
                         onClick={handleChangePassword}
                     >

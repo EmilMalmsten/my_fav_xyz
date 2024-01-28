@@ -63,7 +63,11 @@ function EditToplist() {
                         required
                     />
                 </Form.Group>
-                <Button variant="outline-primary" onClick={handleSave}>
+                <Button
+                    variant="outline-primary"
+                    className="brand-button-outline"
+                    onClick={handleSave}
+                >
                     Save
                 </Button>
                 <Button

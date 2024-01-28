@@ -346,7 +346,7 @@ function EditToplistItems() {
             <Form noValidate onSubmit={handleSave}>
                 {items.map(renderItem)}
                 <Button
-                    className="m-2"
+                    className="m-2 brand-button-outline"
                     variant="outline-primary"
                     onClick={handleAddItem}
                 >
@@ -359,7 +359,11 @@ function EditToplistItems() {
                 >
                     Cancel Edit
                 </Button>
-                <Button className="m-2" variant="outline-success" type="submit">
+                <Button
+                    className="m-2 brand-button-outline"
+                    variant="outline-success"
+                    type="submit"
+                >
                     Save Changes
                 </Button>
             </Form>

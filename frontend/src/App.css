@@ -4,6 +4,26 @@
     flex-direction: column;
 }
 
+.brand-button {
+    background-color: #8b3dff !important;
+    border-color: #8b3dff !important;
+    color: white !important;
+}
+
+.brand-button:hover {
+    background-color: #7731d8 !important;
+}
+
+.brand-button-outline {
+    border-color: #8b3dff !important;
+    color: #8b3dff !important;
+}
+
+.brand-button-outline:hover {
+    background-color: #8b3dff !important;
+    color: white !important;
+}
+
 .emojiBtn {
     cursor: pointer;
     padding: 4px;
@@ -74,6 +94,7 @@
     font-size: 20px;
     font-weight: bold;
     text-align: center;
+    border-radius: 5px;
 }
 
 .square-container:hover .overlay {

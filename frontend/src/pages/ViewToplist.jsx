@@ -94,7 +94,10 @@ function Toplist() {
 
                     {isLoggedIn &&
                     Number(toplist.user_id) === Number(authUser.userID) ? (
-                        <span className="mx-2" onClick={handleToplistEdit}>
+                        <span
+                            className="mx-2 emojiBtn"
+                            onClick={handleToplistEdit}
+                        >
                             ✏️
                         </span>
                     ) : null}
@@ -135,6 +138,7 @@ function Toplist() {
                         {toplist.items === null ? (
                             <Button
                                 variant="outline-primary"
+                                className="brand-button-outline"
                                 onClick={handleToplistItems}
                             >
                                 Add items
@@ -142,6 +146,7 @@ function Toplist() {
                         ) : (
                             <Button
                                 variant="outline-primary"
+                                className="brand-button-outline"
                                 onClick={handleToplistItems}
                             >
                                 Edit items
@@ -149,7 +154,7 @@ function Toplist() {
                         )}
 
                         <Button
-                            variant="outline-danger"
+                            variant="outline-secondary"
                             onClick={handleToplistDelete}
                             className="mx-2"
                         >
