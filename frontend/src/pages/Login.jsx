@@ -70,7 +70,11 @@ function Login() {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Button variant="primary" type="submit">
+                    <Button
+                        variant="primary"
+                        type="submit"
+                        className="brand-button"
+                    >
                         Login
                     </Button>
                     <Link
@@ -78,6 +82,7 @@ function Login() {
                         style={{
                             textDecoration: "none",
                             marginLeft: "10px",
+                            color: "#8b3dff",
                         }}
                     >
                         Forgot password? Click here
