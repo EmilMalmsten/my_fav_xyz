@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 
 function Register() {
     const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
     const [showFailureAlert, setShowFailureAlert] = useState(false);
@@ -20,6 +21,7 @@ function Register() {
             try {
                 await axios.post(`${import.meta.env.VITE_API_URL}/users`, {
                     email,
+                    username,
                     password,
                 });
                 await login(email, password);
@@ -76,6 +78,24 @@ function Register() {
                         />
                         <Form.Control.Feedback type="invalid">
                             Please provide a valid email.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+
+                    <Form.Group
+                        controlId="username"
+                        style={{ marginBottom: "1rem" }}
+                    >
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control
+                            required
+                            type="text"
+                            placeholder="Enter username"
+                            minLength="3"
+                            value={username}
+                            onChange={(e) => handleInputChange(e, setUsername)}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            Please provide a valid username. Min 3 characters
                         </Form.Control.Feedback>
                     </Form.Group>
 

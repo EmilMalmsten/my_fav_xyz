@@ -37,6 +37,7 @@ type User struct {
 	CreatedAt                  time.Time `json:"created_at"`
 	PasswordResetToken         string    `json:"password_reset_token"`
 	PasswordResetTokenExpireAt time.Time `json:"password_reset_token_expire_at"`
+	Username                   string    `json:"username"`
 }
 
 type Revocation struct {

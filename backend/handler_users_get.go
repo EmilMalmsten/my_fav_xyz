@@ -12,6 +12,7 @@ func (cfg *apiConfig) handlerUsersGetByID(w http.ResponseWriter, r *http.Request
 	type getUserResp struct {
 		ID        int       `json:"id"`
 		Email     string    `json:"email"`
+		Username  string    `json:"username"`
 		CreatedAt time.Time `json:"created_at"`
 	}
 
@@ -31,6 +32,7 @@ func (cfg *apiConfig) handlerUsersGetByID(w http.ResponseWriter, r *http.Request
 	respondWithJSON(w, http.StatusOK, getUserResp{
 		ID:        dbUser.ID,
 		Email:     dbUser.Email,
+		Username:  dbUser.Username,
 		CreatedAt: dbUser.CreatedAt,
 	})
 }

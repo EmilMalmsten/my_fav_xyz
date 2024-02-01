@@ -12,7 +12,7 @@ Top XYZ is a web app that helps you to keep track of your personal favorites, en
 Navigate to [topxyz.net](https://topxyz.net), browse existing toplists or create your own.
 Creating your own toplists requires registering with your email and a password.
 
-## 🛠️ Technical features
+## 🛠️ Built With
 
 -   Go backend API with CRUD operations for toplists and user account management
 -   React frontend

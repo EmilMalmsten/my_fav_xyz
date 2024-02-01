@@ -1,15 +1,22 @@
 package database
 
+import (
+	"database/sql"
+	"errors"
+	"log"
+)
+
 func (dbCfg *DbConfig) InsertUser(user User) (User, error) {
 	insertQuery := `
-		INSERT INTO users (email, hashed_password)
-		VALUES ($1, $2) 
-		RETURNING id, email, hashed_password
+		INSERT INTO users (email, username, hashed_password)
+		VALUES ($1, $2, $3) 
+		RETURNING id, email, username, hashed_password
 	`
 	var insertedUser User
-	err := dbCfg.database.QueryRow(insertQuery, user.Email, user.HashedPassword).Scan(
+	err := dbCfg.database.QueryRow(insertQuery, user.Email, user.Username, user.HashedPassword).Scan(
 		&insertedUser.ID,
 		&insertedUser.Email,
+		&insertedUser.Username,
 		&insertedUser.HashedPassword,
 	)
 	if err != nil {
@@ -80,6 +87,9 @@ func (dbCfg *DbConfig) GetUserByEmail(email string) (User, error) {
 		&user.CreatedAt,
 	)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return User{}, ErrNotExist
+		}
 		return User{}, err
 	}
 
@@ -88,7 +98,7 @@ func (dbCfg *DbConfig) GetUserByEmail(email string) (User, error) {
 
 func (dbCfg *DbConfig) GetUserByID(userID int) (User, error) {
 	query := `
-		SELECT id, email, hashed_password, created_at 
+		SELECT id, email, username, hashed_password, created_at 
 		FROM users WHERE id = $1
 	`
 
@@ -96,6 +106,7 @@ func (dbCfg *DbConfig) GetUserByID(userID int) (User, error) {
 	err := dbCfg.database.QueryRow(query, userID).Scan(
 		&user.ID,
 		&user.Email,
+		&user.Username,
 		&user.HashedPassword,
 		&user.CreatedAt,
 	)
@@ -104,6 +115,44 @@ func (dbCfg *DbConfig) GetUserByID(userID int) (User, error) {
 	}
 
 	return user, nil
+}
+
+func (dbCfg *DbConfig) UserWithEmailExists(email string) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1 
+			FROM users 
+			WHERE email = $1
+		)
+	`
+
+	var exists bool
+	err := dbCfg.database.QueryRow(query, email).Scan(&exists)
+	if err != nil {
+		log.Printf("Failed to check if email exists: %v", err)
+		return false, err
+	}
+
+	return exists, nil
+}
+
+func (dbCfg *DbConfig) UserWithUsernameExists(username string) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1 
+			FROM users 
+			WHERE username = $1
+		)
+	`
+
+	var exists bool
+	err := dbCfg.database.QueryRow(query, username).Scan(&exists)
+	if err != nil {
+		log.Printf("Failed to check if username exists: %v", err)
+		return false, err
+	}
+
+	return exists, nil
 }
 
 func (dbCfg *DbConfig) DeleteUser(userID int) error {
