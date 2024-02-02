@@ -18,32 +18,7 @@ Creating your own toplists requires registering with your email and a password.
 -   React frontend
 -   JWT authentication
 -   PostgreSQL database
--   Docker
 -   CI/CD with Github actions
-
-## 🤝 Contributing
-
-### Clone the repo
-
-```
-git clone https://github.com/EmilMalmsten/my_top_xyz.git
-cd my_top_xyz
-```
-
-### Run the project locally in docker
-
-1. Make sure docker is installed by typing: `docker -v` in to your terminal.
-   If it's not installed please follow the [docker getting started guide.](https://www.docker.com/get-started/)
-
-2. Read .env.example, re-name it to .env and set up the required environment variables.
-
-3. Build the project with `docker compose build`
-4. Start with `docker compose up -d`
-5. Run database migrations within the backend container. Replace DB_URL with the actual url used in .env
-    ```
-    docker exec -it backend sh
-    migrate -path migrations -database ${DB_URL} up
-    ```
 
 ### Submit a pull request
 
