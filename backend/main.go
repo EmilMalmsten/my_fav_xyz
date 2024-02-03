@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -26,12 +27,13 @@ type apiConfig struct {
 }
 
 func main() {
-	workingDir, err := os.Getwd()
+	exePath, err := os.Executable()
 	if err != nil {
-		log.Println("Failed to get working directory")
+		log.Println("Failed to get executable path")
 	}
-
-	err = godotenv.Load(workingDir + "/.env")
+	exeDir := filepath.Dir(exePath)
+	envPath := path.Join(exeDir, ".env")
+	err = godotenv.Load(envPath)
 	if err != nil {
 		log.Println("Failed to load env file")
 	}
@@ -138,11 +140,6 @@ func main() {
 	router.Post("/api/forgotpassword", apiCfg.handlerForgotPassword)
 	router.Patch("/api/resetpassword/{resetToken}", apiCfg.handlerResetPassword)
 
-	exePath, err := os.Executable()
-	if err != nil {
-		log.Println(err)
-	}
-	exeDir := filepath.Dir(exePath)
 	imagesDir := filepath.Join(exeDir, "images")
 	FileServer(router, "/images", http.Dir(imagesDir))
 
