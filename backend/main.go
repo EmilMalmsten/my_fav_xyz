@@ -26,7 +26,12 @@ type apiConfig struct {
 }
 
 func main() {
-	err := godotenv.Load()
+	workingDir, err := os.Getwd()
+	if err != nil {
+		log.Println("Failed to get working directory")
+	}
+
+	err = godotenv.Load(workingDir + "/.env")
 	if err != nil {
 		log.Println("Failed to load env file")
 	}
