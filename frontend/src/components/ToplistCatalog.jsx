@@ -17,9 +17,9 @@ function ToplistCatalog({ title, endpoint }) {
             );
 
             if (itemWithImagePath) {
-                return `${import.meta.env.VITE_IMG_URL}/${
-                    itemWithImagePath.list_id
-                }/${itemWithImagePath.image_path}`;
+                return `${import.meta.env.VITE_IMG_URL}${
+                    itemWithImagePath.image_path
+                }`;
             }
         }
         return defaultImage;

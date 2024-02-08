@@ -72,6 +72,7 @@ function Toplist() {
                     );
                     toplist.items = sortedItems;
                 }
+                console.log(toplist);
                 setToplist(toplist);
             } catch (error) {
                 console.error(error);

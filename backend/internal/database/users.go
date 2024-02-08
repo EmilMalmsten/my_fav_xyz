@@ -21,6 +21,7 @@ func (dbCfg *DbConfig) InsertUser(user User) (User, error) {
 	)
 	if err != nil {
 		if isUniqueConstraintError(err) {
+			log.Println(err)
 			return insertedUser, ErrAlreadyExist
 		}
 		return insertedUser, err

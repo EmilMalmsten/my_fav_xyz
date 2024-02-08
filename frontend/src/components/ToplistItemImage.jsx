@@ -11,9 +11,11 @@ function ToplistItemImage({ item }) {
             if (item.newImageFile) {
                 setSrc(item.newImageFile);
             } else if (item.image_path) {
-                setSrc(`${import.meta.env.VITE_IMG_URL}/${item.list_id}/${
-                    item.image_path
-                }?v=${Date.now()}`);
+                setSrc(
+                    `${import.meta.env.VITE_IMG_URL}${
+                        item.image_path
+                    }?v=${Date.now()}`
+                );
             } else {
                 setSrc(defaultImage);
             }

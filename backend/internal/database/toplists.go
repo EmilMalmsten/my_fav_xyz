@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
 )
 
 func (dbCfg *DbConfig) InsertToplist(toplist Toplist) (Toplist, error) {
@@ -132,9 +133,9 @@ func rankAlreadyExists(existingRanks []int, rank int) bool {
 
 func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int) ([]ToplistItem, error) {
 
-	newListItems, err := handleImageChanges(newListItems, listId)
-	if err != nil {
-		return []ToplistItem{}, err
+	for i := range newListItems {
+		dbCfg.saveOrDeleteImage(&newListItems[i], listId)
+		log.Println(newListItems[i].ImagePath)
 	}
 
 	existingListItems, err := dbCfg.GetToplistItems(listId)
@@ -161,14 +162,15 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 		var updatedItem ToplistItem
 		if rankAlreadyExists(existingListItemRanks, newListItems[i].Rank) {
 			updateQuery := `
-				UPDATE list_items SET title = $1, description = $2 
-				WHERE rank = $3 AND toplist_id = $4 
-				RETURNING id, toplist_id, rank, title, description
+				UPDATE list_items SET title = $1, description = $2, image_path = $3
+				WHERE rank = $4 AND toplist_id = $5
+				RETURNING id, toplist_id, rank, title, description, image_path
 			`
 			err := dbCfg.database.QueryRow(
 				updateQuery,
 				newListItems[i].Title,
 				newListItems[i].Description,
+				newListItems[i].ImagePath,
 				newListItems[i].Rank,
 				listId,
 			).Scan(
@@ -177,6 +179,7 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 				&updatedItem.Rank,
 				&updatedItem.Title,
 				&updatedItem.Description,
+				&updatedItem.ImagePath,
 			)
 			if err != nil {
 				return []ToplistItem{}, err
@@ -184,9 +187,9 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 
 		} else {
 			insertQuery := `
-				INSERT INTO list_items (toplist_id, rank, title, description)
-				VALUES ($1, $2, $3, $4) 
-				RETURNING id, toplist_id, rank, title, description
+				INSERT INTO list_items (toplist_id, rank, title, description, image_path)
+				VALUES ($1, $2, $3, $4, $5) 
+				RETURNING id, toplist_id, rank, title, description, image_path
 			`
 			err := dbCfg.database.QueryRow(
 				insertQuery,
@@ -194,12 +197,14 @@ func (dbCfg *DbConfig) UpdateToplistItems(newListItems []ToplistItem, listId int
 				newListItems[i].Rank,
 				newListItems[i].Title,
 				newListItems[i].Description,
+				newListItems[i].ImagePath,
 			).Scan(
 				&updatedItem.ItemID,
 				&updatedItem.ListID,
 				&updatedItem.Rank,
 				&updatedItem.Title,
 				&updatedItem.Description,
+				&updatedItem.ImagePath,
 			)
 			if err != nil {
 				return []ToplistItem{}, err
@@ -276,18 +281,12 @@ func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
 		return toplist, err
 	}
 
-	toplistItemsWithImgPaths, err := setImagePaths(toplistItems, listId)
-	if err != nil {
-		fmt.Println(err)
-		return toplist, err
-	}
-
-	toplist.Items = toplistItemsWithImgPaths
+	toplist.Items = toplistItems
 	return toplist, nil
 }
 
 func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
-	query := "SELECT id, toplist_id, rank, title, description FROM list_items WHERE toplist_id = $1"
+	query := "SELECT id, toplist_id, rank, title, description, image_path FROM list_items WHERE toplist_id = $1"
 	rows, err := dbCfg.database.QueryContext(context.Background(), query, listId)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -301,7 +300,7 @@ func (dbCfg *DbConfig) GetToplistItems(listId int) ([]ToplistItem, error) {
 
 	for rows.Next() {
 		var item ToplistItem
-		err := rows.Scan(&item.ItemID, &item.ListID, &item.Rank, &item.Title, &item.Description)
+		err := rows.Scan(&item.ItemID, &item.ListID, &item.Rank, &item.Title, &item.Description, &item.ImagePath)
 		if err != nil {
 			fmt.Println(err)
 			return []ToplistItem{}, err
@@ -399,11 +398,8 @@ func (dbCfg *DbConfig) ListToplistsByProperty(limit int, property string) ([]Top
 		if err != nil {
 			return []Toplist{}, err
 		}
-		toplistItemsWithImgPaths, err := setImagePaths(toplistItems, toplist.ToplistID)
-		if err != nil {
-			return []Toplist{}, err
-		}
-		toplist.Items = toplistItemsWithImgPaths
+
+		toplist.Items = toplistItems
 		toplists = append(toplists, toplist)
 	}
 
@@ -504,12 +500,9 @@ func (dbCfg *DbConfig) ListToplistsByUser(userID, limit, offset int) ([]Toplist,
 		if err != nil {
 			return []Toplist{}, err
 		}
-		toplistItemsWithImgPaths, err := setImagePaths(toplistItems, toplist.ToplistID)
-		if err != nil {
-			return []Toplist{}, err
-		}
-		toplist.Items = toplistItemsWithImgPaths
-		
+
+		toplist.Items = toplistItems
+
 		toplists = append(toplists, toplist)
 	}
 
