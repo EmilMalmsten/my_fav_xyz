@@ -103,7 +103,7 @@ function Toplist() {
                     ) : null}
                 </div>
                 <p>
-                    <em>Created by {toplist.username}</em>
+                    <em>Created by: {toplist.username}</em>
                 </p>
                 <p>{toplist.description}</p>
                 {toplist.items && (
