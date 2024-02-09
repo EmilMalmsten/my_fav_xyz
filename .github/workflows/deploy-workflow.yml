@@ -26,6 +26,6 @@ jobs:
                   && ${{ secrets.MIGRATE_UP_CMD }} \
                   && cd ../frontend \
                   && echo ${{ secrets.NPM_PATH }} run build \
-                  && sudo systemctl restart topxyz && exit"
+                  && sudo systemctl restart topxyz.service && exit"
             - name: cleanup
               run: rm -rf ~/.ssh
