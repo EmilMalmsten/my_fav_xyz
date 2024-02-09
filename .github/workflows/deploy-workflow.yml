@@ -24,7 +24,6 @@ jobs:
                   && cd backend \
                   && go build -o out \
                   && ${{ secrets.MIGRATE_UP_CMD }} \
-                  && cd ../frontend \
-                  && npm run build && exit"
+                  && ${{ secrets.NPM_PATH }} run build && exit"
             - name: cleanup
               run: rm -rf ~/.ssh
