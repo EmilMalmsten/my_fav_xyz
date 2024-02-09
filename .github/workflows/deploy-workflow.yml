@@ -23,8 +23,7 @@ jobs:
                   && git pull \
                   && cd backend \
                   && go build -o out \
-                  && pwd \
-                  && make migrateup \
+                  && ${{ secrets.MIGRATE_UP_CMD }} \
                   && cd ../frontend \
                   && npm run build && exit"
             - name: cleanup
