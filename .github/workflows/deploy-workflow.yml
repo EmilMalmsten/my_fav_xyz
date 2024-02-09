@@ -23,6 +23,7 @@ jobs:
                   && git pull \
                   && cd backend \
                   && go build -o out \
+                  && pwd \
                   && make migrateup \
                   && cd ../frontend \
                   && npm run build && exit"
