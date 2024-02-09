@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import React from "react";
-import { Container, Form, Button, Row, Col } from "react-bootstrap";
+import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
 import ToplistItemImage from "../components/ToplistItemImage";
@@ -126,7 +126,16 @@ function EditToplistItems() {
                 );
                 navigate(`/toplists/${toplist.toplist_id}`);
             } catch (error) {
-                console.log(error);
+                console.error(error);
+                if (error.response && error.response.data) {
+                    setShowFailureAlert(true);
+                    setFailureAlertMessage(error.response.data.error);
+                } else {
+                    setShowFailureAlert(true);
+                    setFailureAlertMessage(
+                        "Failed to save toplist. Please try again."
+                    );
+                }
             }
         }
         form.classList.add("was-validated");

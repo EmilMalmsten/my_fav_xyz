@@ -100,14 +100,20 @@ func (cfg *apiConfig) handlerToplistsUpdateItems(w http.ResponseWriter, r *http.
 			// Remove the first part which is file info before the actual image data
 			dataParts := strings.SplitN(imageBase64, ",", 2)
 			if len(dataParts) != 2 {
-				respondWithError(w, http.StatusBadRequest, "Invalid base64 image data")
+				respondWithError(w, http.StatusBadRequest, "Invalid image file")
 				return
 			}
 			base64Data := dataParts[1]
 
 			imageBytes, err := base64.StdEncoding.DecodeString(base64Data)
 			if err != nil {
-				respondWithError(w, http.StatusInternalServerError, "Failed to decode base64 image")
+				respondWithError(w, http.StatusInternalServerError, "Failed to process image data")
+				return
+			}
+
+			maxImageSizeBytes := 400000
+			if len(imageBytes) > maxImageSizeBytes {
+				respondWithError(w, http.StatusBadRequest, "Image is above size limit of 400kB")
 				return
 			}
 
