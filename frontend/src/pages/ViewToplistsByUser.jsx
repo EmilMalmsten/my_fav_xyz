@@ -29,7 +29,7 @@ function ViewToplistsByUser() {
         <Container>
             {user.email ? (
                 <ToplistCatalog
-                    title={`Toplists by ${user.email}`}
+                    title={`Toplists by ${user.username}`}
                     endpoint={`/toplists/user/${id}`}
                 />
             ) : (

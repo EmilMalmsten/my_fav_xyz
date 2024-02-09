@@ -78,7 +78,16 @@ function ToplistCatalog({ title, endpoint }) {
                             }}
                         >
                             <div className="overlay">
-                                <p className="mx-2">{toplist.title}</p>
+                                <p>{toplist.title}</p>
+                                <p
+                                    style={{
+                                        position: "absolute",
+                                        bottom: "0",
+                                        fontSize: "small",
+                                    }}
+                                >
+                                    By: {toplist.username}
+                                </p>
                             </div>
                         </div>
                     </Col>

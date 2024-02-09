@@ -14,6 +14,7 @@ type Toplist struct {
 	Title       string        `json:"title"`
 	Description string        `json:"description"`
 	UserID      int           `json:"user_id"`
+	Username    string        `json:"username"`
 	CreatedAt   time.Time     `json:"created_at"`
 	Items       []ToplistItem `json:"items"`
 	Views       int           `json:"views"`

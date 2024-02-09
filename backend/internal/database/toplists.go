@@ -275,6 +275,12 @@ func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
 		return toplist, err
 	}
 
+	user, err := dbCfg.GetUserByID(toplist.UserID)
+	if err != nil {
+		return toplist, err
+	}
+	toplist.Username = user.Username
+
 	toplistItems, err := dbCfg.GetToplistItems(listId)
 	if err != nil {
 		fmt.Println(err)
@@ -394,6 +400,12 @@ func (dbCfg *DbConfig) ListToplistsByProperty(limit int, property string) ([]Top
 		if err != nil {
 			return []Toplist{}, err
 		}
+		user, err := dbCfg.GetUserByID(toplist.UserID)
+		if err != nil {
+			return []Toplist{}, err
+		}
+		toplist.Username = user.Username
+
 		toplistItems, err := dbCfg.GetToplistItems(toplist.ToplistID)
 		if err != nil {
 			return []Toplist{}, err
@@ -496,6 +508,12 @@ func (dbCfg *DbConfig) ListToplistsByUser(userID, limit, offset int) ([]Toplist,
 		if err != nil {
 			return []Toplist{}, err
 		}
+		user, err := dbCfg.GetUserByID(toplist.UserID)
+		if err != nil {
+			return []Toplist{}, err
+		}
+		toplist.Username = user.Username
+
 		toplistItems, err := dbCfg.GetToplistItems(toplist.ToplistID)
 		if err != nil {
 			return []Toplist{}, err

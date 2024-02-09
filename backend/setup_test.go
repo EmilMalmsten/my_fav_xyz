@@ -53,10 +53,20 @@ func createRandomEmail() string {
 	return email
 }
 
+func createRandomUsername() string {
+	seed := time.Now().UnixNano()
+	rng := rand.New(rand.NewSource(seed))
+	randomNumber := rng.Intn(100000) + 1
+	username := fmt.Sprintf("testuser%d", randomNumber)
+	return username
+}
+
 func insertTestUser() error {
 	randomEmail := createRandomEmail()
+	randomUsername := createRandomUsername()
 	user := database.User{
 		Email:          randomEmail,
+		Username:       randomUsername,
 		HashedPassword: "asd123123123hjerwehr",
 	}
 	insertedUser, err := apiCfg.DB.InsertUser(user)

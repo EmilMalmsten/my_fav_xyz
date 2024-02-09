@@ -72,7 +72,6 @@ function Toplist() {
                     );
                     toplist.items = sortedItems;
                 }
-                console.log(toplist);
                 setToplist(toplist);
             } catch (error) {
                 console.error(error);
@@ -103,6 +102,9 @@ function Toplist() {
                         </span>
                     ) : null}
                 </div>
+                <p>
+                    <em>Created by {toplist.username}</em>
+                </p>
                 <p>{toplist.description}</p>
                 {toplist.items && (
                     <>
