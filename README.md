@@ -35,12 +35,22 @@ Creating your own toplists requires registering with your email and a password.
 1. Read backend/.env.example and frontend/.env.example, re-name both of them to .env and set up the environment variables in each file according to preference
 
 2. Within the backend directory run:
-   `go build -o out && ./out`
-   `make migrateup`
+
+    ```
+    go build -o out && ./out
+    ```
+
+    ```
+    make migrateup
+    ```
 
 3. Within the frontend directory run:
-   `npm install`
-   `npm run dev`
+    ```
+    npm install
+    ```
+    ```
+    npm run dev
+    ```
 
 ### Submit a pull request
 
