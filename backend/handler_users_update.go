@@ -15,6 +15,12 @@ type updateUserEmailRequest struct {
 	Password string `json:"password"`
 }
 
+type updateUserUsernameRequest struct {
+	UserID      int    `json:"user_id"`
+	NewUsername string `json:"new_username"`
+	Password    string `json:"password"`
+}
+
 type updateUserPasswordRequest struct {
 	OldPassword string `json:"old_password"`
 	NewPassword string `json:"new_password"`
@@ -57,7 +63,52 @@ func (cfg *apiConfig) handlerUsersUpdateEmail(w http.ResponseWriter, r *http.Req
 
 	updatedUserResp := database.User{
 		ID:        updatedUser.ID,
+		Username:  updatedUser.Username,
 		Email:     updatedUser.Email,
+		CreatedAt: updatedUser.CreatedAt,
+	}
+
+	respondWithJSON(w, http.StatusOK, updatedUserResp)
+}
+
+func (cfg *apiConfig) handlerUsersUpdateUsername(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	updateUserUsernameRequest := updateUserUsernameRequest{}
+	err := decoder.Decode(&updateUserUsernameRequest)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		return
+	}
+
+	if len(updateUserUsernameRequest.NewUsername) < 3 {
+		respondWithError(w, http.StatusBadRequest, "Username needs to be minimum 3 characters")
+		return
+	}
+
+	dbUser, err := cfg.DB.GetUserByID(updateUserUsernameRequest.UserID)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't get user")
+		return
+	}
+
+	err = auth.CheckPasswordHash(updateUserUsernameRequest.Password, dbUser.HashedPassword)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Invalid password")
+		return
+	}
+
+	updatedUser, err := cfg.DB.UpdateUserUsername(dbUser.ID, updateUserUsernameRequest.NewUsername)
+	if err != nil {
+		fmt.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't update user")
+		return
+	}
+
+	updatedUserResp := database.User{
+		ID:        updatedUser.ID,
+		Email:     updatedUser.Email,
+		Username:  updatedUser.Username,
 		CreatedAt: updatedUser.CreatedAt,
 	}
 

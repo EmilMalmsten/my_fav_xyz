@@ -71,6 +71,7 @@ func (cfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 	userResp := database.User{
 		ID:        dbUser.ID,
 		Email:     dbUser.Email,
+		Username:  dbUser.Username,
 		CreatedAt: dbUser.CreatedAt,
 	}
 

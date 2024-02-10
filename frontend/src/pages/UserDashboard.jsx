@@ -11,6 +11,10 @@ function UserDashboard() {
         navigate(`/users/${authUser.userID}/email`);
     };
 
+    const handleChangeUsername = () => {
+        navigate(`/users/${authUser.userID}/username`);
+    };
+
     const handleChangePassword = () => {
         navigate(`/users/${authUser.userID}/password`);
     };
@@ -30,6 +34,17 @@ function UserDashboard() {
                         onClick={handleChangeEmail}
                     >
                         Change Email Address
+                    </Button>
+                </Col>
+            </Row>
+            <Row className="justify-content-center">
+                <Col xs={12} md={6}>
+                    <Button
+                        className="m-2 w-50 brand-button-outline"
+                        variant="outline-primary"
+                        onClick={handleChangeUsername}
+                    >
+                        Change Username
                     </Button>
                 </Col>
             </Row>

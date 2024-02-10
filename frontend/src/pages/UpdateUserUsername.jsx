@@ -4,8 +4,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-function UpdateUserEmail() {
-    const [email, setEmail] = useState("");
+function UpdateUserUsername() {
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showFailureAlert, setShowFailureAlert] = useState(false);
     const [failureAlertMessage, setFailureAlertMessage] = useState("");
@@ -22,10 +22,10 @@ function UpdateUserEmail() {
         if (form.checkValidity()) {
             try {
                 const response = await axios.put(
-                    `${import.meta.env.VITE_API_URL}/users/email`,
+                    `${import.meta.env.VITE_API_URL}/users/username`,
                     {
-                        old_email: authUser.email,
-                        new_email: email,
+                        user_id: authUser.userID,
+                        new_username: username,
                         password: password,
                     }
                 );
@@ -36,7 +36,7 @@ function UpdateUserEmail() {
                     response.data.created_at
                 );
                 navigate("/", {
-                    state: { successAlert: "Email updated successfully" },
+                    state: { successAlert: "Username updated successfully" },
                 });
             } catch (error) {
                 console.error(error);
@@ -46,7 +46,7 @@ function UpdateUserEmail() {
                 } else {
                     setShowFailureAlert(true);
                     setFailureAlertMessage(
-                        "Email update failed. Please try again."
+                        "Username update failed. Please try again."
                     );
                 }
             }
@@ -72,19 +72,21 @@ function UpdateUserEmail() {
                 )}
                 <Form noValidate onSubmit={handleSubmit}>
                     <Form.Group
-                        controlId="email"
+                        controlId="username"
                         style={{ marginBottom: "1rem" }}
                     >
-                        <Form.Label>Enter New Email</Form.Label>
+                        <Form.Label>Enter New Username</Form.Label>
                         <Form.Control
                             required
-                            type="email"
-                            placeholder="Enter email"
-                            value={email}
-                            onChange={(e) => handleInputChange(e, setEmail)}
+                            type="text"
+                            placeholder="Enter username"
+                            minLength="3"
+                            value={username}
+                            onChange={(e) => handleInputChange(e, setUsername)}
                         />
                         <Form.Control.Feedback type="invalid">
-                            Please provide a valid email.
+                            Please provide a valid username. Minimum length is 3
+                            characters.
                         </Form.Control.Feedback>
                     </Form.Group>
 
@@ -126,4 +128,4 @@ function UpdateUserEmail() {
     );
 }
 
-export default UpdateUserEmail;
+export default UpdateUserUsername;

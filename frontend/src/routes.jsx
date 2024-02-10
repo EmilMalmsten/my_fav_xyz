@@ -10,6 +10,7 @@ import { useAuth } from "./context/AuthContext";
 import EditToplist from "./pages/EditToplist";
 import EditToplistItems from "./pages/EditToplistItems";
 import UpdateUserEmail from "./pages/UpdateUserEmail";
+import UpdateUserUsername from "./pages/UpdateUserUsername";
 import UserDashboard from "./pages/UserDashboard";
 import UpdateUserPassword from "./pages/UpdateUserPassword";
 import DeleteUser from "./pages/DeleteUser";
@@ -73,6 +74,10 @@ const routes = [
     {
         path: "/users/:id/email",
         element: <ProtectedRoute element={<UpdateUserEmail />} />,
+    },
+    {
+        path: "/users/:id/username",
+        element: <ProtectedRoute element={<UpdateUserUsername />} />,
     },
     {
         path: "/users/:id/password",

@@ -131,6 +131,7 @@ func main() {
 	router.Get("/api/users/{userID}", apiCfg.handlerUsersGetByID)
 	router.Post("/api/users", apiCfg.handlerUsersCreate)
 	router.Put("/api/users/email", apiCfg.handlerUsersUpdateEmail)
+	router.Put("/api/users/username", apiCfg.handlerUsersUpdateUsername)
 	router.Put("/api/users/password", apiCfg.handlerUsersUpdatePassword)
 	router.Delete("/api/users", apiCfg.handlerUsersDelete)
 

@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
         );
         updateUserInfo(
             response.data.user.email,
+            response.data.user.username,
             response.data.user.id,
             response.data.user.created_at
         );
@@ -46,9 +47,10 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const updateUserInfo = (email, userID, createdAt) => {
+    const updateUserInfo = (email, username, userID, createdAt) => {
         const user = {
             email: email,
+            username: username,
             userID: userID,
             createdAt: createdAt,
         };
