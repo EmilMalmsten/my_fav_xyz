@@ -18,7 +18,7 @@ Creating your own toplists requires registering with your email and a password.
 -   PostgreSQL database
 -   CI/CD with Github actions
 
-## 🛠️ Run locally 💻
+## 💻 Run locally
 
 ### Dependencies
 
@@ -37,25 +37,29 @@ git clone https://github.com/limesten/topxyz.git && cd topxyz
 1. This setup assumes that you already are familiar with PostgreSQL, and that you have it up and running with a database ready to use.
 
 2. Within the backend directory:
-   Read .env.example and set up the variables according to preference
-   Rename .env.example to .env
 
-    Run database migrations:
+    Read .env.example and set up the variables according to preference
+
+    Rename .env.example to .env
 
     ```
     make migrateup
     ```
 
     ```
-    go build -o out && ./out
+    go build -o topxyz && ./topxyz
     ```
 
 3. Within the frontend directory:
-   Read .env.example and set up the variables according to preference
-   Rename .env.example to .env
+
+    Read .env.example and set up the variables according to preference
+
+    Rename .env.example to .env
+
     ```
     npm install
     ```
+
     ```
     npm run dev
     ```
