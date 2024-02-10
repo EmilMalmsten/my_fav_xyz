@@ -24,7 +24,8 @@ jobs:
                   && cd backend \
                   && go build -o out \
                   && ${{ secrets.MIGRATE_UP_CMD }} \
-                  && cd ../frontend \
+                  && cd ${{ secrets.WORK_DIR }} \
+                  && cd frontend \
                   && ${{ secrets.NPM_PATH }} run build \
                   && sudo systemctl restart topxyz.service && exit"
             - name: cleanup
