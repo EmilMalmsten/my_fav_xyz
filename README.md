@@ -28,23 +28,31 @@ Creating your own toplists requires registering with your email and a password.
 
 ### Clone the repo
 
-`git clone https://github.com/limesten/topxyz.git && cd topxyz`
+```
+git clone https://github.com/limesten/topxyz.git && cd topxyz
+```
 
 ### Project setup
 
-1. Read backend/.env.example and frontend/.env.example, re-name both of them to .env and set up the environment variables in each file according to preference
+1. This setup assumes that you already are familiar with PostgreSQL, and that you have it up and running with a database ready to use.
 
-2. Within the backend directory run:
+2. Within the backend directory:
+   Read .env.example and set up the variables according to preference
+   Rename .env.example to .env
 
-    ```
-    go build -o out && ./out
-    ```
+    Run database migrations:
 
     ```
     make migrateup
     ```
 
-3. Within the frontend directory run:
+    ```
+    go build -o out && ./out
+    ```
+
+3. Within the frontend directory:
+   Read .env.example and set up the variables according to preference
+   Rename .env.example to .env
     ```
     npm install
     ```
