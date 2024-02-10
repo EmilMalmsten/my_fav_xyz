@@ -26,6 +26,8 @@ jobs:
                   && ${{ secrets.MIGRATE_UP_CMD }} \
                   && cd ${{ secrets.WORK_DIR }} \
                   && cd frontend \
+                  && export NVM_DIR=~/.nvm \
+                  && source ~/.nvm/nvm.sh \
                   && npm run build \
                   && sudo systemctl restart topxyz.service && exit"
             - name: cleanup
