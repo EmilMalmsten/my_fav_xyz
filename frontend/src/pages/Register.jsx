@@ -63,6 +63,7 @@ function Register() {
                         {failureAlertMessage}
                     </Alert>
                 )}
+                <h1 className="mb-4">Create account</h1>
                 <Form noValidate onSubmit={handleSubmit}>
                     <Form.Group
                         controlId="email"
@@ -139,7 +140,7 @@ function Register() {
                     </Form.Group>
 
                     <Button className="brand-button" type="submit">
-                        Register
+                        Sign up
                     </Button>
                 </Form>
             </div>

@@ -111,7 +111,7 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 	err = cfg.DB.InsertPasswordResetToken(dbUser)
 	if err != nil {
 		fmt.Println(err)
-		respondWithError(w, http.StatusInternalServerError, "Failed to insert passwrod reset token")
+		respondWithError(w, http.StatusInternalServerError, "Failed to insert password reset token")
 		return
 	}
 
@@ -122,6 +122,7 @@ func (cfg *apiConfig) handlerForgotPassword(w http.ResponseWriter, r *http.Reque
 
 	err = cfg.SendEmail(&dbUser, &emailData, "resetPassword.html")
 	if err != nil {
+		fmt.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to send email")
 		return
 	}

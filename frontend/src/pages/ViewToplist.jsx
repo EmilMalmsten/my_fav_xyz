@@ -81,6 +81,18 @@ function Toplist() {
         }
     };
 
+    function getBackgroundColor(rank) {
+        if (rank === 1) {
+            return "gold";
+        } else if (rank === 2) {
+            return "silver";
+        } else if (rank === 3) {
+            return "#AA8954";
+        } else {
+            return "white";
+        }
+    }
+
     useEffect(() => {
         if (toplist && authUser && toplist.like_ids) {
             for (const id of toplist.like_ids) {
@@ -89,8 +101,8 @@ function Toplist() {
                     return;
                 }
             }
-            setHasLiked(false);
         }
+        setHasLiked(false);
     }, [toplist, authUser]);
 
     useEffect(() => {
@@ -130,7 +142,7 @@ function Toplist() {
         <>
             <Container style={{ width: "80%", margin: "2rem auto" }}>
                 <Row className="my-4">
-                    <Col>
+                    <Col xs={10} sm={10} md={10} lg={10} xl={10}>
                         <div style={{ display: "flex" }}>
                             <h1>{toplist.title}</h1>
 
@@ -150,14 +162,18 @@ function Toplist() {
                         </p>
                         <p>{toplist.description}</p>
                     </Col>
-                    <Col className="d-flex justify-content-end align-items-center">
-                        <Button
-                            variant="secondary"
-                            className={hasLiked ? "" : "brand-button"}
-                            onClick={handleToplistLike}
-                        >
-                            🤍 {toplist.like_count}
-                        </Button>
+                    <Col xs={2} sm={2} md={2} lg={2} xl={2}>
+                        <div className="d-flex justify-content-end">
+                            <Button
+                                variant="secondary"
+                                className={`my-3 ${
+                                    hasLiked ? "" : "brand-button"
+                                }`}
+                                onClick={handleToplistLike}
+                            >
+                                🤍 {toplist.like_count}
+                            </Button>
+                        </div>
                     </Col>
                 </Row>
                 {toplist.items && (
@@ -165,11 +181,28 @@ function Toplist() {
                         {toplist.items.map((item) => (
                             <React.Fragment key={item.item_id}>
                                 <Row className="my-5">
-                                    <Col xs={1} s={1} md={1}>
-                                        <h4>{item.rank}</h4>
+                                    <Col xs={2} s={1} md={1}>
+                                        <div
+                                            style={{
+                                                backgroundColor:
+                                                    getBackgroundColor(
+                                                        item.rank
+                                                    ),
+                                                width: "40px",
+                                                height: "40px",
+                                                borderRadius: "50%",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                            }}
+                                        >
+                                            <h5 style={{ marginBottom: "0px" }}>
+                                                {item.rank}
+                                            </h5>
+                                        </div>
                                     </Col>
                                     <Col
-                                        xs={11}
+                                        xs={10}
                                         s={6}
                                         md={4}
                                         style={{ maxWidth: "220px" }}

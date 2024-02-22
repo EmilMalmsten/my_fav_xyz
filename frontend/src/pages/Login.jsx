@@ -77,11 +77,17 @@ function Login() {
                     >
                         Login
                     </Button>
+                    <Button
+                        variant="primary"
+                        onClick={() => navigate("/register")}
+                        className="brand-button mx-2"
+                    >
+                        Sign up
+                    </Button>
                     <Link
                         to={`/forgot-password`}
                         style={{
                             textDecoration: "none",
-                            marginLeft: "10px",
                             color: "#8b3dff",
                         }}
                     >
