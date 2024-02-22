@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -20,6 +21,7 @@ func (cfg *apiConfig) handlerToplistsGetOne(w http.ResponseWriter, r *http.Reque
 
 	dbToplist, err := cfg.DB.GetToplist(toplistID)
 	if err != nil {
+		log.Println(err)
 		if errors.Is(err, database.ErrNotExist) {
 			respondWithError(w, http.StatusNotFound, "Toplist does not exist")
 			return
@@ -58,6 +60,7 @@ func (cfg apiConfig) handlerToplistsGetMany(w http.ResponseWriter, r *http.Reque
 	offset := (pageID - 1) * pageSize
 	toplists, err := cfg.DB.ListToplists(pageSize, offset)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to get toplists")
 		return
 	}
@@ -81,6 +84,7 @@ func (cfg apiConfig) handlerToplistsGetRecent(w http.ResponseWriter, r *http.Req
 	toplistFilterProp := "date"
 	toplists, err := cfg.DB.ListToplistsByProperty(pageSize, toplistFilterProp)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to get toplists")
 		return
 	}
@@ -104,6 +108,7 @@ func (cfg apiConfig) handlerToplistsGetPopular(w http.ResponseWriter, r *http.Re
 	toplistFilterProp := "views"
 	toplists, err := cfg.DB.ListToplistsByProperty(pageSize, toplistFilterProp)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to get toplists")
 		return
 	}

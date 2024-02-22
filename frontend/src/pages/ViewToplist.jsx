@@ -9,11 +9,24 @@ import ToplistItemImage from "../components/ToplistItemImage";
 
 function Toplist() {
     const [toplist, setToplist] = useState({});
+    const [hasLiked, setHasLiked] = useState(false);
     const viewsUpdatedRef = useRef(false);
     const { authUser, isLoggedIn } = useAuth();
     const navigate = useNavigate();
 
     const { id } = useParams();
+
+    const checkToplistLike = (toplist) => {
+        for (const id of toplist.like_ids) {
+            if (id == toplist.user_id) {
+                console.log("user has liked this toplist");
+                setHasLiked(true);
+                return;
+            }
+        }
+        console.log("user has not liked");
+        setHasLiked(false);
+    };
 
     const handleToplistEdit = () => {
         navigate(`/toplists/${id}/edit`, { state: toplist });
@@ -50,6 +63,36 @@ function Toplist() {
         navigate(`/toplists/${id}/items`, { state: toplist });
     };
 
+    const handleToplistLike = async () => {
+        if (!isLoggedIn) {
+            alert("Login required");
+            return;
+        }
+        try {
+            const accessToken = localStorage.getItem("accessToken");
+            await axios.post(
+                `${import.meta.env.VITE_API_URL}/toplists/likes`,
+                {
+                    toplist_id: toplist.toplist_id,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            if (hasLiked) {
+                setHasLiked(false);
+                toplist.like_count -= 1;
+            } else {
+                setHasLiked(true);
+                toplist.like_count += 1;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
     useEffect(() => {
         const updateToplistViews = async () => {
             await axios
@@ -60,7 +103,7 @@ function Toplist() {
             viewsUpdatedRef.current = true;
         };
 
-        const fetchData = async () => {
+        const fetchToplistData = async () => {
             try {
                 const response = await axios.get(
                     `${import.meta.env.VITE_API_URL}/toplists/${id}`
@@ -73,6 +116,7 @@ function Toplist() {
                     toplist.items = sortedItems;
                 }
                 setToplist(toplist);
+                checkToplistLike(toplist);
             } catch (error) {
                 console.error(error);
             }
@@ -81,31 +125,42 @@ function Toplist() {
         if (!viewsUpdatedRef.current) {
             updateToplistViews();
         }
-        fetchData();
+        fetchToplistData();
     }, []);
     return (
         <>
             <Container style={{ width: "80%", margin: "2rem auto" }}>
-                <div
-                    className="my-4"
-                    style={{ display: "flex", alignItems: "center" }}
-                >
-                    <h1>{toplist.title}</h1>
+                <Row className="my-4">
+                    <Col>
+                        <div style={{ display: "flex" }}>
+                            <h1>{toplist.title}</h1>
 
-                    {isLoggedIn &&
-                    Number(toplist.user_id) === Number(authUser.userID) ? (
-                        <span
-                            className="mx-2 emojiBtn"
-                            onClick={handleToplistEdit}
+                            {isLoggedIn &&
+                            Number(toplist.user_id) ===
+                                Number(authUser.userID) ? (
+                                <span
+                                    className="mx-2 emojiBtn"
+                                    onClick={handleToplistEdit}
+                                >
+                                    ✏️
+                                </span>
+                            ) : null}
+                        </div>
+                        <p>
+                            <em>Made by: {toplist.username}</em>
+                        </p>
+                        <p>{toplist.description}</p>
+                    </Col>
+                    <Col className="d-flex justify-content-end align-items-center">
+                        <Button
+                            variant="secondary"
+                            className={hasLiked ? "" : "brand-button"}
+                            onClick={handleToplistLike}
                         >
-                            ✏️
-                        </span>
-                    ) : null}
-                </div>
-                <p>
-                    <em>Made by: {toplist.username}</em>
-                </p>
-                <p>{toplist.description}</p>
+                            🤍 {toplist.like_count}
+                        </Button>
+                    </Col>
+                </Row>
                 {toplist.items && (
                     <>
                         {toplist.items.map((item) => (

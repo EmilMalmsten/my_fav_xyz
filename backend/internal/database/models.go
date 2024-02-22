@@ -18,7 +18,8 @@ type Toplist struct {
 	CreatedAt   time.Time     `json:"created_at"`
 	Items       []ToplistItem `json:"items"`
 	Views       int           `json:"views"`
-	Likes       int           `json:"likes"`
+	LikeCount   int           `json:"like_count"`
+	LikeIDs     []int         `json:"like_ids"`
 }
 
 type ToplistItem struct {

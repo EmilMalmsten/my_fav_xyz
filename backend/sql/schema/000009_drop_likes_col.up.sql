@@ -1,0 +1,2 @@
+ALTER TABLE toplists
+DROP COLUMN likes;

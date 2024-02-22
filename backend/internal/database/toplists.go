@@ -255,6 +255,30 @@ func (dbCfg *DbConfig) DeleteSpecificToplistItems(itemsToDelete []ToplistItem) e
 	return nil
 }
 
+func (dbCfg *DbConfig) GetToplistLikes(toplistID int) ([]int, error) {
+	query := "SELECT user_id FROM toplist_likes WHERE toplist_id = $1"
+	rows, err := dbCfg.database.Query(query, toplistID)
+	if err != nil {
+		return nil, err
+	}
+
+	var userIDs []int
+	for rows.Next() {
+		var userID int
+		err = rows.Scan(&userID)
+		if err != nil {
+			return nil, err
+		}
+
+		userIDs = append(userIDs, userID)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return userIDs, nil
+}
+
 func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
 	var toplist Toplist
 
@@ -286,6 +310,13 @@ func (dbCfg *DbConfig) GetToplist(listId int) (Toplist, error) {
 		fmt.Println(err)
 		return toplist, err
 	}
+
+	toplistLikes, err := dbCfg.GetToplistLikes(listId)
+	if err != nil {
+		return toplist, err
+	}
+	toplist.LikeIDs = toplistLikes
+	toplist.LikeCount = len(toplistLikes)
 
 	toplist.Items = toplistItems
 	return toplist, nil
@@ -374,7 +405,7 @@ func (dbCfg *DbConfig) ListToplistsByProperty(limit int, property string) ([]Top
 	}
 
 	query := ` 
-		SELECT id, title, description, user_id, created_at, views, likes FROM toplists 
+		SELECT id, title, description, user_id, created_at, views FROM toplists 
 		ORDER BY ` + orderClause + `
 		LIMIT $1
 	`
@@ -395,7 +426,6 @@ func (dbCfg *DbConfig) ListToplistsByProperty(limit int, property string) ([]Top
 			&toplist.UserID,
 			&toplist.CreatedAt,
 			&toplist.Views,
-			&toplist.Likes,
 		)
 		if err != nil {
 			return []Toplist{}, err
@@ -444,6 +474,34 @@ func (dbCfg *DbConfig) UpdateToplistViews(toplistID int) (Toplist, error) {
 		}
 	}
 	return updatedToplist, nil
+}
+
+func (dbCfg *DbConfig) UpdateToplistLikes(toplistID, userID int) error {
+
+	var exists bool
+	err := dbCfg.database.QueryRow("SELECT EXISTS(SELECT 1 FROM toplist_likes WHERE user_id = $1 AND toplist_id = $2)",
+		userID,
+		toplistID,
+	).Scan(&exists)
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
+	if !exists {
+		insertQuery := "INSERT INTO toplist_likes (user_id, toplist_id, liked_at) VALUES ($1, $2, CURRENT_TIMESTAMP)"
+		_, err = dbCfg.database.Exec(insertQuery, userID, toplistID)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+
+	deleteQuery := "DELETE FROM toplist_likes WHERE user_id = $1 AND toplist_id = $2"
+	_, err = dbCfg.database.Exec(deleteQuery, userID, toplistID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (dbCfg *DbConfig) SearchToplists(searchTerm string, limit, offset int) ([]Toplist, error) {

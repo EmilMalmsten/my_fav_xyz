@@ -126,6 +126,7 @@ func main() {
 	router.Get("/api/toplists/recent", apiCfg.handlerToplistsGetRecent)
 	router.Get("/api/toplists/popular", apiCfg.handlerToplistsGetPopular)
 	router.Post("/api/toplists/views/{toplistID}", apiCfg.handlerToplistsViews)
+	router.With(apiCfg.validateJWT).Post("/api/toplists/likes", apiCfg.handlerToplistsLikes)
 	router.Get("/api/toplists/search", apiCfg.handlerToplistsSearch)
 
 	router.Get("/api/users/{userID}", apiCfg.handlerUsersGetByID)

@@ -1,0 +1,2 @@
+ALTER TABLE toplists
+ADD COLUMN likes INT DEFAULT 0;
