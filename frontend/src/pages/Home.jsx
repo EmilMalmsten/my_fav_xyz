@@ -28,7 +28,7 @@ function Home() {
             <Searchbar />
 
             <ToplistCatalog
-                title="Most popular toplists"
+                title="Most viewed toplists"
                 endpoint="/toplists/popular"
             />
 
@@ -43,7 +43,12 @@ function Home() {
             </div>
 
             <ToplistCatalog
-                title="Recent toplists"
+                title="Most liked toplists"
+                endpoint="/toplists/liked"
+            />
+
+            <ToplistCatalog
+                title="Most recent toplists"
                 endpoint="/toplists/recent"
             />
 

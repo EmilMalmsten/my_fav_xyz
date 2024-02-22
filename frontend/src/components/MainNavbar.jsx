@@ -57,7 +57,7 @@ function MainNavbar() {
                         {isLoggedIn && (
                             <>
                                 <Nav.Link onClick={handleViewUser}>
-                                    {authUser.email}
+                                    {authUser.username}
                                 </Nav.Link>
                                 <Nav.Link onClick={handleLogout}>
                                     Logout

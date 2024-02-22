@@ -116,6 +116,30 @@ func (cfg apiConfig) handlerToplistsGetPopular(w http.ResponseWriter, r *http.Re
 	respondWithJSON(w, http.StatusOK, toplists)
 }
 
+func (cfg apiConfig) handlerToplistsGetLiked(w http.ResponseWriter, r *http.Request) {
+	pageSizeString := r.URL.Query().Get("page_size")
+	pageSize, err := strconv.Atoi(pageSizeString)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid page size parameter")
+		return
+	}
+	maxPageSize := 100
+	if pageSize < 1 || pageSize > maxPageSize {
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Page size needs to be min 1 and max %d", maxPageSize))
+		return
+	}
+
+	toplistFilterProp := "likes"
+	toplists, err := cfg.DB.ListToplistsByProperty(pageSize, toplistFilterProp)
+	if err != nil {
+		log.Println(err)
+		respondWithError(w, http.StatusInternalServerError, "Failed to get toplists")
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, toplists)
+}
+
 func (cfg apiConfig) handlerToplistsByUser(w http.ResponseWriter, r *http.Request) {
 	userIDString := chi.URLParam(r, "userID")
 	userID, err := strconv.Atoi(userIDString)

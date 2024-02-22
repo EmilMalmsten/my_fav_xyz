@@ -391,24 +391,40 @@ func (dbCfg *DbConfig) ListToplists(limit, offset int) ([]Toplist, error) {
 }
 
 func (dbCfg *DbConfig) ListToplistsByProperty(limit int, property string) ([]Toplist, error) {
-	orderClause := ""
+	var query string
 
 	switch property {
 	case "date":
-		orderClause = "created_at DESC"
-	case "views":
-		orderClause = "views DESC"
-	case "likes":
-		orderClause = "likes DESC"
-	default:
-		orderClause = "created_at DESC"
-	}
-
-	query := ` 
+		query = ` 
 		SELECT id, title, description, user_id, created_at, views FROM toplists 
-		ORDER BY ` + orderClause + `
-		LIMIT $1
-	`
+		ORDER BY created_at DESC LIMIT $1
+		`
+	case "views":
+		query = ` 
+		SELECT id, title, description, user_id, created_at, views FROM toplists 
+		ORDER BY views DESC LIMIT $1
+		`
+	case "likes":
+		query = ` 
+		SELECT t.id, t.title, t.description, t.user_id, t.created_at, t.views
+		FROM toplists t
+		WHERE t.id IN (
+			SELECT toplist_id
+			FROM toplist_likes
+			GROUP BY toplist_id
+		)
+		ORDER BY (
+			SELECT COUNT(*)
+			FROM toplist_likes tl
+			WHERE tl.toplist_id = t.id
+		) DESC LIMIT $1;
+		`
+	default:
+		query = ` 
+		SELECT id, title, description, user_id, created_at, views FROM toplists 
+		ORDER BY created_at DESC LIMIT $1
+		`
+	}
 
 	rows, err := dbCfg.database.QueryContext(context.Background(), query, limit)
 	if err != nil {
