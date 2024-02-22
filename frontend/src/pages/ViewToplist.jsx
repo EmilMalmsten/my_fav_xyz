@@ -16,18 +16,6 @@ function Toplist() {
 
     const { id } = useParams();
 
-    const checkToplistLike = (toplist) => {
-        for (const id of toplist.like_ids) {
-            if (id == toplist.user_id) {
-                console.log("user has liked this toplist");
-                setHasLiked(true);
-                return;
-            }
-        }
-        console.log("user has not liked");
-        setHasLiked(false);
-    };
-
     const handleToplistEdit = () => {
         navigate(`/toplists/${id}/edit`, { state: toplist });
     };
@@ -94,6 +82,18 @@ function Toplist() {
     };
 
     useEffect(() => {
+        if (toplist && authUser && toplist.like_ids) {
+            for (const id of toplist.like_ids) {
+                if (id == authUser.userID) {
+                    setHasLiked(true);
+                    return;
+                }
+            }
+            setHasLiked(false);
+        }
+    }, [toplist, authUser]);
+
+    useEffect(() => {
         const updateToplistViews = async () => {
             await axios
                 .post(`${import.meta.env.VITE_API_URL}/toplists/views/${id}`)
@@ -116,7 +116,6 @@ function Toplist() {
                     toplist.items = sortedItems;
                 }
                 setToplist(toplist);
-                checkToplistLike(toplist);
             } catch (error) {
                 console.error(error);
             }
