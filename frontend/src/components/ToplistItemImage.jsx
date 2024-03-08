@@ -24,7 +24,14 @@ function ToplistItemImage({ item }) {
     }, [item]);
 
     return (
-        <div style={{ width: "200px", height: "200px", overflow: "hidden" }}>
+        <div
+            style={{
+                width: "200px",
+                height: "200px",
+                overflow: "hidden",
+                borderRadius: "5px",
+            }}
+        >
             <img
                 src={src}
                 alt={item.title}
