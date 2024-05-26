@@ -5,9 +5,13 @@ We all have areas in our lives where we are a bit extra passionate. For you it c
 
 Top XYZ is a web app that helps you to keep track of your personal favorites, enables you to rank them, and sharing them with others.
 
-![Alt Text](https://s10.gifyu.com/images/SfZPz.gif)
+View demo here:
+https://gifyu.com/image/SfZPz
 
 ## 🚀 Quick Start
+
+Update May 26 2024
+The application is no longer publically hosted. You can view a demo of the application on the link above.
 
 Navigate to [topxyz.net](https://topxyz.net), browse existing toplists or create your own.
 Creating your own toplists requires registering with your email and a password.
