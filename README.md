@@ -10,7 +10,7 @@ https://gifyu.com/image/SfZPz
 
 ## 🚀 Quick Start
 
-Update May 26 2024
+Update May 26 2024 -
 The application is no longer publically hosted. You can view a demo of the application on the link above.
 
 Navigate to [topxyz.net](https://topxyz.net), browse existing toplists or create your own.
