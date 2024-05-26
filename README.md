@@ -5,7 +5,7 @@ We all have areas in our lives where we are a bit extra passionate. For you it c
 
 Top XYZ is a web app that helps you to keep track of your personal favorites, enables you to rank them, and sharing them with others.
 
-![Alt Text](https://s12.gifyu.com/images/SfZD1.gif)
+![Alt Text](https://photos.google.com/share/AF1QipPAzAUvfLOzUSvzJLUq_mIg3ZoWDOiwOlnd2cKpUs2BPlTrRdSyijfl5yFfYkHg_g/photo/AF1QipPqpAo3GGna7P3c808sbEvj-K4Y1w8S2zMlRCL2?key=em85OXk4VUtlT2FJM2syNVYxeGdFRHdRcDRlSGJR)
 
 ## 🚀 Quick Start
 
